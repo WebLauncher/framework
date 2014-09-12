@@ -96,7 +96,7 @@ class System {
 	/**
 	 * @var Skins Folder ( default:'skins/' )
 	 */
-	public $skins_folder = 'skins/';
+	public $skins_folder = 'assets/skins/';
 	/**
 	 * @var skin server path
 	 */
@@ -1497,7 +1497,7 @@ class System {
 		foreach ($js_files as $k => $v)
 			if (isset_or($v['src'])) {
 				if ($v['local']) {
-					$this -> session['__js_files'][$group][] = str_replace('{$skin_scripts}', '//skins/' . $this -> skin . '/' . $this -> module . 'scripts/', str_replace('{$root_scripts}', '//assets/scripts/', $v['src']));
+					$this -> session['__js_files'][$group][] = str_replace('{$skin_scripts}', '//'.$this->skins_folder . $this -> skin . '/' . $this -> module . 'scripts/', str_replace('{$root_scripts}', '//assets/scripts/', $v['src']));
 					$this -> add_js_file($this -> paths['root'] . 'min/?g=js_site' . $group . '&module=' . $module . '&ck=' . $this -> session_cookie . '&skin=' . $this -> skin, false);
 				} else {
 					$this -> add_js_file($v['src'], false, $v['type']);
@@ -1650,14 +1650,15 @@ class System {
 		if (!TemplatesManager::is_cached($template_folder . 'index.tpl', $this -> cache_hash)) {
 			$this -> render_skin();
 			// change smarty template dir for module
-
+			
+			$template_folder = $this -> paths['root_code'] . $this -> module . 'views/';
 			if (is_dir($this -> paths['root_code'] . $this -> module . 'views/' . $this -> skin . '/'))
 				$template_folder = $this -> paths['root_code'] . $this -> module . 'views/' . $this -> skin . '/';
-			else
+			elseif (is_dir($this -> paths['root_code'] . $this -> module . 'views/' . $this -> default_skin . '/' ))
 				$template_folder = $this -> paths['root_code'] . $this -> module . 'views/' . $this -> default_skin . '/';
-
+				
 			$cache_folder = $this -> paths['root_cache'] . $this -> module . 'views' . DS . $this -> skin . DS;
-
+			
 			$this -> fetch_template('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
 			if ($this -> ajax && $this -> obj_index -> view != 'index')
 				$this -> render_type = 'page';
