@@ -1909,7 +1909,7 @@ class System {
 			$this -> db_conn = new DbManager();
 			$this -> db_conn -> trace = $this -> trace;
 			$this -> add_tables();
-			$this -> db_conn -> connect($this -> db_connections[0]['host'], $this -> db_connections[0]['user'], $this -> db_connections[0]['password'], $this -> db_connections[0]['dbname']);
+			$this -> db_conn -> connect($this -> db_connections[0]['host'], $this -> db_connections[0]['user'], $this -> db_connections[0]['password'], $this -> db_connections[0]['dbname'], isset_or($this -> db_connections[0]['type'],'mysql'));
 		}
 	}
 
