@@ -37,7 +37,7 @@ class ModelsManager
 		{
 			$trace = debug_backtrace();
 	        trigger_error(
-	            'Undefined table for model in php.config.php file via __get(): tbl_' . $name .
+	            'Undefined table for model in php.config.php file via __get(): ' . $name .
 	            ' in ' . $trace[0]['file'] .
 	            ' on line ' . $trace[0]['line'],
 	            E_USER_NOTICE);
@@ -57,7 +57,7 @@ class ModelsManager
 		{
 			$trace = debug_backtrace();
 	        trigger_error(
-	            'Undefined table for model in php.config.php file via __call(): tbl_' . $name .
+	            'Undefined table for model in php.config.php file via __call(): ' . $name .
 	            ' in ' . $trace[0]['file'] .
 	            ' on line ' . $trace[0]['line'],
 	            E_USER_NOTICE);
@@ -77,11 +77,11 @@ class ModelsManager
 		{
 			if($this->import_from_page($model))
 				return true;
-			if(isset($this->db->tables['tbl_'.$model]))
+			if(isset($this->db->tables[$model]))
 			{
 				$this->$model=new Base();                
 				if(is_a($this->$model,'_Base') && !$this->$model->table)
-					$this->$model->table=$this->db->tables['tbl_'.strtolower($model)];                
+					$this->$model->table=$this->db->tables[strtolower($model)];                
 				$this->models[]=$model;
                 $this->{$model}->models=&$this;
 				return true;
@@ -107,7 +107,7 @@ class ModelsManager
 			$model_name=strtolower($model);
 			$this->$model_name=new $model();
 			if(is_a($this->$model_name,'_Base') && !$this->$model_name->table)
-				$this->$model_name->table=$this->db->tables['tbl_'.strtolower($model)];
+				$this->$model_name->table=$this->db->tables[strtolower($model)];
 			$this->models[]=strtolower($model);
             $this->{$model_name}->models=&$this;
 			return true;

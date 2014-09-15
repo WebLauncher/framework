@@ -23,7 +23,7 @@
 	    public function offsetExists($offset) {
 	    	global $page;
 			if(!isset($page->tables->{$offset}))
-				if(strpos($offset,'tbl_')==0) $page->tables->{$offset}=substr ($offset , 4 , strlen($offset)-4);
+				$page->tables->{$offset}=$offset;
 	        return isset($page->tables->{$offset});
 	    }
 		/**
@@ -40,7 +40,7 @@
 		 */
 	    public function offsetGet($offset) {
 	    	global $page;
-	        return isset($page->tables->{$offset}) ? $page->tables->{$offset} : (strpos($offset,'tbl_')==0 ?substr ($offset , 4 , strlen($offset)-4):null);
+	        return isset($page->tables->{$offset}) ? $page->tables->{$offset} : $offset;
 	    }
 		/**
 		 * Magic method get

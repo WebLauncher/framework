@@ -16,3 +16,4 @@
 4. Replace $page->metas_enabled with $page->seo_enabled
 5. Replace $page->visits_logs_enabled with $page->logins_logs_enabled
 6. Move skins folder under asseets folder. Some general sites do not require skins and should only be used in case there is the need for skins. Otherwise assets folder should be used.
+7. Replace 'tbl_' with '' (blank string). In table aliasing and models there is no longer required to use this.

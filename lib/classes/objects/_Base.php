@@ -115,8 +115,7 @@ class _Base implements ArrayAccess {
 		} elseif (is_a($this -> db, 'DbManager')) {
 			if (isset($this -> db -> tables[$name]))
 				return $this -> db -> tables[$name];
-			elseif (strpos($name, 'tbl_') == 0)
-				return substr($name, 4, strlen($name) - 4);
+			else return $name;
 		}
 		$trace = debug_backtrace();
 		trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);

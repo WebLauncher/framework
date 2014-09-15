@@ -1352,8 +1352,8 @@ class System {
 	 * @return
 	 */
 	private function _init_settings() {
-		if ($this -> settings_enabled && isset($this -> db_conn -> tables['tbl_settings'])) {
-			$query = 'select * from ' . $this -> db_conn -> tables['tbl_settings'];
+		if ($this -> settings_enabled && isset($this -> db_conn -> tables['settings'])) {
+			$query = 'select * from ' . $this -> db_conn -> tables['settings'];
 			$arr = $this -> db_conn -> getAll($query);
 			$return = array();
 			foreach ($arr as $k => $v) {

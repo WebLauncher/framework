@@ -1,4 +1,5 @@
 2.7.0
+- removed 'tbl_' from models and table aliases
 - you are no longer required to create default skin, skins are an optional feature
 - fixed minify library cache location
 - fixed: Page: on_no_action or index gets executes in parent components
