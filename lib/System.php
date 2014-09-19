@@ -481,6 +481,11 @@ class System {
 	 * @var unknown_type
 	 */
 	public $template = '';
+	
+	/**
+	 * Template engine (default: smarty)
+	 */
+	public $template_engine='smarty';
 	/**
 	 * DAL Models
 	 * @var unknown_type
@@ -944,9 +949,10 @@ class System {
 	private function _init_template() {
 		global $smarty;
 		$this -> import('library', 'Smarty');
-		$smarty = TemplatesManager::get_engine($this -> libraries_settings['smarty']['version'], $this -> paths['root_code'], $this -> paths['root_cache'], $this -> trace, $this -> debug, $this -> cache_enabled);
+		$smarty = TemplatesManager::get_engine($this->template_engine,$this -> libraries_settings['smarty']['version'], $this -> paths['root_code'], $this -> paths['root_cache'], $this -> trace, $this -> debug, $this -> cache_enabled);
 		$this -> template = &$smarty;
-		$this -> import('library', 'wbl_smarty');
+		if($this->template_engine=='smarty')
+			$this -> import('library', 'wbl_smarty');
 		$this -> change_template_dir($this -> paths['root_code']);
 		$this -> change_cache_dir($this -> paths['root_cache']);
 		if (isset_or($_REQUEST['__clear_cache'])) {
@@ -1647,6 +1653,7 @@ class System {
 				$this -> template -> display(__DIR__ . '/objects/system/index.tpl', $this -> cache_hash);
 			die ;
 		}
+		$cache_folder=$this -> paths['root_cache'] ;
 		if (!TemplatesManager::is_cached($template_folder . 'index.tpl', $this -> cache_hash)) {
 			$this -> render_skin();
 			// change smarty template dir for module
