@@ -57,6 +57,43 @@ class BuildManager
 		}
 		return count($this->errors)?false:true;
 	}
+	
+	/**
+	 * Add component to site
+	 * @param string $path
+	 * @param string $component
+	 * @param string $skin 
+	 */
+	function add_module($path,$skin='default')
+	{
+		$module=basename($path);
+		if(!$this->files->add_dir($path))
+		{
+			$this->errors[]='Could not add dir:"'.$path.'"!';
+		}
+		if(!$this->files->add_dir($path.'components/'))
+		{
+			$this->errors[]=('Could not add dir:"'.$path.'components/"!');
+		}
+		if(!$this->files->add_dir($path.'views/'.$skin.'/'))
+		{
+			$this->errors[]=('Could not add dir:"'.$path.'views/'.$skin.'/"!');
+		}
+		if(!$this->files->save_file($path.'views/'.$skin.'/index.tpl',$this->get_component_view($module)))
+		{
+			$this->errors[]=('Could not write file:"'.$path.'views/'.$skin.'/'.$component.'.tpl"!');
+		}
+		if(!$this->files->save_file($path.'index.php',$this->get_module_class($module)))
+		{
+			$this->errors[]=('Could not write file:"'.$path.'index.php"!');
+		}
+		if(!$this->files->save_file($path.'config.php',$this->get_module_config($module)))
+		{
+			$this->errors[]=('Could not write file:"'.$path.'config.php"!');
+		}
+		$this->add($path.'components/home/','home',$skin);
+		return count($this->errors)?false:true;
+	}
 
 	/**
 	 * Get generated code for component class
@@ -84,6 +121,44 @@ class BuildManager
 		$class.="	{\n";
 		$class.="	}\n";
 		$class.="}\n";
+		$class.="?>";
+		return $class;
+	}
+	
+	/**
+	 * Get generated code for module class
+	 * @param string $module
+	 */
+	function get_module_class($module)
+	{
+		$class="<?php\n";
+		$class.="/**\n";
+ 		$class.="* Class PageIndex for module '$module'\n";
+ 		$class.="* @author BuildManager\n";
+ 		$class.="*\n";
+ 		$class.="*/\n";
+		$class.="class PageIndex extends Page{\n";
+		$class.="	function index()\n";
+		$class.="	{\n";
+		$class.="	}\n";
+		$class.="}\n";
+		$class.="?>";
+		return $class;
+	}
+	
+	/**
+	 * Get generated code for module config file
+	 * @param string $component
+	 */
+	function get_module_config($module)
+	{
+		$class="<?php\n";
+		$class.="/**\n";
+ 		$class.="* global page access \n";
+ 		$class.="*\n";
+ 		$class.="*/\n";
+		$class.='global $page;'."\n";
+		$class.='$page->title="page title for module '.$module.'";'."\n";
 		$class.="?>";
 		return $class;
 	}

@@ -1666,10 +1666,24 @@ class System {
 				
 			$cache_folder = $this -> paths['root_cache'] . $this -> module . 'views' . DS . $this -> skin . DS;
 			
-			$this -> fetch_template('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
+			if(is_file($template_folder . 'noscript.tpl'))
+				$this -> fetch_template('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
 			if ($this -> ajax && $this -> obj_index -> view != 'index')
 				$this -> render_type = 'page';
-			$this -> obj_index -> _render_template($this -> render_type);			
+			if(is_a($this -> obj_index,"Page"))
+				$this -> obj_index -> _render_template($this -> render_type);
+			elseif(!$this -> live && $this -> build_enabled && isset($this -> actions[0]) && $this -> actions[0] == 'build-module')
+			{
+				$build = new BuildManager($this -> uploads);
+				if(!$build -> add_module($this->paths['root_code'].$this->module))
+				{
+					foreach($build->errors as $e)
+						$this -> logger -> log('builder_error', $e);
+				}
+				$this -> redirect($this -> paths['current']);
+			}
+			else 
+				trigger_error('No class named PageIndex extending Page provided in "index.php" file provided for module '.$this->module);	
 
 			// change smarty template and cache dir for main index
 			$template_folder = $this -> paths['root_dir'];
@@ -1971,7 +1985,7 @@ class System {
 		$pages = explode('/', $query);
 
 		$module = trim($pages[0]);
-		if ($module != '' && is_dir($this -> paths['root_code'] . $module)) {
+		if (($module != '' && is_dir($this -> paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a'])=='build-module')) {
 			$module .= '/';
 		} elseif ($module == '') {
 			$module = $this -> default_module;
