@@ -70,6 +70,15 @@ class QueryBuilder
 	}
 	
 	/**
+	 * Add having to query
+	 */
+	function having($condition){
+		if($condition)
+			$this->append('having '.$condition);
+		return $this;
+	}
+	
+	/**
 	 * Start update query
 	 * @param array $fields
 	 * @param bool $escape
@@ -310,15 +319,6 @@ class QueryBuilder
 	{
 		if($condition)
 			$this->append('where '.$condition);
-		return $this;
-	}
-	
-	/**
-	 * Add having to query
-	 */
-	function having($condition){
-		if($condition)
-			$this->append('having '.$condition);
 		return $this;
 	}
 	

@@ -115,7 +115,8 @@ class _Base implements ArrayAccess {
 		} elseif (is_a($this -> db, 'DbManager')) {
 			if (isset($this -> db -> tables[$name]))
 				return $this -> db -> tables[$name];
-			else return $name;
+			else
+				return $name;
 		}
 		$trace = debug_backtrace();
 		trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
@@ -226,8 +227,7 @@ class _Base implements ArrayAccess {
 	 * @example In model use: $this->get_cond('field="value"')
 	 */
 	public function get_cond($condition) {
-		$arr = $this -> builder() -> select() -> join($this -> joins) -> where($this -> __process_cond($condition)) -> first();
-		;
+		$arr = $this -> builder() -> select() -> join($this -> joins) -> where($this -> __process_cond($condition)) -> first(); ;
 		if (count($arr))
 			return $this -> _process_row($arr);
 		return '';
@@ -269,7 +269,7 @@ class _Base implements ArrayAccess {
 	 * @param string $having [optional]
 	 * @example In model use: $this->get_cools(array('field1','field1'),0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
 	 */
-	public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by='', $having='') {
+	public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
 		$cond_text = '';
 		$order_text = '';
 		$skip_text = '';
@@ -290,12 +290,12 @@ class _Base implements ArrayAccess {
 			$cond_text = ($cond_s ? '(' . $cond_s . ')' : '');
 
 		$builder -> where($cond_text);
-		
-		if($group_by)
-			$builder->group($group_by);
-		
-		if($having)
-			$builder->having($having);
+
+		if ($group_by)
+			$builder -> group($group_by);
+
+		if ($having)
+			$builder -> having($having);
 
 		if ($order_by != '')
 			if (is_array($order_by))
@@ -344,7 +344,7 @@ class _Base implements ArrayAccess {
 	 */
 	public function count_all($cond = '') {
 		if ($this -> table) {
-			$count = $this -> builder() -> select(array('count(*)')) -> where($this -> __process_cond($cond)) -> value();
+			$count = $this -> builder() -> select(array('count(*)')) -> join($this -> joins) -> where($this -> __process_cond($cond)) -> value();
 			return $count ? $count : 0;
 		}
 		return 0;
