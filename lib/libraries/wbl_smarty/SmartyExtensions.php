@@ -130,7 +130,7 @@ class SmartyExtensions {
 		$content = trim($content);
 		if (is_numeric($content)) {
 			$obj = $this->system -> models -> images -> get($content);
-			$image_path = $obj['original_http_path'];
+			$image_path = $this->system->paths['root'].$obj['path'];
 		} else
 			$image_path = $content;
 
@@ -324,10 +324,11 @@ class SmartyExtensions {
 		}
 	}
 
-	function element_v3($params, &$smarty)
+	function element_v3($params, $template)
 	{
+		$smarty=&$template->smarty;
 	    if (empty($params['path'])) {
-	        $smarty->trigger_error("element: missing 'path' parameter");
+	        trigger_error("{element}: missing 'path' parameter");
 	        return;
 	    }
 		
@@ -363,7 +364,7 @@ class SmartyExtensions {
 		    }
 	    }	
 		else{
-			$smarty->trigger_error("element: template file not found at: ".$template_path);
+			trigger_error("{element}: template file not found at: ".$template_path);
 	        return;	
 		}
 	}
@@ -726,8 +727,9 @@ class SmartyExtensions {
 	 * Smarty {image}{/image} block plugin
 	 */
 	function image_v3($params, $content, &$smarty, &$repeat){
-		if(!$repeat)
+		if(!$repeat){
 			return $this->image_v2($params, $content, $smarty);
+		}
 	}
 	
 	/**

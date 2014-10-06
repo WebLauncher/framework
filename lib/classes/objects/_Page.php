@@ -539,5 +539,12 @@
 				$path = $this -> folder . 'views/' . $this -> skin . '/';
 			return file_exists($path.$view.'.tpl');
 		}
+		
+		/**
+		 * Returns the referer URL
+		 */
+		public function referer(){
+			return isset_or($_SERVER["HTTP_REFERER"],'/');
+		}
 	}
 ?>
