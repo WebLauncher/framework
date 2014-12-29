@@ -1,4 +1,5 @@
 2.7.0
+- renamed get_colls in get_cols misspelling
 - removed 'tbl_' from models and table aliases
 - you are no longer required to create default skin, skins are an optional feature
 - fixed minify library cache location
@@ -10,7 +11,7 @@
 	- ex: $page->router->route('test/(\d+)/','site/page/?a=test:$1');
 	- it uses preg_match to match the patterns and replace it
 - Controller: if url /component1/component2/component3/ if component1 exists and component2 does not exist look into executing action_{component2} if defined and pssing parameter component3
-- Model: added $group_by and $having parameter to get_all and get_colls methods (get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = ''))
+- Model: added $group_by and $having parameter to get_all and get_cols methods (get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = ''))
 - changed $page->console_cronjobs_db_table from array to string
 - changed $page->seo_tracking_enabled to $page->libraries_settings['wbl_seo']['trackings_enabled']
 - changed $page->seo_tracking_mode to $page->libraries_settings['wbl_seo']['trackings_mode']

@@ -249,7 +249,7 @@ class _Base implements ArrayAccess {
 	 * @example In model use: $this->get_all(0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
 	 */
 	public function get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
-		return $this -> get_colls('*', $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
+		return $this -> get_cols('*', $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
 	}
 
 	/**
@@ -269,7 +269,7 @@ class _Base implements ArrayAccess {
 	 * @param string $having [optional]
 	 * @example In model use: $this->get_cools(array('field1','field1'),0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
 	 */
-	public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
+	public function get_cols($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
 		$cond_text = '';
 		$order_text = '';
 		$skip_text = '';
