@@ -773,5 +773,18 @@ class _Base implements ArrayAccess {
     function columns(){
         return $this->db->getAll('SHOW COLUMNS FROM `'.$this->table.'`');
     }
+    
+    /**
+     * Save data into DB. This will call insert or update if the $this->id_field is set or not
+     * @return the id of the row inserted/updated
+     * @param array $data the array of data to be saved
+     */
+    function save($data=array()){
+        if(isset_or($data[$this->id_field]))
+            $this->update($data);
+        else
+            $data[$this->id_field]=$this->insert($data);
+        return $data[$this->id_field];
+    }
 }
 ?>
