@@ -276,7 +276,28 @@ class System {
 	/**
 	 * @var files manager allowed upload extensions
 	 */
-	public $upload_allowed_extensions = array('png', 'jpeg', 'gif', 'bmp', 'doc', 'pdf', 'zip', 'jpg', 'mp4', 'wmv', 'mpeg', 'avi', '3gp', 'MP4', 'swf', 'docx', 'ppt', 'pptx', 'xls', 'xlsx');
+	public $upload_allowed_extensions = array(
+		'png',
+		'jpeg',
+		'gif',
+		'bmp',
+		'doc',
+		'pdf',
+		'zip',
+		'jpg',
+		'mp4',
+		'wmv',
+		'mpeg',
+		'avi',
+		'3gp',
+		'MP4',
+		'swf',
+		'docx',
+		'ppt',
+		'pptx',
+		'xls',
+		'xlsx'
+	);
 	/**
 	 * @var page restricted flag
 	 */
@@ -293,7 +314,14 @@ class System {
 	 * Custom login messages
 	 * @var unknown_type
 	 */
-	public $login_messages = array('active' => 'User is not activated!', 'deleted' => 'User is deleted!', 'valid' => 'User is invalid!', 'success' => 'You are logged in!', 'no_user' => 'The given username does not exist!', 'no_pass' => 'The password you provided is invalid!');
+	public $login_messages = array(
+		'active' => 'User is not activated!',
+		'deleted' => 'User is deleted!',
+		'valid' => 'User is invalid!',
+		'success' => 'You are logged in!',
+		'no_user' => 'The given username does not exist!',
+		'no_pass' => 'The password you provided is invalid!'
+	);
 	/**
 	 * @var Show/Hide Log-in messages
 	 */
@@ -325,7 +353,7 @@ class System {
 	/**
 	 * @var page settings table
 	 */
-	public $settings_table='settings';
+	public $settings_table = 'settings';
 	/**
 	 * @var render entire page flag
 	 */
@@ -345,9 +373,9 @@ class System {
 	public $mail_type = 'mail';
 	/**
 	 * Mail queue table
-	 * @var 
+	 * @var
 	 */
-	public $mail_queue_table='email_queue';
+	public $mail_queue_table = 'email_queue';
 	/**
 	 * Mail host
 	 * @var unknown_type
@@ -377,7 +405,17 @@ class System {
 	/**
 	 * E-mail default parameters
 	 */
-	public $mail_defaults = array('subject' => 'system new e-mail', 'from' => 'from@website.com', 'fromname' => 'system from name', 'reply_to' => 'no-reply@website.com', 'reply_name' => 'system reply name', 'attachments' => array(), 'mail_in' => 'to', 'sender' => '', 'others' => array());
+	public $mail_defaults = array(
+		'subject' => 'system new e-mail',
+		'from' => 'from@website.com',
+		'fromname' => 'system from name',
+		'reply_to' => 'no-reply@website.com',
+		'reply_name' => 'system reply name',
+		'attachments' => array(),
+		'mail_in' => 'to',
+		'sender' => '',
+		'others' => array()
+	);
 	/**
 	 * @var page scripts manager
 	 */
@@ -400,16 +438,16 @@ class System {
 	public $libraries_settings = array(
 		'smarty' => array('version' => 'v2'),
 		'wbl_locale' => array(
-			'table'=>'locales',
-			'texts_table'=>'locales_texts',
-			'translations_table'=>'locales_translations'
+			'table' => 'locales',
+			'texts_table' => 'locales_texts',
+			'translations_table' => 'locales_translations'
 		),
-		'wbl_seo'=>array(
-			'links_table'=>'seo_links',
-			'metas_table'=>'seo_metas',
-			'trackings_enabled'=>false,
-			'trackings_mode'=>'all',
-			'trackings_table'=>'seo_trackings'
+		'wbl_seo' => array(
+			'links_table' => 'seo_links',
+			'metas_table' => 'seo_metas',
+			'trackings_enabled' => false,
+			'trackings_mode' => 'all',
+			'trackings_table' => 'seo_trackings'
 		)
 	);
 	/**
@@ -433,9 +471,9 @@ class System {
 	 */
 	public $logins_logs_enabled = false;
 	/**
-	 * @var Log-in Visits Logger Table 
+	 * @var Log-in Visits Logger Table
 	 */
-	public $logins_logs_table='logins';
+	public $logins_logs_table = 'logins';
 	/**
 	 * System Logger
 	 * @return
@@ -481,11 +519,11 @@ class System {
 	 * @var unknown_type
 	 */
 	public $template = '';
-	
+
 	/**
 	 * Template engine (default: smarty)
 	 */
-	public $template_engine='smarty';
+	public $template_engine = 'smarty';
 	/**
 	 * DAL Models
 	 * @var unknown_type
@@ -643,7 +681,12 @@ class System {
 				return isset($_SERVER['HTTPS']);
 				break;
 			case 'request_method' :
-				return in_array(isset_or($_SERVER['REQUEST_METHOD'], 'GET'), array('POST', 'DELETE', 'GET', 'PUT')) ? strtolower(isset_or($_SERVER['REQUEST_METHOD'], 'GET')) : 'get';
+				return in_array(isset_or($_SERVER['REQUEST_METHOD'], 'GET'), array(
+					'POST',
+					'DELETE',
+					'GET',
+					'PUT'
+				)) ? strtolower(isset_or($_SERVER['REQUEST_METHOD'], 'GET')) : 'get';
 				break;
 		}
 	}
@@ -655,7 +698,13 @@ class System {
 	 * @return
 	 */
 	function import($type, $file) {
-		return in_array($type, array('dal', 'class', 'library', 'file', 'model')) && $this -> {"load_".$type}($file);
+		return in_array($type, array(
+			'dal',
+			'class',
+			'library',
+			'file',
+			'model'
+		)) && $this -> {"load_".$type}($file);
 	}
 
 	/**
@@ -665,7 +714,7 @@ class System {
 	function init() {
 		// init autoload
 		$this -> _init_autoload();
-		
+
 		// init router
 		$this -> _init_router();
 
@@ -680,7 +729,7 @@ class System {
 
 		// init hocks
 		$this -> _init_hocks();
-		
+
 		self::$hostname = self::get_hostname();
 
 		$this -> hocks -> before_init();
@@ -793,18 +842,18 @@ class System {
 	/**
 	 * Init Router
 	 */
-	private function _init_router(){
-		$this->router=new RoutesManager();
+	private function _init_router() {
+		$this -> router = new RoutesManager();
 	}
-	
+
 	/**
-	 * Route page to another 
+	 * Route page to another
 	 * @param string $pattern
 	 * @param string  $replacement
 	 * @param array $params
 	 */
-	function route($pattern,$replacement,$params=''){
-		$this->router->route($pattern,$replacement,$params);
+	function route($pattern, $replacement, $params = '') {
+		$this -> router -> route($pattern, $replacement, $params);
 	}
 
 	/**
@@ -828,7 +877,10 @@ class System {
 	 * Init autoloader
 	 */
 	private function _init_autoload() {
-		spl_autoload_register(array($this, '__autoload'));
+		spl_autoload_register(array(
+			$this,
+			'__autoload'
+		));
 	}
 
 	/**
@@ -914,9 +966,9 @@ class System {
 			$this -> config_file = SYSTEM_CONFIG_FILE;
 		// configuration file
 		if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file))
-			$this -> import('file', dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file);
+			include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file;
 		elseif (defined('SYSTEM_CONFIG_PATH') && is_file(SYSTEM_CONFIG_PATH . $this -> config_file))
-			$this -> import('file', SYSTEM_CONFIG_PATH . $this -> config_file);
+			include_once SYSTEM_CONFIG_PATH . $this -> config_file;
 		if (substr($this -> default_module, -1) !== '/')
 			$this -> default_module .= '/';
 		$this -> _init_debug();
@@ -949,9 +1001,9 @@ class System {
 	private function _init_template() {
 		global $smarty;
 		$this -> import('library', 'Smarty');
-		$smarty = TemplatesManager::get_engine($this->template_engine,$this -> libraries_settings['smarty']['version'], $this -> paths['root_code'], $this -> paths['root_cache'], $this -> trace, $this -> debug, $this -> cache_enabled);
+		$smarty = TemplatesManager::get_engine($this -> template_engine, $this -> libraries_settings['smarty']['version'], $this -> paths['root_code'], $this -> paths['root_cache'], $this -> trace, $this -> debug, $this -> cache_enabled);
 		$this -> template = &$smarty;
-		if($this->template_engine=='smarty')
+		if ($this -> template_engine == 'smarty')
 			$this -> import('library', 'wbl_smarty');
 		$this -> change_template_dir($this -> paths['root_code']);
 		$this -> change_cache_dir($this -> paths['root_cache']);
@@ -988,9 +1040,9 @@ class System {
 	private function _init_module_config() {
 		// check and import module config.php file
 		if (defined('MODULE_CONFIG_PATH'))
-			$this -> import('file', MODULE_CONFIG_PATH . 'config.php');
+			include MODULE_CONFIG_PATH . 'config.php';
 		else
-			$this -> import('file', $this -> paths['root_code'] . $this -> module . 'config.php');
+			include $this -> paths['root_code'] . $this -> module . 'config.php';
 		$this -> _init_debug();
 		if (!isset($this -> db_connections) || !is_array($this -> db_connections) || !count($this -> db_connections))
 			$this -> db_conn_enabled = false;
@@ -1239,7 +1291,7 @@ class System {
 	private function _init_page_settings() {
 		if ($this -> seo_enabled && !$this -> ajax) {
 			$pagepath = $this -> paths['current_full'];
-			$model=$this->libraries_settings['wbl_seo']['links_table'];
+			$model = $this -> libraries_settings['wbl_seo']['links_table'];
 			$pg = $this -> models -> {$model} -> get_cond('page="' . $pagepath . '"');
 			if ($pg) {
 				$params = array();
@@ -1258,7 +1310,7 @@ class System {
 
 				$id = $this -> models -> {$model} -> insert($params);
 				$pg = $params;
-				$pg['id']=$id;
+				$pg['id'] = $id;
 			}
 			$this -> page = $pg;
 
@@ -1275,7 +1327,7 @@ class System {
 	function save_page_settings() {
 		if ($this -> seo_enabled && $this -> db_conn_enabled && !$this -> ajax) {
 			$pagepath = $this -> paths['current_full'];
-			$model=$this->libraries_settings['wbl_seo']['links_table'];
+			$model = $this -> libraries_settings['wbl_seo']['links_table'];
 			$pg = $this -> models -> {$model} -> get_cond('page="' . $pagepath . '"');
 			if ($pg) {
 				$params = array();
@@ -1306,7 +1358,7 @@ class System {
 					$params['client_ip'] = $this -> browser_ip;
 					$params['session_hash'] = session_id();
 				}
-				$this -> models -> {$this->libraries_settings['wbl_seo']['trackings_table']} -> insert($params);
+				$this -> models -> {$this -> libraries_settings['wbl_seo']['trackings_table']} -> insert($params);
 			}
 		}
 	}
@@ -1344,8 +1396,7 @@ class System {
 	 * Get meta tags from db
 	 */
 	private function _init_metas() {
-		if (!$this -> ajax && $this->seo_enabled)
-		{	
+		if (!$this -> ajax && $this -> seo_enabled) {
 			$query = 'select `name`,`content` from `' . $this -> libraries_settings['wbl_seo']['metas_table'] . '` where is_active=1';
 			$metas = $this -> db_conn -> getAll($query);
 			foreach ($metas as $v)
@@ -1365,7 +1416,10 @@ class System {
 			foreach ($arr as $k => $v) {
 				if ($v['type'] == "id") {
 					$query = "select `" . $v['from_field'] . "` from `" . $v['from_table'] . "` where id=" . $v['value'];
-					$return[$v['name']] = array("value" => $this -> db_conn -> getOne($query), "id" => $v['value']);
+					$return[$v['name']] = array(
+						"value" => $this -> db_conn -> getOne($query),
+						"id" => $v['value']
+					);
 				} else
 					$return[$v['name']] = array("value" => $v['value']);
 			}
@@ -1433,7 +1487,7 @@ class System {
 		}
 		// set locale
 		if ($this -> multi_language) {
-			$language = $this -> db_conn -> getRow('select * from `' . $this->libraries_settings['wbl_locale']['table'] . '` where id=' . $this -> session['language_id']);
+			$language = $this -> db_conn -> getRow('select * from `' . $this -> libraries_settings['wbl_locale']['table'] . '` where id=' . $this -> session['language_id']);
 			if (strtolower($this -> browser['os']) == 'windows' && isset_or($language['locale_win']))
 				setlocale(LC_ALL, $language['locale_win']);
 			elseif (isset_or($language['locale_linux']))
@@ -1475,7 +1529,10 @@ class System {
 		if (isset($this -> meta_tags[$name]))
 			$this -> meta_tags[$name]['content'] = $content;
 		else
-			$this -> meta_tags[$name] = array('name' => $name, 'content' => $content);
+			$this -> meta_tags[$name] = array(
+				'name' => $name,
+				'content' => $content
+			);
 	}
 
 	/**
@@ -1487,7 +1544,11 @@ class System {
 	function add_js_file($file, $local = true, $type = 'text/javascript') {
 		$file = str_replace(isset_or($this -> paths['skin_scripts']), '{$skin_scripts}', $file);
 		$file = str_replace(isset_or($this -> paths['root_scripts']), '{$root_scripts}', $file);
-		$this -> js_files[$file] = array('src' => $file, 'local' => $local, 'type' => $type);
+		$this -> js_files[$file] = array(
+			'src' => $file,
+			'local' => $local,
+			'type' => $type
+		);
 	}
 
 	/**
@@ -1503,7 +1564,7 @@ class System {
 		foreach ($js_files as $k => $v)
 			if (isset_or($v['src'])) {
 				if ($v['local']) {
-					$this -> session['__js_files'][$group][] = str_replace('{$skin_scripts}', '//'.$this->skins_folder . $this -> skin . '/' . $this -> module . 'scripts/', str_replace('{$root_scripts}', '//assets/scripts/', $v['src']));
+					$this -> session['__js_files'][$group][] = str_replace('{$skin_scripts}', '//' . $this -> skins_folder . $this -> skin . '/' . $this -> module . 'scripts/', str_replace('{$root_scripts}', '//assets/scripts/', $v['src']));
 					$this -> add_js_file($this -> paths['root'] . 'min/?g=js_site' . $group . '&module=' . $module . '&ck=' . $this -> session_cookie . '&skin=' . $this -> skin, false);
 				} else {
 					$this -> add_js_file($v['src'], false, $v['type']);
@@ -1523,7 +1584,12 @@ class System {
 	 * @param string $browser_cond
 	 */
 	function add_css_file($file, $type = 'text/css', $media = 'screen, projection', $browser_cond = '') {
-		$this -> css_files[$file] = array('href' => $file, 'type' => $type, 'media' => $media, 'browser_cond' => $browser_cond);
+		$this -> css_files[$file] = array(
+			'href' => $file,
+			'type' => $type,
+			'media' => $media,
+			'browser_cond' => $browser_cond
+		);
 	}
 
 	/**
@@ -1600,10 +1666,14 @@ class System {
 	function fetch_template($name, $file, $cache_folder, $return = false) {
 		$this -> change_cache_dir($cache_folder);
 		if (is_file($file)) {
-			if ($return)
-				return $this -> template -> fetch($file, $this -> cache_hash);
-			else
-				$this -> assign($name, $this -> template -> fetch($file, $this -> cache_hash));
+			try {
+				if ($return)
+					return $this -> template -> fetch($file, $this -> cache_hash);
+				else
+					$this -> assign($name, $this -> template -> fetch($file, $this -> cache_hash));
+			} catch(Exception $ex) {
+				trigger_error('Template Exception: ' . $ex -> getMessage());
+			}
 		} else
 			$this -> logger -> log('Templates_Error', 'Can not fetch template "' . $name . '" from file "' . $file . '"!');
 	}
@@ -1653,37 +1723,34 @@ class System {
 				$this -> template -> display(__DIR__ . '/objects/system/index.tpl', $this -> cache_hash);
 			die ;
 		}
-		$cache_folder=$this -> paths['root_cache'] ;
+		$cache_folder = $this -> paths['root_cache'];
 		if (!TemplatesManager::is_cached($template_folder . 'index.tpl', $this -> cache_hash)) {
 			$this -> render_skin();
 			// change smarty template dir for module
-			
+
 			$template_folder = $this -> paths['root_code'] . $this -> module . 'views/';
 			if (is_dir($this -> paths['root_code'] . $this -> module . 'views/' . $this -> skin . '/'))
 				$template_folder = $this -> paths['root_code'] . $this -> module . 'views/' . $this -> skin . '/';
-			elseif (is_dir($this -> paths['root_code'] . $this -> module . 'views/' . $this -> default_skin . '/' ))
+			elseif (is_dir($this -> paths['root_code'] . $this -> module . 'views/' . $this -> default_skin . '/'))
 				$template_folder = $this -> paths['root_code'] . $this -> module . 'views/' . $this -> default_skin . '/';
-				
+
 			$cache_folder = $this -> paths['root_cache'] . $this -> module . 'views' . DS . $this -> skin . DS;
-			
-			if(is_file($template_folder . 'noscript.tpl'))
+
+			if (is_file($template_folder . 'noscript.tpl'))
 				$this -> fetch_template('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
 			if ($this -> ajax && $this -> obj_index -> view != 'index')
 				$this -> render_type = 'page';
-			if(is_a($this -> obj_index,"Page"))
+			if (is_a($this -> obj_index, "Page"))
 				$this -> obj_index -> _render_template($this -> render_type);
-			elseif(!$this -> live && $this -> build_enabled && isset($this -> actions[0]) && $this -> actions[0] == 'build-module')
-			{
+			elseif (!$this -> live && $this -> build_enabled && isset($this -> actions[0]) && $this -> actions[0] == 'build-module') {
 				$build = new BuildManager($this -> uploads);
-				if(!$build -> add_module($this->paths['root_code'].$this->module))
-				{
-					foreach($build->errors as $e)
+				if (!$build -> add_module($this -> paths['root_code'] . $this -> module)) {
+					foreach ($build->errors as $e)
 						$this -> logger -> log('builder_error', $e);
 				}
 				$this -> redirect($this -> paths['current']);
-			}
-			else 
-				trigger_error('No class named PageIndex extending Page provided in "index.php" file provided for module '.$this->module);	
+			} else
+				trigger_error('No class named PageIndex extending Page provided in "index.php" file provided for module ' . $this -> module);
 
 			// change smarty template and cache dir for main index
 			$template_folder = $this -> paths['root_dir'];
@@ -1703,12 +1770,17 @@ class System {
 
 			$this -> assign('p', $this -> get_page());
 		}
-		header('Content-Type: ' . $this -> content_type);
+		if (!headers_sent())
+			header('Content-Type: ' . $this -> content_type);
 		$this -> change_cache_dir($cache_folder);
-		if (is_file($template_folder . 'index.tpl'))
-			$this -> template -> display($template_folder . 'index.tpl', $this -> cache_hash);
-		else
-			$this -> template -> display(__DIR__ . '/templates/system/index.tpl', $this -> cache_hash);
+		try {
+			if (is_file($template_folder . 'index.tpl'))
+				$this -> template -> display($template_folder . 'index.tpl', $this -> cache_hash);
+			else
+				$this -> template -> display(__DIR__ . '/templates/system/index.tpl', $this -> cache_hash);
+		} catch(Exception $ex) {
+			trigger_error('Template Exception: ' . $ex -> getMessage());
+		}
 	}
 
 	/**
@@ -1763,15 +1835,17 @@ class System {
 		if (isset($this -> actions[0]) && $this -> actions[0] == 'validate') {
 			die($this -> validate -> validate($_POST['rule'], $_POST['value']) ? '1' : '0');
 		}
+		try {
+			// init index
+			if (isset($this -> obj_index))
+				$this -> obj_index -> _init();
 
-		// init index
-		if (isset($this -> obj_index))
-			$this -> obj_index -> _init();
-
-		// render index
-		if (!$this -> restricted && isset($this -> obj_index))
-			$this -> obj_index -> _render();
-
+			// render index
+			if (!$this -> restricted && isset($this -> obj_index))
+				$this -> obj_index -> _render();
+		} catch(Exception $ex) {
+			trigger_error('Exception: ' . $ex -> getMessage());
+		}
 		// get database pages number if required
 		if ($this -> no_pages == 0 && $this -> no_total_rows < 0) {
 			$this -> no_total_rows = (is_object($this -> db_conn) ? $this -> db_conn -> countTotalRows() : $this -> no_total_rows);
@@ -1930,7 +2004,7 @@ class System {
 			$this -> db_conn = new DbManager();
 			$this -> db_conn -> trace = $this -> trace;
 			$this -> add_tables();
-			$this -> db_conn -> connect($this -> db_connections[0]['host'], $this -> db_connections[0]['user'], $this -> db_connections[0]['password'], $this -> db_connections[0]['dbname'], isset_or($this -> db_connections[0]['type'],'mysql'));
+			$this -> db_conn -> connect($this -> db_connections[0]['host'], $this -> db_connections[0]['user'], $this -> db_connections[0]['password'], $this -> db_connections[0]['dbname'], isset_or($this -> db_connections[0]['type'], 'mysql'));
 		}
 	}
 
@@ -1955,7 +2029,11 @@ class System {
 	function add_message($type, $text) {
 		if (@!is_array(@$this -> session['messages']))
 			$this -> session['messages'] = array();
-		$this -> session['messages'][] = array('type' => $type, 'text' => $text, 'showed' => 0);
+		$this -> session['messages'][] = array(
+			'type' => $type,
+			'text' => $text,
+			'showed' => 0
+		);
 		$this -> save_session();
 		$this -> messages = $this -> session['messages'];
 
@@ -1970,7 +2048,11 @@ class System {
 	function add_error($field, $text) {
 		if (!isset($this -> session['errors']) || !is_array($this -> session['errors']))
 			$this -> session['errors'] = array();
-		$this -> session['errors'][] = array('field' => $field, 'text' => $text, 'showed' => 0);
+		$this -> session['errors'][] = array(
+			'field' => $field,
+			'text' => $text,
+			'showed' => 0
+		);
 		$this -> errors[$field] = $text;
 		$this -> valid = false;
 	}
@@ -1985,7 +2067,7 @@ class System {
 		$pages = explode('/', $query);
 
 		$module = trim($pages[0]);
-		if (($module != '' && is_dir($this -> paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a'])=='build-module')) {
+		if (($module != '' && is_dir($this -> paths['root_code'] . $module)) || (!$this -> live && $this -> build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
 			$module .= '/';
 		} elseif ($module == '') {
 			$module = $this -> default_module;
@@ -2018,7 +2100,10 @@ class System {
 	 * @param object $content
 	 */
 	function add_meta_tag($name, $content) {
-		$this -> meta_tags[$name] = array('name' => $name, 'content' => $content);
+		$this -> meta_tags[$name] = array(
+			'name' => $name,
+			'content' => $content
+		);
 	}
 
 	/**
@@ -2164,7 +2249,7 @@ class System {
 		$this -> authenticate -> messages = $this -> login_messages;
 		$this -> authenticate -> show_messages = $this -> show_login_messages;
 		$this -> authenticate -> logins_logs_enabled = $this -> logins_logs_enabled;
-		$this -> authenticate -> logins_logs_model = $this-> logins_logs_table;
+		$this -> authenticate -> logins_logs_model = $this -> logins_logs_table;
 		$this -> authenticate -> module_user_type = $this -> module_user_type;
 	}
 
@@ -2210,7 +2295,10 @@ class System {
 			if (!isset($this -> session['validation']))
 				$this -> session['validation'] = array();
 			if (!isset($this -> session['validation'][$hash]))
-				$this -> session['validation'][$hash] = array('form_id' => $form_id, 'fields' => array());
+				$this -> session['validation'][$hash] = array(
+					'form_id' => $form_id,
+					'fields' => array()
+				);
 			$this -> session['validation'][$hash]['fields'][$field]['rules'][$rule] = $message;
 			$this -> validate -> add_rule($form_id, $field, $rule, $message);
 		}
@@ -2236,7 +2324,10 @@ class System {
 			if (!isset($this -> session['validation']))
 				$this -> session['validation'] = array();
 			if (!isset($this -> session['validation'][$hash]))
-				$this -> session['validation'][$hash] = array('form_id' => $form_id, 'fields' => array());
+				$this -> session['validation'][$hash] = array(
+					'form_id' => $form_id,
+					'fields' => array()
+				);
 			$this -> session['validation'][$hash]['fields'][$field]['filters'][$filter] = $params;
 			$this -> validate -> add_filter($form_id, $field, $filter, $params);
 		}
@@ -2492,7 +2583,58 @@ class System {
 		static $status_codes = null;
 
 		if ($status_codes === null) {
-			$status_codes = array(100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing', 200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect', 400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 509 => 'Bandwidth Limit Exceeded', 510 => 'Not Extended');
+			$status_codes = array(
+				100 => 'Continue',
+				101 => 'Switching Protocols',
+				102 => 'Processing',
+				200 => 'OK',
+				201 => 'Created',
+				202 => 'Accepted',
+				203 => 'Non-Authoritative Information',
+				204 => 'No Content',
+				205 => 'Reset Content',
+				206 => 'Partial Content',
+				207 => 'Multi-Status',
+				300 => 'Multiple Choices',
+				301 => 'Moved Permanently',
+				302 => 'Found',
+				303 => 'See Other',
+				304 => 'Not Modified',
+				305 => 'Use Proxy',
+				307 => 'Temporary Redirect',
+				400 => 'Bad Request',
+				401 => 'Unauthorized',
+				402 => 'Payment Required',
+				403 => 'Forbidden',
+				404 => 'Not Found',
+				405 => 'Method Not Allowed',
+				406 => 'Not Acceptable',
+				407 => 'Proxy Authentication Required',
+				408 => 'Request Timeout',
+				409 => 'Conflict',
+				410 => 'Gone',
+				411 => 'Length Required',
+				412 => 'Precondition Failed',
+				413 => 'Request Entity Too Large',
+				414 => 'Request-URI Too Long',
+				415 => 'Unsupported Media Type',
+				416 => 'Requested Range Not Satisfiable',
+				417 => 'Expectation Failed',
+				422 => 'Unprocessable Entity',
+				423 => 'Locked',
+				424 => 'Failed Dependency',
+				426 => 'Upgrade Required',
+				500 => 'Internal Server Error',
+				501 => 'Not Implemented',
+				502 => 'Bad Gateway',
+				503 => 'Service Unavailable',
+				504 => 'Gateway Timeout',
+				505 => 'HTTP Version Not Supported',
+				506 => 'Variant Also Negotiates',
+				507 => 'Insufficient Storage',
+				509 => 'Bandwidth Limit Exceeded',
+				510 => 'Not Extended'
+			);
 		}
 
 		if ($status_codes[$statusCode] !== null) {

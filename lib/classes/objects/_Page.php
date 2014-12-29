@@ -177,6 +177,7 @@
 			if(isset($this -> system -> actions[0]) && !is_int($this -> system -> actions[0]) && !in_array($this -> system -> actions[0], $this -> blocked_actions) && !in_array($this -> system -> actions[0], $this -> system -> actions_executed))
 			{
 				$params = array_slice($this -> system -> actions, 1, count($this -> system -> actions) - 1);
+				unset($params['all']);
 				if(method_exists($this, $this->system->request_method.'_action_' . $this -> system -> actions[0])){
 					if($this->_check_view($this -> system -> actions[0]))
 						$this->view=$this -> system -> actions[0];

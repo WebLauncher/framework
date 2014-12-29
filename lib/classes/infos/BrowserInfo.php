@@ -919,6 +919,12 @@
 				self::$Browser = 'Internet Explorer';
 				self::$Type = 'browser';
 			}
+			elseif (self::contains('trident',self::$USER_AGENT))
+			{
+				self::$Browser = 'Internet Explorer';
+				self::$Type = 'browser';
+				if (self::contains('rv:11.0',self::$USER_AGENT)) {self::$Browser_Version = '11.0';}
+			}
 			elseif (self::contains('mozilla',self::$USER_AGENT)) // (2) netscape nie je prilis detekovatelny....
 			{
 				self::$Browser = 'Netscape';

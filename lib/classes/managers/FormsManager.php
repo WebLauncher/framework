@@ -163,7 +163,7 @@ class Form_Rules {
 	 * @param object $value
 	 */
 	public static function firstname($value) {
-		return preg_match('#^[A-Z][a-z -]{2,64}[a-z]\$#i', $value);
+		return preg_match('#^[A-Z][a-zA-Z\s\-]{1,64}[a-z]\$#i', $value);
 	}
 
 	/**

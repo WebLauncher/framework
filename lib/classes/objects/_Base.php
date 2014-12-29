@@ -40,6 +40,10 @@ class _Base implements ArrayAccess {
 	 */
 	public $models = null;
 	/**
+	 * @var \System $system Reference to system
+	 */
+	public $system = null;
+	/**
 	 * @var array $extends Extensions of the current model
 	 */
 	public $extends = array();
@@ -166,7 +170,7 @@ class _Base implements ArrayAccess {
 	 * Before delete method
 	 * @param object $id
 	 */
-	private function _before_delete($id) {
+	private function _before_delete(&$id) {
 		$obj = $this -> get($id);
 		// maintain order
 		if (isset($obj[$this -> order_field]) && $obj[$this -> order_field] >= 0)
@@ -178,7 +182,7 @@ class _Base implements ArrayAccess {
 	 * Before delete public method
 	 * @param string $id
 	 */
-	public function before_delete($id = '') {
+	public function before_delete(&$id) {
 	}
 
 	/**
@@ -249,7 +253,7 @@ class _Base implements ArrayAccess {
 	 * @example In model use: $this->get_all(0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
 	 */
 	public function get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
-		return $this -> get_cols('*', $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
+		return $this -> get_colls('*', $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
 	}
 
 	/**
@@ -269,7 +273,7 @@ class _Base implements ArrayAccess {
 	 * @param string $having [optional]
 	 * @example In model use: $this->get_cools(array('field1','field1'),0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
 	 */
-	public function get_cols($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
+	public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
 		$cond_text = '';
 		$order_text = '';
 		$skip_text = '';
@@ -396,6 +400,9 @@ class _Base implements ArrayAccess {
 		if (is_array($params)) {
 			$this -> _before_insert($params);
 			$this -> _last_inserted_id = $this -> builder() -> insert(array_keys($params)) -> values($params) -> execute();
+            if($this->_last_inserted_id && isset($params[$this->id_field]))
+                $this -> _last_inserted_id=$params[$this->id_field];
+            
 			$this -> _after_insert($params);
 			return $this -> last_id();
 		}
@@ -406,7 +413,7 @@ class _Base implements ArrayAccess {
 	 * Before insert callback private method
 	 * @param object $params
 	 */
-	private function _before_insert($params) {
+	private function _before_insert(&$params) {
 		$this -> before_insert($params);
 	}
 
@@ -414,7 +421,7 @@ class _Base implements ArrayAccess {
 	 * Before insert callback public method
 	 * @param object $params
 	 */
-	public function before_insert($params = '') {
+	public function before_insert(&$params) {
 	}
 
 	/**
@@ -484,7 +491,7 @@ class _Base implements ArrayAccess {
 	 * @param array $params
 	 * @param object $cond
 	 */
-	private function _before_update($params, $cond) {
+	private function _before_update(&$params, &$cond) {
 		$this -> before_update($params, $cond);
 	}
 
@@ -493,7 +500,7 @@ class _Base implements ArrayAccess {
 	 * @param array $params
 	 * @param object $cond
 	 */
-	public function before_update($params, $cond) {
+	public function before_update(&$params, &$cond) {
 	}
 
 	/**
@@ -584,7 +591,7 @@ class _Base implements ArrayAccess {
 	 */
 	function exists_cond($cond) {
 		if ($cond)
-			if ($this -> builder() -> select() -> where($this -> __process_cond($cond)) -> first())
+			if ($this -> builder() -> select() -> join($this -> joins) -> where($this -> __process_cond($cond)) -> first())
 				return true;
 		return false;
 	}
@@ -760,5 +767,11 @@ class _Base implements ArrayAccess {
 		return $obj;
 	}
 
+    /**
+     * Get columns of the current table
+     */
+    function columns(){
+        return $this->db->getAll('SHOW COLUMNS FROM `'.$this->table.'`');
+    }
 }
 ?>

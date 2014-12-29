@@ -126,8 +126,9 @@
 					}
 	
 					if ($this->logged) {
-						$this->login_user($row['id'],$type,isset($_POST[$this->remmember_field]));						
-						$page -> add_message('success', $this -> messages['success']);
+						$this->login_user($row['id'],$type,isset($_POST[$this->remmember_field]));		
+						if($this -> messages['success'])				
+							$page -> add_message('success', $this -> messages['success']);
 					}
 				} else {
 					unset($page -> session['user_id']);

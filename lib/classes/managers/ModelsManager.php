@@ -84,6 +84,7 @@ class ModelsManager
 					$this->$model->table=$this->db->tables[strtolower($model)];                
 				$this->models[]=$model;
                 $this->{$model}->models=&$this;
+				$this->{$model}->system=&$page;
 				return true;
 			}
 			return false;
@@ -110,6 +111,8 @@ class ModelsManager
 				$this->$model_name->table=$this->db->tables[strtolower($model)];
 			$this->models[]=strtolower($model);
             $this->{$model_name}->models=&$this;
+            global $page;
+            $this->{$model_name}->system=&$page;
 			return true;
 		}
 		return false;
