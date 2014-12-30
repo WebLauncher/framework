@@ -83,6 +83,14 @@
 				$this->_methods=array_merge($this->_methods,$this->_get_methods($class));
 			}
 		}
+        
+        /**
+         * Unload extension class
+         * @param object $class
+         */
+        function unload($class){
+            unset($this->_list[$class]);
+        }
 		
 		/**
 		 * Get methods

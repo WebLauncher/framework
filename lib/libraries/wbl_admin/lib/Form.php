@@ -113,6 +113,7 @@
 		function __construct($label, $type, $attributes)
 		{
 			$attributes['type'] = $type ? $type : Wbl_Form_FieldTypes::NONE;
+            $this -> type = $type;
 			$this -> label = $label;
 			$this -> attributes = $attributes;
 		}

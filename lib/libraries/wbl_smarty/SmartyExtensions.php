@@ -434,22 +434,22 @@ class SmartyExtensions {
 	function validator($params, &$smarty)
 	{
 	    if (empty($params['form'])) {
-	        $smarty->trigger_error("validator: missing 'form' parameter");
+	        trigger_error("validator: missing 'form' parameter");
 	        return;
 	    }
 		
 		if (empty($params['field'])) {
-	        $smarty->trigger_error("validator: missing 'field' parameter");
+	        trigger_error("validator: missing 'field' parameter");
 	        return;
 	    }
 		
 		if (empty($params['rule'])) {
-	        $smarty->trigger_error("validator: missing 'rule' parameter");
+	        trigger_error("validator: missing 'rule' parameter");
 	        return;
 	    }
 		
 		if (empty($params['message'])) {
-	        $smarty->trigger_error("validator: missing 'message' parameter");
+	        trigger_error("validator: missing 'message' parameter");
 	        return;
 	    }
 	
@@ -489,9 +489,9 @@ class SmartyExtensions {
 			$result.='<input type="hidden" name="__hash" value="'.$hash.'"/>';
 		}
 		$this->system->add_validator($form_id,$field,$rule,$message,$client,$server);
-		$smarty->assign('p',$this->system->get_page());
+		$this->system->template->assign('p',$this->system->get_page());
 		if($this->system->ajax)
-			$smarty->assign('bottom_script','<script type="text/javascript">'.$this->system->session['script'].'</script>');
+			$this->system->template->assign('bottom_script','<script type="text/javascript">'.$this->system->session['script'].'</script>');
 		
 	    if (empty($params['assign']))
 	    {

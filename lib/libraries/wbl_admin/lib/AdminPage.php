@@ -10,16 +10,15 @@ class AdminPage extends Page {
 
 		if ($this -> system -> logged) {
 			// get users permissions
-			if (isset_or($this -> user['type_id']) && method_exists($this -> models -> administrators, 'get_permissions'))
-				$this -> user['permissions'] = $this -> models -> administrators -> get_permissions($this -> user['type_id']);
+			$this->user=$this->models->administrators->process_row($this->user);
 
 			// get menu
 			$xmlp = new Xml_Parser();
-			$xmlp -> load($this -> system -> paths['root_dir'] . 'modules/admin/menu.xml');
+			$xmlp -> load($this -> system -> paths['root_dir'] . 'modules/'.$this->system->module.'menu.xml');
 			$admin_menu = $xmlp -> xmlToArray();
 			self::$menu = $admin_menu['menu']['item'];
 			self::$breadcrumb = $this -> _getMap();
-			$this -> title = $this -> _getTitle();
+			$this -> title = self::$breadcrumb[count(self::$breadcrumb)-1]['name'];
 		}
 	}
 
@@ -92,21 +91,22 @@ class AdminPage extends Page {
 	}
 
 	function __menu_filter($var) {
-		$visible = (!$this -> user['is_master'] && !isset_or($var['master']));
-		if (isset($this -> user['permissions']) && isset($var['permissions'])) {
-			$perms = explode(',', $var['permissions']);
-			$found = false;
-			foreach ($perms as $v) {
-				if (isset($this -> user['permissions'][trim($v)]))
-					$found = true;
+		$visible = (isset_or($var['master']) && $this->user['is_master']) || !isset_or($var['master']);
+		if (isset($var['permissions'])) {
+			if(isset($this -> user['permissions'])){
+				$perms = explode(',', $var['permissions']);
+				$found = false;
+				foreach ($perms as $v) {
+					if (isset_or($this -> user['permissions'][trim($v)]))
+						$found = true;
+				}
+				$visible = $found;
 			}
-			$visible = $found;
+			else{
+				$visible=isset_or($var['master']) && $this->user['is_master'];
+			}
 		}
-		if (isset($this -> user['permissions']) && (array_key_exists('cms', $this -> user['permissions']) || array_key_exists('employee_logins', $this -> user['permissions']))) {
-			return true;
-		} else {
-			return $visible || $this -> user['is_master'];
-		}
+		return $visible;		
 	}
 
 	function _currentMenu() {
