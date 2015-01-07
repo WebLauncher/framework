@@ -1,4 +1,7 @@
 2.7.0
+- Model: added attribute $map_array to provide the default mapping for method map()
+- Model: added function map($map_array='') this maps GET or POST to the columns from the model table
+- Model: added function save($data='') this executes insert or update depending if the id value (primary key) is provided (if $data not provided it calls map)
 - Model: added function escape($string) returns the escaped string by current db rules
 - Model: added function column_type($name) returns the type of the columns identified by $name
 - Model: added function columns() returns the columns schema for the current table in DB

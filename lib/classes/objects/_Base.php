@@ -76,6 +76,11 @@ class _Base implements ArrayAccess {
      * @var array $_columns Columns cache for the table
      */
     protected $_columns = array();
+    
+    /**
+     * @var array $map_array Default map array for maping post/get to model
+     */
+    public $map_array='';
 
     /**
      * COnstructor
@@ -823,7 +828,9 @@ class _Base implements ArrayAccess {
      * @return the id of the row inserted/updated
      * @param array $data the array of data to be saved
      */
-    function save($data = array()) {
+    function save($data = '') {
+        if(!$data)
+            $data = $this->map();
         if (isset_or($data[$this -> id_field]))
             $this -> update($data);
         else
@@ -845,6 +852,33 @@ class _Base implements ArrayAccess {
      */
     function affected(){
         return $this->db->affectedRows();
+    }
+    
+    /**
+     * Map request/post data to collumns and return the array of data mapped to this model db table
+     * @return array data mapped to the collumns
+     * @param array $map_array custom mapping array in the structure of array('column'=>'form_field_name')
+     */
+    function map($map_array=''){
+        if(!$map_array)
+        {
+            if(!$this->map_array){
+                $map_array=array();
+                $cols=$this->columns();
+                foreach($cols as $col)
+                    $map_array[$col['Field']]=$col['Field'];
+            }
+            else
+                $map_array=$this->map_array;
+        }
+        $data=$this->system->ispostback?$_POST:$_GET;
+        if(isset($data[get_class($this)]) && is_array($data[get_class($this)]))
+            $data=$data[get_class($this)];
+        $map_data=array();
+        foreach($map_array as $k=>$v)
+            if(isset($data[$v]))
+                $map_data[$k]=$data[$v];
+        return $map_data;
     }
 }
 ?>
