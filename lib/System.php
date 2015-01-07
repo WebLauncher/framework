@@ -927,7 +927,7 @@ class System {
 	 * Init console determination function
 	 */
 	private function _init_console() {
-		$this -> console = defined('PHP_SAPI') && PHP_SAPI == 'cli';
+		$this -> console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (PHP_SAPI == 'cgi-fcgi' && isset($_SERVER['PWD'])));        
 		if ($this -> console) {
 			ConsoleManager::$system = &$this;
 			ConsoleManager::init();
@@ -964,6 +964,10 @@ class System {
 		global $page;
 		if (defined('SYSTEM_CONFIG_FILE'))
 			$this -> config_file = SYSTEM_CONFIG_FILE;
+        if (!isset($_SERVER["SCRIPT_FILENAME"]) && isset($_SERVER['PWD'])){
+            $_SERVER['SCRIPT_FILENAME'] = $_SERVER['PWD'].'/index.php';
+            $_SERVER['SCRIPT_NAME'] = isset_or($_SERVER['SCRIPT_NAME'],'index.php');
+        }
 		// configuration file
 		if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file))
 			include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file;
@@ -1152,7 +1156,7 @@ class System {
 	 * Init system paths
 	 */
 	private function _init_paths() {
-		$this_address = ($this -> ssl ? 'https://' : 'http://') . isset_or($_SERVER['HTTP_HOST']);
+		$this_address = ($this -> ssl ? 'https://' : 'http://') . isset_or($_SERVER['HTTP_HOST'],'localhost');
 		$application_name = dirname(isset_or($_SERVER['SCRIPT_NAME']));
 		$this -> paths['root'] = $this -> console ? $this -> console_baseurl : $this_address . (strlen($application_name) <= 1 ? '' : $application_name) . '/';
 		$this -> assets_server_path = $this -> assets_server_path ? $this -> assets_server_path : $this -> paths['root'] . 'assets/';
