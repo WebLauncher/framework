@@ -72,6 +72,10 @@ class _Base implements ArrayAccess {
      * @var array $_extend Extend model
      */
     protected $_extend = array();
+    /**
+     * @var array $_columns Columns cache for the table
+     */
+    protected $_columns = array();
 
     /**
      * COnstructor
@@ -796,7 +800,22 @@ class _Base implements ArrayAccess {
      * Get columns of the current table
      */
     function columns() {
-        return $this -> db -> getAll('SHOW COLUMNS FROM `' . $this -> table . '`');
+        if(!count($this->_columns))
+            $this->_columns=$this -> db -> getAll('SHOW COLUMNS FROM `' . $this -> table . '`');
+        return $this->_columns;
+    }
+    
+    /**
+     * Get the column type for a given column
+     * @return string column type
+     * @param string $name column name
+     */
+    function column_type($name){
+        $cols=$this->columns();
+        foreach($cols as $v)
+            if($v['Field']==$name)
+                return $v['Type'];
+        return '';
     }
 
     /**
@@ -811,6 +830,21 @@ class _Base implements ArrayAccess {
             $data[$this -> id_field] = $this -> insert($data);
         return $data[$this -> id_field];
     }
-
+    
+    /**
+     * Escape string using db driver function
+     * @return escaped string
+     * @param string $string unescaped string
+     */
+    function escape($string){
+        return $this->db->escape(stripslashes(addslashes(trim($string))));
+    }
+    
+    /**
+     * Get number of affected rows by the last query
+     */
+    function affected(){
+        return $this->db->affectedRows();
+    }
 }
 ?>

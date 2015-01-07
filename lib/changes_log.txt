@@ -1,5 +1,9 @@
 2.7.0
-- renamed get_colls in get_cols misspelling
+- Model: added function escape($string) returns the escaped string by current db rules
+- Model: added function column_type($name) returns the type of the columns identified by $name
+- Model: added function columns() returns the columns schema for the current table in DB
+- Model: added function affected() returns the number of rows affected by the last query
+- Model: renamed get_colls in get_cols misspelling
 - removed 'tbl_' from models and table aliases
 - you are no longer required to create default skin, skins are an optional feature
 - fixed minify library cache location

@@ -4,7 +4,7 @@ class TemplatesManager
 	protected static $engine=null;
 	protected static $ver='v2';
 	
-	public static function get_engine_new($type='php',$params=array()){
+	public static function get_engine_object($type='php',$params=array()){
 		$class=ucfirst($type).'TemplateEngine';
 		return new $class($params);
 	}
@@ -19,55 +19,8 @@ class TemplatesManager
 			'debug'=>$debug,
 			'cache_enabled'=>$cache_enabled
 		);
-		self::$engine=self::get_engine_new($template_engine,$params);
-		return self::$engine;
-		
-		self::$ver=$ver;
-		switch($ver)
-		{
-			case 'v2':
-				require_once dirname(__FILE__).'/v2/libs/Smarty.class.php';
-				self::$smarty = new Smarty;
-				self::$smarty->template_dir=$template_dir;
-				self::$smarty->compile_dir=$cache_dir;
-				
-				self::$smarty->cache_dir=$cache_dir.'smarty_cache/';
-				if(!is_dir($cache_dir.'smarty_cache/'))
-					mkdir($cache_dir.'smarty_cache/');
-				if($cache_enabled)
-				{
-					self::enable_cache();
-				}
-				if($debug)
-					self::$smarty->error_reporting=E_ALL ^ E_NOTICE;			
-				if(!$trace)
-					self::$smarty->load_filter('output', 'trimwhitespace');
-			break;
-			case 'v3':
-				require_once dirname(__FILE__).'/v3/libs/Smarty.class.php';
-				self::$smarty= new Smarty();
-				self::$smarty->setTemplateDir($template_dir);
-				self::$smarty->setCompileDir($cache_dir);	
-				self::$smarty->allow_php_templates=true;
-				self::$smarty->auto_literal = false;
-				self::$smarty->error_unassigned = true;
-				if($debug)
-				{
-					self::$smarty->debugging=false;
-					self::$smarty->compile_check = true;
-					self::$smarty->error_reporting=E_ALL & ~E_NOTICE;
-				}
-				else
-				{
-					self::$smarty->debugging=false;
-					self::$smarty->compile_check = false;
-					self::$smarty->error_reporting=0;
-				}
-				if(!$trace)
-					self::$smarty->loadFilter('output', 'trimwhitespace');			
-			break;		
-		}
-		return self::$smarty;
+		self::$engine=self::get_engine_object($template_engine,$params);
+		return self::$engine;		
 	}
 	
 	public static function set_template_dir($dir='')
@@ -113,7 +66,7 @@ class TemplatesManager
 	}
 	
 	public static function is_cached($template,$cache_id=''){
-		return self::$engine->clear_cache($template,$cache_id='');
+		return self::$engine->is_cached($template,$cache_id='');
 	}
 }
 ?>

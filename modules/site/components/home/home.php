@@ -10,7 +10,7 @@ class home_page extends Page
 	{
 	}
 
-	function on_index()
+	function index()
 	{
 	}
 
