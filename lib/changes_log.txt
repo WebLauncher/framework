@@ -1,4 +1,5 @@
 2.7.0
+- Config: added function add_config($name,$hostnames) this will load config.$name.php file when the hostnames are matched
 - Model: added attribute $map_array to provide the default mapping for method map()
 - Model: added function map($map_array='') this maps GET or POST to the columns from the model table
 - Model: added function save($data='') this executes insert or update depending if the id value (primary key) is provided (if $data not provided it calls map)

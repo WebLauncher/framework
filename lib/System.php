@@ -628,7 +628,12 @@ class System {
 	/**
 	 * System config filename
 	 */
-	public $config_file = 'php.config.php';
+	public $config_file = 'config.php';
+    
+    /**
+     * System environments
+     */
+    protected $environments = array('development'=>array('localhost','127.0.0.1')); 
 
 	/**
 	 * Constructor
@@ -973,6 +978,17 @@ class System {
 			include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file;
 		elseif (defined('SYSTEM_CONFIG_PATH') && is_file(SYSTEM_CONFIG_PATH . $this -> config_file))
 			include_once SYSTEM_CONFIG_PATH . $this -> config_file;
+        else
+            trigger_error('Configuration file "'.dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this -> config_file.'" missing!');
+        
+        // get environment
+        $configs=$this->get_configs();
+        foreach($configs as $env)
+            if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.'.$env.'.php'))
+                include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.'.$env.'.php';
+            else
+                trigger_error('Configuration file "'.dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.'.$env.'.php" missing!');
+        
 		if (substr($this -> default_module, -1) !== '/')
 			$this -> default_module .= '/';
 		$this -> _init_debug();
@@ -2649,5 +2665,34 @@ class System {
 		return '';
 	}
 
+    /**
+     * Add new environment
+     * @param $name Name of the enviroment
+     * @param $hostnames Hostnames to map to
+     */
+    function add_config($name,$hostnames){
+        if(!isset($this->environments[$name]))
+            $this->environments[$name]=array();
+        if(is_array($hostnames))
+            foreach($hostnames as $host)
+                $this->environments[$name][]=$host;
+        else
+            $this->environments[$name][]=$hostnames;
+    }
+    
+    /**
+     * Get the current enviroments
+     */
+    function get_configs(){
+        $found=array();
+        self::get_hostname();
+        foreach($this->environments as $name=>$hosts)
+            foreach($hosts as $host)
+                if(is_callable($host) && $host($this))
+                    $found[$name]=$name;
+                elseif($host==self::$hostname)
+                    $found[$name]=$name;
+        return $found;
+    }
 }
 ?>
