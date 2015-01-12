@@ -1,8 +1,14 @@
 WebLauncher Framework
 =====================
 
-This is a bootstrap for a new project using WebLauncher Framework.
+Version: 2.7.0
 
-**THIS IS A DEVELOPMENT PREVIEW. DON'T USE THIS ON PRODUCTION SITES UNTIL THIS LINE IS REMOVED.**
+This is a bootstrap for a new project using in-house WebLauncher Framework.
 
-Latest 2.7.0
+For documentation go to this url:
+
+http://weblauncher.ro/book/
+
+Changes Log:
+
+https://github.com/WebLauncher/framework/blob/master/lib/changes_log.txt
