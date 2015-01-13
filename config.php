@@ -12,6 +12,7 @@ $this -> add_config('production', 'example.com');
  $page->add_css_file('{$skin_styles}ui.css');
  $page->add_css_file('{$skin_styles}ie.css','text/css','screen, projection','if IE');
  */
+$page->add_css_file('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css');
 
 /* Use to import JS files into template */
 $this -> add_js_file('{$root_scripts}jquery/jquery.js');

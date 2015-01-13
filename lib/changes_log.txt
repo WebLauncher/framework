@@ -1,4 +1,5 @@
 2.7.0
+- Libraries: added 'wbl_migrate' a migration library to help with migrations
 - Config: added function add_config($name,$hostnames) this will load config.$name.php file when the hostnames are matched
 - Model: added attribute $map_array to provide the default mapping for method map()
 - Model: added function map($map_array='') this maps GET or POST to the columns from the model table

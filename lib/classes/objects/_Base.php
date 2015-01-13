@@ -121,7 +121,8 @@ class _Base implements ArrayAccess {
         }
         if ($name == 'db') {
             global $dal;
-            return $dal -> db;
+            $db=&$dal->db;
+            return $db;
         }
         if ($this -> uses && is_array($this -> uses) && in_array($name, $this -> uses)) {
             return $this -> models -> $name;
