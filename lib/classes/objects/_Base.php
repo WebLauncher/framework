@@ -121,8 +121,7 @@ class _Base implements ArrayAccess {
         }
         if ($name == 'db') {
             global $dal;
-            $db=&$dal->db;
-            return $db;
+            return $dal -> db;
         }
         if ($this -> uses && is_array($this -> uses) && in_array($name, $this -> uses)) {
             return $this -> models -> $name;
@@ -154,7 +153,7 @@ class _Base implements ArrayAccess {
                     $method
                 ), $arguments);
         }
-        if ($this -> Extensions -> method_exists($name))
+        if ($this -> Extensions && $this -> Extensions -> method_exists($name))
             return call_user_func_array(array(
                 $this -> Extensions,
                 $name

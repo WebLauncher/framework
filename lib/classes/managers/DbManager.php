@@ -548,5 +548,12 @@ class DbManager {
 	function __destroy(){
 		$this->db_connection=null;
 	}
+
+    /**
+     * Get PDO connection
+     */
+    function get_connection(){
+        return $this->db_connection;
+    }
 }
 ?>
