@@ -303,12 +303,23 @@ class QueryBuilder
 			foreach($fields as $k=>$v)
 			{
 				if($k<$no_fields-1)
-					$this->append('`'.$v.'`'.(isset($directions[$k])?' '.$directions[$k]:''),',');
+					$this->append($this->escape_name($v).(isset($directions[$k])?' '.$directions[$k]:''),',');
 				else
-					$this->append('`'.$v.'`'.(isset($directions[$k])?' '.$directions[$k]:''));
+					$this->append($this->escape_name($v).(isset($directions[$k])?' '.$directions[$k]:''));
 			}
 		}
 		return $this;
+	}
+
+	/**
+	 * Escape names
+	 * @param  string $name
+	 */
+	function escape_name($name){
+		if(substr($name,0,1)=='@')
+			return substr($name, 1);
+		else
+			return '`'.$name.'`';
 	}
 	
 	/**
