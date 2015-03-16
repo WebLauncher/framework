@@ -3,8 +3,6 @@ class AdminPage extends Page {
 	public static $menu = array();
 	public static $breadcrumb = array();
 
-	var $version = "1.0.0";
-
 	function _on_init() {
 		parent::_on_init();
 
@@ -33,6 +31,7 @@ class AdminPage extends Page {
 				$this -> template -> assign('page_title', $this -> _getPageTitleByClass());
 			$this -> assign("admin_menu", $this -> _getMenu());
 			$this -> assign("admin_menu_page", $this -> _currentMenu());
+			$this -> assign("admin_menu_path",self::$breadcrumb[count(self::$breadcrumb)-1]['link']);
 			$this -> _cleanMap();
 			$this -> assign("page_map", self::$breadcrumb);
 			$this -> system -> title = $this -> system -> title . ' - ' . tr($this -> title);

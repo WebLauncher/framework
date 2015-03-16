@@ -1122,6 +1122,7 @@ class System
     private function _init_functions() {
         
         // general functions
+        $this->import('library','kint');
         $this->import('file', __DIR__ . '/functions/system.php');
     }
     
@@ -2447,6 +2448,10 @@ class System
     function redirect($url = '', $action = '', $page = '', $error = '') {
         $this->clear_cache($url);
         if (!$this->ajax) $this->save_state();
+        if ($this->trace){
+            $this->time->end('system');
+            TraceManager::generate();            
+        }
         if ($url) {
             if (headers_sent() || $this->ajax) {
                 echo '<script type="text/javascript">location.href="' . $url . '";</script>';

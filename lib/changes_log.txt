@@ -1,4 +1,12 @@
 2.7.0
+- System: updated system trace to a more powerfull tool where requests can be debuged and site files can be generated (to access use the button from the trace or add '?a=__sys_trace')
+- Component: added '?a=build-model:{$name}' which generates a new model file for model named {$name}
+- removed 'debug' library and replaced with Kint
+- added and used Kint library and removed dBug (http://raveren.github.io/kint/#intro)
+	- echopre() and echopre_r() will still work as expected
+	- for debugging several functions are available as per Kint documentation
+		- d($var) - debug a variable
+		- dd($var) - debug and die a variable 
 - Model: use SQL functions at get_all and get_colls using @ caracter in the begining of the field name it supresses espace of the field with ''
 - Libraries: added 'wbl_migrate' a migration library to help with migrations
 - Config: added function add_config($name,$hostnames) this will load config.$name.php file when the hostnames are matched

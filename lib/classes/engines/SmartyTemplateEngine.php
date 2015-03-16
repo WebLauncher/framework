@@ -85,7 +85,10 @@ class SmartyTemplateEngine implements TemplateEngine{
 				return $this->_smarty->get_template_vars($var);
 			break;
 			case 'v3':
-				return isset_or($this->_smarty->tpl_vars[$var]->value);
+                if($var)
+				    return isset_or($this->_smarty->tpl_vars[$var]->value);
+                else
+                    return $this->_smarty->getTemplateVars();
 			break;
 		}
 	}

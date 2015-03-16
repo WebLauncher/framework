@@ -342,7 +342,9 @@ class FilesManager
 	function file_array($path, $exclude = ".|..", $recursive = false) 
 	{
         $path = rtrim($path, "/") . "/";
+        
         $folder_handle = opendir($path);
+        
         $exclude_array = explode("|", $exclude);
         $result = array();
         while(false !== ($filename = readdir($folder_handle))) {
@@ -351,6 +353,32 @@ class FilesManager
                     if($recursive) $result[] = $this->file_array($path, $exclude, true);
                 } else {
                     $result[] = $filename;
+                }
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Returns the directories at a given path 
+     * @param string $path 
+     * @param string $exclude [optional][default=".|.."]
+     * @param bool $recursive Flag if it should go through subfolders
+     * @return array directories found at the given path
+     */
+    function dir_array($path, $exclude = ".|..", $recursive = false) 
+    {
+        $path = rtrim($path, "/") . "/";
+        
+        $folder_handle = opendir($path);
+        
+        $exclude_array = explode("|", $exclude);
+        $result = array();
+        while(false !== ($filename = readdir($folder_handle))) {
+            if(!in_array(strtolower($filename), $exclude_array)) {
+                if(is_dir($path . $filename . "/")) {
+                    $result[] = $filename;
+                    if($recursive) $result[] = $this->file_array($path, $exclude, true);                    
                 }
             }
         }

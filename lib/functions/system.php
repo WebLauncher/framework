@@ -11,7 +11,7 @@
  */
 function echopre($arr, $return = false) {
 	$text = '<div align="left" style="font-size:-1;"><pre class="debug">';
-	$text .= print_r($arr, true);
+	$text .= @d($arr);
 	$text .= '</pre></div>';
 	if ($return)
 		return $text;

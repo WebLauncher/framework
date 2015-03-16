@@ -57,6 +57,24 @@ class BuildManager
 		}
 		return count($this->errors)?false:true;
 	}
+    
+    /**
+     * Add model to site
+     * @param string $path
+     * @param string $component
+     */
+    function add_model($path,$name)
+    {
+        if(!$this->files->add_dir($path.'models/'))
+        {
+            $this->errors[]='Could not add dir:"'.$path.'"!';
+        }
+        if(!$this->files->save_file($path.'models/'.$name.'.php',$this->get_model_class($name)))
+        {
+            $this->errors[]=('Could not write file:"'.$path.'models/'.$name.'.php"!');
+        }
+        return count($this->errors)?false:true;
+    }
 	
 	/**
 	 * Add component to site
@@ -124,6 +142,25 @@ class BuildManager
 		$class.="?>";
 		return $class;
 	}
+    
+    /**
+     * Get generated code for model class
+     * @param string $name
+     */
+    function get_model_class($name)
+    {
+        $class="<?php\n";
+        $class.="/**\n";
+        $class.="* Class ".$name."\n";
+        $class.="* @author BuildManager\n";
+        $class.="*\n";
+        $class.="*/\n";
+        $class.="class ".$name." extends Base\n";
+        $class.="{\n";
+        $class.="}\n";
+        $class.="?>";
+        return $class;
+    }
 	
 	/**
 	 * Get generated code for module class

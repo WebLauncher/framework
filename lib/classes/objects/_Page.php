@@ -374,7 +374,7 @@
 							$this -> system -> logger -> log('builder_error', $e);
 					}
 					$this -> redirect($this -> paths['current']);
-				}
+				}                
 				elseif(!$this -> system -> live && $this -> system -> build_enabled && $this -> system -> build_auto)
 				{
 					$this -> redirect($this -> paths['current'] . '?a=build');
@@ -382,7 +382,17 @@
 				else				
 				{
 					$this -> system -> call_404();
-				}				
+				}
+                if(!$this -> system -> live && $this -> system -> build_enabled && isset($this -> system -> actions[0]) && $this -> system -> actions[0] == 'build-model')
+                {
+                    $build = new BuildManager($this -> system -> uploads);
+                    if(!$build -> add_model($this->folder, $this -> system -> actions[1]))
+                    {
+                        foreach($build->errors as $e)
+                            $this -> system -> logger -> log('builder_error', $e);
+                    }
+                    $this -> redirect($this -> paths['current']);
+                }				
 			}
 			if($this -> subpage)
 			{

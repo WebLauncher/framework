@@ -1115,7 +1115,7 @@
 		{
 			global $page;
 			$page -> template -> assign('form', $this -> generate());
-			return $page -> template -> fetch($page -> objects['templates']['form_new']);
+			return $page -> template -> fetch($page -> objects['templates']['form']);
 		}
 
 	}
