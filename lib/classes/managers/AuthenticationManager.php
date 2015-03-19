@@ -137,16 +137,22 @@
 					$page -> add_message('error', $this -> messages['no_user']);
 				}
 			}
-	
-			$goto = isset($_POST[$this->redirect_field]) ? $_POST[$this->redirect_field] : '';
-			if ($this->logged == 1) {
-				if ($goto != '')
-					$page -> redirect($goto);
-				else
-					$page -> redirect($page -> paths['current']);
-			} else {
-				$page -> redirect($page -> paths['current'] . '?e=login');
-			}
+	        if($page->ajax){
+	            $page->response_data['logged']=$this->logged;
+                $page->response_type='json';
+	            $page->get_response();
+	        }
+            else{
+    			$goto = isset($_POST[$this->redirect_field]) ? $_POST[$this->redirect_field] : '';
+    			if ($this->logged == 1) {
+    				if ($goto != '')
+    					$page -> redirect($goto);
+    				else
+    					$page -> redirect($page -> paths['current']);
+    			} else {
+    				$page -> redirect($page -> paths['current'] . '?e=login');
+    			}
+            }
 		}
 		
 		/**
@@ -241,7 +247,14 @@
 		function logout($goto = ''){
 			global $page;
 			$this->logout_user();
-			$page -> redirect($goto ? $goto : $page -> paths['current']);
+            if($page->ajax){
+                $page->response_data['logged']=$this->logged;
+                $page->response_type='json';
+                $page->get_response();
+            }
+            else{
+			    $page -> redirect($goto ? $goto : $page -> paths['current']);
+            }
 		}
 
 		/**

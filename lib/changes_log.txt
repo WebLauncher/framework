@@ -1,4 +1,13 @@
 2.7.0
+- Authenticate: default response type for ajax request is 'json'
+- System: added response type handling
+	- $page->response_type = 'html' // current/default response type
+	- $page->response_types=array('html','json'); // allowed response types
+	- $page->response_data=array(); // the response data to be sent to response type handler
+	- to use response type add in the url the var ?response=json or add an extension to the url http://site.com/home.json
+	- to add data to response_data you can also use the assign() method from controller by setting $page->response_assign=true (default: false)
+		- be carefull when using this to not assign security data to be available public
+		- we recommend leaving this to false unless you controll the data that is assigned or the site user is authenticated and can have access to the data
 - System: updated system trace to a more powerfull tool where requests can be debuged and site files can be generated (to access use the button from the trace or add '?a=__sys_trace')
 - Component: added '?a=build-model:{$name}' which generates a new model file for model named {$name}
 - removed 'debug' library and replaced with Kint
