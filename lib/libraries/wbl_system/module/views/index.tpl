@@ -40,7 +40,11 @@
     			<li role="presentation">
     				<a href="#phpinfo" data-toggle="tab"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> PHP Info</a>
     			</li>
-    			
+    			{if count($errors)}
+    			<li role="presentation">
+    				<a href="#errors" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Error Log</a>
+    			</li>
+    			{/if}
     		</ul>
     		<div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="trace">
@@ -68,6 +72,21 @@
                 		<iframe src="{$root}?a=__sys_trace_phpinfo" id="phpinfo_frame" width="100%" height="500" border="0" style="border:none;"></iframe>
                 	</div>
                 </div>
+                {if $errors}
+                <div role="tabpanel" class="tab-pane" id="errors">
+                	<br/>
+                	<div class="col-md-12">
+                		<label>{$errors|@count} errors</label>
+                		{foreach item=error from=$errors}
+                		<div class="alert alert-danger" role="alert" style="background: #{$error->error->back};border-color:#{$error->error->color};color:#{$error->error->color};">
+                			{$error->error->name}: 
+                			<strong>{$error->text}</strong> ({$error->date})<br/>
+                			<a href="{$error->file}">{$error->file} (@ line: {$error->line})</a> {if $error->class}Class: <strong>{$error->class}</strong>{/if} {if $error->method} Method: <strong>{$error->method}</strong>{/if}
+                		</div> 
+                		{/foreach}               		
+                	</div>
+                </div>
+                {/if}
             </div>
 		</div>
 		
