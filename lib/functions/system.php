@@ -67,8 +67,11 @@ function the_error_handler($errno = '', $errstr = '', $errfile = '', $errline = 
         ';
 		$no = 0;
 		$method = '';
-		if (isset($raw[1]))
+        $class = '';
+		if (isset($raw[1])){
 			$method = $raw[1]['function'];
+            $class = isset_or($raw[1]['class']);
+		}
 		$raw = array_reverse($raw);
 		foreach ($raw as $entry) {
 			if (isset_or($entry['function']) != 'the_error_handler') {
@@ -118,6 +121,25 @@ function the_error_handler($errno = '', $errstr = '', $errfile = '', $errline = 
 				fwrite($handle, '\'' . print_r($errortype[$errno], true) . "','$errfile','$errline','$errstr','" . date('Y-m-d\',\'H:i:s') . "'\n");
 				fclose($handle);
 			}
+            
+            if (!is_writable(isset_or($page -> error_log_path) . 'errs.log.json')) {
+                $handle = @fopen(isset_or($page -> error_log_path) . 'errs.log.json', 'w');
+                @fclose($handle);
+            }
+            if (is_writable(isset_or($page -> error_log_path) . 'errs.log.json')) {
+                $handle = fopen(isset_or($page -> error_log_path) . 'errs.log.json', 'a');
+                $array=array(
+                    'error'=>$errortype[$errno],
+                    'file'=>$errfile,
+                    'line'=>$errline,
+                    'text'=>$errstr,
+                    'method'=>$method,
+                    'class'=>$class,
+                    'date'=>date('Y-m-d H:i:s')
+                );
+                fwrite($handle, json_encode($array) . ",\n");
+                fclose($handle);
+            }
 		}
 	}
 }
@@ -133,8 +155,8 @@ function the_register_shutdown() {
 	session_write_close();
 	# Getting last error
 	$error = error_get_last();
-	if ($page -> debug)
-		//print_r($error);
+	if ($page -> debug){
+        the_error_handler($error['type'], $error['message'], $error['file'], $error['line']); 
 		# Checking if last error is a fatal error
 		if (($error['type'] === E_ERROR) || ($error['type'] === E_USER_ERROR)) {
 
@@ -144,9 +166,8 @@ function the_register_shutdown() {
 				$message = 'Found error: <br/>' . echopre_r($error);
 				$mail -> send_mail($page -> error_log_email, 'Fatal error on server ' . $page::$hostname, $message, $page -> error_log_email, 'Fatal Errors Sender');
 			}
-			echo 'Sorry, a serious error has occured in the system.';
-			// . $error['file'];
 		}
+    }
 }
 
 register_shutdown_function('the_register_shutdown');

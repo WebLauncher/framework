@@ -1,6 +1,16 @@
 2.7.0
 - Controller: added class PageApi to handle REST api functionality
 - Model: added class BaseApi to handle REST api functionality
+- save errors into errs.log.json so they can be displayed in system tools
+- Authenticate: default response type for ajax request is 'json'
+- System: added response type handling
+	- $page->response_type = 'html' // current/default response type
+	- $page->response_types=array('html','json'); // allowed response types
+	- $page->response_data=array(); // the response data to be sent to response type handler
+	- to use response type add in the url the var ?response=json or add an extension to the url http://site.com/home.json
+	- to add data to response_data you can also use the assign() method from controller by setting $page->response_assign=true (default: false)
+		- be carefull when using this to not assign security data to be available public
+		- we recommend leaving this to false unless you controll the data that is assigned or the site user is authenticated and can have access to the data
 - System: updated system trace to a more powerfull tool where requests can be debuged and site files can be generated (to access use the button from the trace or add '?a=__sys_trace')
 - Component: added '?a=build-model:{$name}' which generates a new model file for model named {$name}
 - removed 'debug' library and replaced with Kint
@@ -20,7 +30,7 @@
 - Model: added function columns() returns the columns schema for the current table in DB
 - Model: added function affected() returns the number of rows affected by the last query
 - Model: renamed get_colls in get_cols misspelling
-- removed 'tbl_' from models and table aliases
+- removed '' from models and table aliases
 - you are no longer required to create default skin, skins are an optional feature
 - fixed minify library cache location
 - fixed: Page: on_no_action or index gets executes in parent components
@@ -225,7 +235,7 @@
 	- other features
 - improved execution performance
 - added fatal error handling function, also e-mail report can be configured in $page->error_log_email this e-mails will receive the report.
-- changed models tables reference in configuration as not required(now if a table does not have alias in php.config.php when you assign the table name as $this->tbl_example it will assign the models the table 'example' in case it does not have an alias)  
+- changed models tables reference in configuration as not required(now if a table does not have alias in php.config.php when you assign the table name as $this->example it will assign the models the table 'example' in case it does not have an alias)  
 - fixed issue with smarty validator message with newline character
 - fixed issue when changing view to index page of the modules
 - added parameter for Smarty::bind block plugin called default. This will return the default value if no value found in database.
@@ -245,7 +255,7 @@
 - removed library phpcalendar (deprecated)
 - removed library replication (deprecated)
 - fixed smarty validator message location issue
-- added $page->seo_tracking_allowed which tracks in a database tbl_xpages_tracking which track crawlers access. $page->seo_tracking_type sets the type of tracking (all [default], browser, robot)
+- added $page->seo_tracking_allowed which tracks in a database xpages_tracking which track crawlers access. $page->seo_tracking_type sets the type of tracking (all [default], browser, robot)
 - added SessionHandlerDb which stores the $_SESSION var in database as the old system works (Now $_SESSION can be used anywhere in the project)
 - added caching to image function in smarty when image is modified
 - fixed image generation to send proper headers so the file can be saved and used as image

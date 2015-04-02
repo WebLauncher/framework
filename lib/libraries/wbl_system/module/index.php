@@ -11,6 +11,13 @@ class PageIndex extends Page
         $this->assign('page',isset_or($_REQUEST['page'],array_pop($trace_files)));
         $this->assign('can_build',$this->system->build_enabled);
         $this->assign('server',TraceManager::get_debug($_SERVER));
+        if(file_exists($this->paths['main_root_dir'].'errs.log.json'))
+        {
+            $errors=file_get_contents($this->paths['main_root_dir'].'errs.log.json');            
+            $errors=json_decode('['.rtrim(trim($errors),",").']');
+            $errors=array_reverse($errors);
+            $this->assign('errors',$errors);
+        }
     }
     
     function action___sys_trace_build(){
