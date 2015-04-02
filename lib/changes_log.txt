@@ -1,4 +1,6 @@
 2.7.0
+- Controller: added class PageApi to handle REST api functionality
+- Model: added class BaseApi to handle REST api functionality
 - System: updated system trace to a more powerfull tool where requests can be debuged and site files can be generated (to access use the button from the trace or add '?a=__sys_trace')
 - Component: added '?a=build-model:{$name}' which generates a new model file for model named {$name}
 - removed 'debug' library and replaced with Kint
