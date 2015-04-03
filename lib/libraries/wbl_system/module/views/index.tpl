@@ -94,7 +94,8 @@
 	{literal}
 	<script type="text/javascript" charset="utf-8">
 		function load_trace(page,obj){
-            $('#load_trace').load(root+'?a=__sys_trace_get&page='+page);
+			if(page)
+            	$('#load_trace').load(root+'?a=__sys_trace_get&page='+page);
         }
         
         function load_build(){

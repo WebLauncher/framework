@@ -173,8 +173,6 @@ class TraceManager {
     public static function init() {
         global $page;
         if ($trace_dir = self::check_dir()) {
-            
-            
             if (isset_or($page -> actions[0]) == '__sys_trace' || isset_or($page -> actions[0]) == '__sys_trace_build') {
                 $page->import('library','wbl_system');
             } else if (isset_or($page -> actions[0]) == '__sys_trace_phpinfo') {

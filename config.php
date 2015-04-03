@@ -5,6 +5,7 @@
 // $this -> add_config('development', 'localhost');
 
 $this -> add_config('production', 'example.com');
+$this -> add_config('development', 'localhost:10001');
 
 
 /* Use to import CSS files into template

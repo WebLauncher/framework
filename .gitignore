@@ -2,3 +2,4 @@ files
 cache
 .settings/com.aptana.editor.php.prefs
 errs.log.csv
+errs.log.json
