@@ -1,3 +1,5 @@
+2.7.1
+- session regenerate id per logout
 2.7.0
 - Controller: added class PageApi to handle REST api functionality
 - Model: added class BaseApi to handle REST api functionality

@@ -194,6 +194,7 @@
 			unset($page -> session['user_type']);
 			unset($page -> session['remmember']);
 			unset($page -> session['temp']);
+            SessionManager::regenerate();
 			$page -> session['user_logout'] = 1;
 		}
 
