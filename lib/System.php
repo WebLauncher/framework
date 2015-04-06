@@ -18,7 +18,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package WebLauncher\System
  */
-define('SYS_VERSION', '2.7.0');
+define('SYS_VERSION', '2.7.1');
 
 /**
  * System CLass
@@ -754,7 +754,7 @@ class System {
      * System response data
      */
     public $response_data = array();
-    
+
     /**
      * System response assign with assign() method
      */
@@ -1155,6 +1155,7 @@ class System {
         // general functions
         $this -> import('library', 'kint');
         $this -> import('file', __DIR__ . '/functions/system.php');
+        $this -> import('file', __DIR__ . '/functions/password.php');
     }
 
     /**
@@ -1893,7 +1894,7 @@ class System {
     function assign($var, $value = null) {
         if ($this -> response_type == 'html')
             $this -> template -> assign($var, $value);
-        elseif($this->response_assign){
+        elseif ($this -> response_assign) {
             if (is_array($var))
                 $this -> response_data = array_merge($this -> response_data, $var);
             else
@@ -2942,4 +2943,3 @@ class System {
     }
 
 }
-?>
