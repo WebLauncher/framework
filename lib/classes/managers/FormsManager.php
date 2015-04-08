@@ -3,10 +3,10 @@
  * Form Manager Classes
  */
 /**
- * Class Form_Filters
+ * Class FormFilters
  * @package WebLauncher\Managers
  */
-class Form_Filters{
+class FormFilters{
 	/**
 	 * Just trim the value
 	 * @param string $value 
@@ -66,7 +66,7 @@ class Form_Filters{
  * Form Rules Class
  * @package WebLauncher\Managers
  */
-class Form_Rules {
+class FormRules {
 	/**
 	 * Check required. rule='required|5' - required lenght 5
 	 * @return
@@ -210,7 +210,7 @@ class Form_Rules {
 	 * @param object $value
 	 */
 	public static function percent($value) {
-		return Form_Rules::intervalnr($i, array(0 => '', 1 => '0', 2 => '100'));
+		return FormRules::intervalnr($i, array(0 => '', 1 => '0', 2 => '100'));
 	}
 
 	/**
@@ -327,7 +327,7 @@ class Form_Rules {
 	 * @param array $params
 	 */
 	public static function notexists($value, $params) {
-		return !Form_Rules::exists($value, $params);
+		return !FormRules::exists($value, $params);
 	}
 	
 	/**
@@ -336,7 +336,7 @@ class Form_Rules {
 	 * @param array $params
 	 */
 	public static function exists_different($value, $params) {
-		return ($params[3] != $value && Form_Rules::exists($value, $params)) || $params[3] == $value;
+		return ($params[3] != $value && FormRules::exists($value, $params)) || $params[3] == $value;
 	}
 
 	/**
@@ -410,7 +410,7 @@ class Form_Rules {
  * Class Form Rule
  * @package WebLauncher\Managers
  */
-class Form_Rule {
+class FormRule {
 	/**
 	 * @var string $rule Rule to check
 	 */
@@ -447,7 +447,7 @@ class Form_Rule {
 		if(count($vars)<=1)
 		{
 			$rule=$this->rule;
-			return Form_Rules::$rule($value);
+			return FormRules::$rule($value);
 		}
 		else{
 			switch($vars[0]){
@@ -455,7 +455,7 @@ class Form_Rule {
 					$vars[2]=isset_or($_POST[$vars[2]]);				
 				break;
 			}
-			return Form_Rules::$vars[0]($value,$vars);
+			return FormRules::$vars[0]($value,$vars);
 		}
 	}
 	
@@ -471,7 +471,7 @@ class Form_Rule {
  * Class Form Filter
  * @package WebLauncher\Managers
  */
-class Form_Filter {
+class FormFilter {
 	/**
 	 * @var string $filter Filter name
 	 */
@@ -498,7 +498,7 @@ class Form_Filter {
 	 */
 	function filter($value,$params='') {
 		$filt=$this->filter;
-		return Form_Filters::$filt($value,$params);
+		return FormFilters::$filt($value,$params);
 	}
 }
 
@@ -506,7 +506,7 @@ class Form_Filter {
  * Class Form Field
  * @package WebLauncher\Managers
  */
-class Form_Field {
+class FormField {
 	/**
 	 * @var string $field_name Name of the input field
 	 */
@@ -559,7 +559,7 @@ class Form_Field {
 	 * @param string $message
 	 */
 	public function add_rule($rule, $message = '') {
-		$this -> rules[base64_encode($rule)] = new Form_Rule($rule, $message);
+		$this -> rules[base64_encode($rule)] = new FormRule($rule, $message);
 	}
 
 	/**
@@ -568,7 +568,7 @@ class Form_Field {
 	 * @param array $params
 	 */
 	public function add_filter($filter, $params = '') {
-		$this -> filters[base64_encode($filter)] = new Form_Filter($filter, $params);
+		$this -> filters[base64_encode($filter)] = new FormFilter($filter, $params);
 	}
 	
 	/**
@@ -600,7 +600,7 @@ class Form_Field {
 	 */
 	public function run_filter($filter,$params='')
 	{
-		return Form_Filters::$filter($this->value,$params);
+		return FormFilters::$filter($this->value,$params);
 	}
 	
 	/**
@@ -630,7 +630,7 @@ class Form_Field {
  * Class Form Object
  * @package WebLauncher\Managers
  */
-class Form_Object {
+class FormObject {
 	/**
 	 * @var string $_form_id Form id
 	 */
@@ -679,7 +679,7 @@ class Form_Object {
 	 * @param object $field
 	 */
 	public function add_field($field) {
-		if(!isset($this->_fields[$field]))$this->_fields[$field]=new Form_Field($field);
+		if(!isset($this->_fields[$field]))$this->_fields[$field]=new FormField($field);
 	}
 	
 	/**
@@ -802,7 +802,7 @@ class FormsManager implements ArrayAccess {
 	 */
 	private function _add_form($form_id) {
 		if (!isset($this -> forms[$form_id]))
-			$this -> forms[$form_id] = new Form_Object($form_id);
+			$this -> forms[$form_id] = new FormObject($form_id);
 	}
 	
 	/**
@@ -871,10 +871,10 @@ class FormsManager implements ArrayAccess {
 		$vars=explode('|',$rule);
 		if(count($vars)<=1)
 		{
-			return Form_Rules::$rule($value);
+			return FormRules::$rule($value);
 		}
 		else
-			return Form_Rules::$vars[0]($value,$vars);
+			return FormRules::$vars[0]($value,$vars);
 	}
 	
 	/**
