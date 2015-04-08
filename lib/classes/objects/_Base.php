@@ -321,7 +321,7 @@ class _Base implements ArrayAccess {
 
         if ($order_by != '')
             if (is_array($order_by))
-                $builder -> order($order_by, $order_dir ? (is_array($order_dir) ? $order_dir : array($order_dir)) : array());
+                $builder -> order(explode(',', $order_by), $order_dir ? (is_array($order_dir) ? $order_dir : explode(',',$order_dir)) : array());
             else
                 $builder -> order(array($order_by), array($order_dir));
         $arr = array();
