@@ -341,10 +341,11 @@ class _Base implements ArrayAccess {
      * @param object $arr
      */
     private function _process_array($arr) {
-        return $this -> process ? array_map(array(
+        $arr=$this -> process ? array_map(array(
             $this,
             '_process_row'
         ), $arr) : $arr;
+        return $arr; // new DbRowObjectList($arr,$this);
     }
 
     /**
@@ -352,15 +353,16 @@ class _Base implements ArrayAccess {
      * @param array $row
      */
     private function _process_row($row) {
+        // $row=new DbRowObject($row, $this);
         if ($this -> process) {
             if (is_callable($this -> process_row_func))
-                return call_user_func($this -> process_row_func, $row);
+                $row=call_user_func($this -> process_row_func, $row);
             else
-                return call_user_func(array(
+                $row=call_user_func(array(
                     $this,
                     $this -> process_row_func
                 ), $row);
-        }
+        }        
         return $row;
     }
 

@@ -1,4 +1,6 @@
 2.7.1
+- update DbRowObjectList to be iterateable and countable
+- fix DbRowObject to have modification access on offetGet
 - session regenerate id per logout
 - added password_compat https://github.com/ircmaxell/password_compat
 2.7.0
