@@ -2,11 +2,7 @@
 /**
  * Init system site handler and render
  */
-
-/**
- *
- */
 require_once dirname(__FILE__) . '/system.init.php';
 global $page;
-$page -> render();
+$page->render();
 unset($page);
