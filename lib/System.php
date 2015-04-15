@@ -583,9 +583,19 @@ class System
     public $logger = '';
 
     /**
+     * Page cache enabled
+     */
+    public $page_cache_enabled = false;
+
+    /**
      * Cache enabled
      */
-    public $cache_enabled = false;
+    public $cache_enabled = true;
+
+    /**
+     * Cache options
+     */
+    public $cache_options = '';
 
     /**
      * Cache enabled
@@ -851,7 +861,7 @@ class System
             break;
 
         case 'request_method' :
-            $methods=array(
+            $methods = array(
                 'POST',
                 'DELETE',
                 'GET',
@@ -872,7 +882,7 @@ class System
      */
     function import($type, $file)
     {
-        $types=array(
+        $types = array(
             'dal',
             'class',
             'library',
@@ -1078,7 +1088,7 @@ class System
      */
     private function _initAutoload()
     {
-        $method=array(
+        $method = array(
             $this,
             '__autoload'
         );
@@ -1264,7 +1274,7 @@ class System
     {
         global $smarty;
         $this->import('library', 'Smarty');
-        $smarty = TemplatesManager::get_engine($this->template_engine, $this->libraries_settings['smarty']['version'], $this->paths['root_code'], $this->paths['root_cache'], $this->trace, $this->debug, $this->cache_enabled);
+        $smarty = TemplatesManager::get_engine($this->template_engine, $this->libraries_settings['smarty']['version'], $this->paths['root_code'], $this->paths['root_cache'], $this->trace, $this->debug, $this->page_cache_enabled);
         $this->template = &$smarty;
         if ($this->template_engine == 'smarty') {
             $this->import('library', 'wbl_smarty');
@@ -1607,8 +1617,19 @@ class System
     {
         $this->no_cache = !$this->live;
         if (isset_or($_REQUEST['__nocache'])) {
-            $this->cache_enabled = false;
+            $this->page_cache_enabled = false;
             $this->no_cache = true;
+        }
+        if ($this->cache_enabled) {
+            $this->import('library','stash');
+            if (!$this->cache_options) {
+                $this->cache_options = array('short' => array(
+                        'type' => 'file',
+                        'default' => true,
+                        'options' => array('path' => $this->paths['root_cache'].'_system/')
+                    ));
+            }
+            $this->cache = new CacheManager($this->cache_options);
         }
     }
 
@@ -2224,7 +2245,7 @@ class System
             $cache_folder = $this->paths['root_cache'] . '_index/';
 
             $this->time->end('system');
-            $this->time->end('_renderTemplates');
+            $this->time->end('render_templates');
             $this->memory->save('system_after_render');
             if ($this->trace) {
                 TraceManager::generate();
@@ -2511,7 +2532,7 @@ class System
             $this->assign('skin_scripts', $this->paths['skin_scripts']);
             $this->assign('skin_styles', $this->paths['skin_styles']);
 
-            $before_skin= '<link rel="icon" href="{$root_images}favicon.ico" type="image/x-icon"/>
+            $before_skin = '<link rel="icon" href="{$root_images}favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="{$root_images}favicon.ico" type="image/x-icon"/>
 <script type="text/javascript">
     var root="{$root}";

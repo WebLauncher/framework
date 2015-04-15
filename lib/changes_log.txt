@@ -1,4 +1,8 @@
 2.7.1
+- added cache library Stash (read book)
+- $page->cache_enabled now refers to caching system
+- $page->cache_options can be used to set cache manager options
+- $page->cache_enabled renamed to $page->page_cache_enabled (because it is related to page caching)
 - update DbRowObjectList to be iterateable and countable
 - fix DbRowObject to have modification access on offetGet
 - session regenerate id per logout
