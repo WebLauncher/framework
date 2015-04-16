@@ -9,10 +9,13 @@
 class CacheManager
 {
     /**
-     * Engines objects
+     * Pools objects
      */
-    private $_engines = array();
+    private $_pools = array();
     
+    /**
+     * Default pool
+     */
     private $_default = 0;
 
     /**
@@ -40,7 +43,7 @@ class CacheManager
             }
             if(isset($v['default']))
                 $this->_default=$k;
-            $this->_engines[$k] = new Stash\Pool($obj);
+            $this->_pools[$k] = new Stash\Pool($obj);
         }
     }
 
@@ -85,9 +88,9 @@ class CacheManager
      */
     public function getEngine($name){
         if($name){
-            return $this->_engines[$name];
+            return $this->_pools[$name];
         } else {
-            return $this->_engines[$this->_default];
+            return $this->_pools[$this->_default];
         }
     }
     
@@ -114,7 +117,7 @@ class CacheManager
         if($this->_default)
         {
             return call_user_func_array(array(
-                        $this->_engines[$this->_default],
+                        $this->_pools[$this->_default],
                         $name
                     ), $arguments);
         }
