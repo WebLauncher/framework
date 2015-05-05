@@ -1,4 +1,6 @@
 <?php
+if(!class_exists($class_name))
+    include __DIR__.'/TablesManager.php';
 /**
  * Database Manager Class
  */
@@ -116,13 +118,6 @@ class DbManager {
     {
     	return ($this->db_type.':dbname='.$this->db_name.';host='.$this->db_server.';charset=utf8');
     }
-    
-    /**
-     * Get DB tables
-     */
-    public function get_tables(){
-        return $this->getAll('SHOW TABLES;');
-    }
 	
 	/**
 	 * Execute a query
@@ -136,7 +131,6 @@ class DbManager {
     	{
     		$this->queries[count($this->queries)]=array();
     		$this->queries[count($this->queries)-1]['query']=$sql;
-            $this->queries[count($this->queries)-1]['args']=$args;
     		$this->queries[count($this->queries)-1]['start']=microtime(1);
     	}
 		try{
@@ -556,12 +550,5 @@ class DbManager {
 	function __destroy(){
 		$this->db_connection=null;
 	}
-
-    /**
-     * Get PDO connection
-     */
-    function get_connection(){
-        return $this->db_connection;
-    }
 }
 ?>

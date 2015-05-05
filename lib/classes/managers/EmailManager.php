@@ -87,10 +87,11 @@
 			}
 			$this -> mailer ->FromName = $fromname;
 	
-			$this -> mailer ->Host=$page->mail_host;
-			$this -> mailer ->Username=$page->mail_user;
-			$this -> mailer ->Password=$page->mail_password;
-	
+            if(isset($page)){
+    			$this -> mailer ->Host=$page->mail_host;
+    			$this -> mailer ->Username=$page->mail_user;
+    			$this -> mailer ->Password=$page->mail_password;
+            }
 			// add attachments
 			if(count($attachments)>0)
 				foreach($attachments as $k=>$v)
@@ -180,7 +181,6 @@
 			if(!is_null($this->mailer))
 			{
 				$send = $this -> mailer ->Send();	
-				unset($this -> mailer);
 			}
 			return $send;
 		}
@@ -192,7 +192,7 @@
 		 */
 		function process_queue_obj($obj,$hosts){
 			$this->mailer=null;
-			$this->compose(unser($obj['to']), $obj['subject'], $obj['message'], $obj['from'], $obj['from_name'],$obj['reply_to'],$obj['reply_name'],unser($obj['attachments']),$obj['mail_in'],$obj['sender'],unser($obj['others']));			
+			$this->compose(unser($obj['to']), $obj['subject'], $obj['message'], $obj['from'], $obj['from_name'],$obj['reply'],$obj['reply_name'],unser($obj['attachments']),$obj['mail_in'],$obj['sender'],unser($obj['others']));			
 			switch(strtolower(isset($hosts[$obj['hostname']]['mail_type'])?$hosts[$obj['hostname']]['mail_type']:""))
 			{
 				case "qmail":
@@ -207,6 +207,9 @@
 					$this->mailer->Host=isset_or($hosts[$obj['hostname']]['mail_host']);
 					$this->mailer->Username=isset_or($hosts[$obj['hostname']]['mail_user']);
 					$this->mailer->Password=isset_or($hosts[$obj['hostname']]['mail_password']);
+                    if(isset_or($hosts[$obj['hostname']]['mail_port'])){
+                        $this->mailer->Port=isset_or($hosts[$obj['hostname']]['mail_port']);
+                    }
 				break;			
 				case "mail":
 				default:
