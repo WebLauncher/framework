@@ -46,6 +46,14 @@
 	.tree li.parent_li > span:hover, .tree li.parent_li > span:hover+ ul li span {
 		color: #337ab7;
 	}
+	input.error {
+	    border:1px solid #f00;
+	}
+	label.error {
+	    color:#f00;
+	    font-weight:normal;
+	}
+	
 
 </style>
 <script>
@@ -70,7 +78,7 @@
 			return false;
 		});
 		$('#add_component').submit(function() {
-			if($('#add_component [name="name"]').val()){
+			if($('#add_component').valid()){
 				$.get($('#add_component [name="path"]').val() + '/' + $('#add_component [name="name"]').val(), {
 					a : 'build'
 				}, function() {
@@ -78,11 +86,11 @@
 					status('Component <strong>'+$('#add_component [name="name"]').val()+'</strong> was created!');
 				});
 			}
-			else alert('Please add a name!');
+			else alert('Please fill in the form properly!');
 			return false;
 		});
 		$('#add_model').submit(function() {
-			if($('#add_model [name="name"]').val()){
+			if($('#add_model').valid()){
 				$.get($('#add_model [name="path"]').val() + '/', {
 					a : 'build-model:' + $('#add_model [name="name"]').val()
 				}, function() {
@@ -90,7 +98,7 @@
 					status('Model <strong>'+$('#add_model [name="name"]').val()+'</strong> was created!');
 				});
 			}
-			else alert('Please add a name!');
+			else alert('Please fill in the form properly!');
 			return false;
 		});
 	});
@@ -122,6 +130,7 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Name</label>
 							<input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+							{validator form="add_component" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
 						</div>
 						<div class="form-group">
 							<label for="exampleInputPassword1">Title</label>
@@ -149,6 +158,7 @@
 						<div class="form-group">
 							<label for="exampleInputEmail1">Name</label>
 							<input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+							{validator form="add_model" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
 						</div>
 						<button type="submit" class="btn btn-default">
 							Add
