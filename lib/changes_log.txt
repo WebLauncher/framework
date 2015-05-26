@@ -1,3 +1,8 @@
+2.7.2
+- updated jquery validate plugin 
+- using ctype library for validations where appropiate
+- use filter_var() for form validators
+- added 'pattern' validator to validate a custom regular "regexp" expresion pattern rule ex. pattern|^[a-z]+$
 2.7.1
 - added cache library Stash (read book)
 - $page->cache_enabled now refers to caching system

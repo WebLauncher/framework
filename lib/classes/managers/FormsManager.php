@@ -109,7 +109,8 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function email($value) {
-		return (!$value || ($value && preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5})\$#i", $value)));
+		// old filter return preg_match("#^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5})\$#i", $value);
+        return filter_var($value,FILTER_VALIDATE_EMAIL)!==false;
 	}
 
 	/**
@@ -127,7 +128,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function digits($value) {
-		return ($value && eregi('^[0-9]+$', $value));
+		return ($value && ctype_digit($value));
 	}
 
 	/**
@@ -136,7 +137,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function alpha($value) {
-		return preg_match('#^[a-zA-Z -]+\$#i', $value);
+	    return $value && ctype_alpha($value);
 	}
 
 	/**
@@ -145,7 +146,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function username($value) {
-		return $value && preg_match('#^[a-z][\da-z_\.]{4,64}[a-z\d]\$#i', $value);
+	    return self::pattern($value,array('^[a-z][\da-z_\.]{4,64}[a-z\d]$'));
 	}
 	
 	/**
@@ -154,7 +155,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function username_full($value) {
-		return $value && preg_match('#^[a-zA-Z\d][\da-zA-Z_\.\,\-]{4,64}[a-zA-Z\d]\$#i', $value);
+		return self::pattern($value,array('^[a-zA-Z\d][\da-zA-Z_\.\-]{4,64}[a-zA-Z\d]$'));
 	}
 
 	/**
@@ -163,7 +164,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function firstname($value) {
-		return filter_var('Mihai', FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>"/^[A-Z][a-zA-Z\s\-]{1,64}[a-z]\$/")))!==FALSE;
+	    return self::pattern($value,array('^[A-Z][a-zA-Z\s\-]{1,64}[a-z]$'));
 	}
 
 	/**
@@ -259,7 +260,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function url($value) {
-		return preg_match('#^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&\'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&\'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&\'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&\'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&\'\(\)\*\+,;=]|:|@)|\/|\?)*)?$#i', $value);
+	    return filter_var($value,FILTER_VALIDATE_URL)!==false;
 	}
 
 	/**
@@ -366,7 +367,7 @@ class FormRules {
 	 * @param object $value
 	 */
 	public static function dateISO($value) {
-		return preg_match('#^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$#i', $value);
+	    return self::pattern($value,array('^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$'));
 	}
 
 	/**
@@ -395,6 +396,15 @@ class FormRules {
 	public static function nowhitespace($value) {
 		return preg_match('#^\S+$#i', $value);
 	}
+    
+    /**
+     * Check pattern
+     * @param string $value
+     * @param array $params
+     */
+    public static function pattern($value,$params='') {
+        return filter_var($value, FILTER_VALIDATE_REGEXP,array("options"=>array("regexp"=>"/".$params[0]."/")))!==FALSE;
+    }
 	
 	/**
 	 * Check the signature
