@@ -78,6 +78,11 @@ class System
      * @var flag if administrative zone
      */
     public $admin = 0;
+    
+    /**
+     * @var flag if default admin zone is enabled
+     */
+    public $admin_enabled = true;
 
     /**
      * @var page query
@@ -1297,11 +1302,8 @@ class System
      */
     private function _initDal()
     {
-        global $dal;
-
-        if ($this->admin) {
-            $this->import('class', 'objects.BaseAdmin');
-        } else {
+        global $dal;       
+        if(!$this->admin) {
             $this->import('class', 'objects.Base');
         }
 
@@ -1606,6 +1608,10 @@ class System
         $this->_initSkin();
         $this->render_all = !$this->ajax;
         $this->render_type = $this->_getRenderType();
+        
+        if ($this->admin) {
+            $this->import('library', 'wbl_admin');
+        }
     }
 
     /**
@@ -2319,7 +2325,6 @@ class System
     {
 
         if ($this->admin) {
-            $this->import('class', 'objects.PageAdmin');
             $this->import('library', 'wbl_admin');
         } else {
             $this->import('class', 'objects.Page');
@@ -2633,7 +2638,12 @@ class System
         $module = trim($pages[0]);
         if (($module != '' && is_dir($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
             $module .= '/';
-        } elseif ($module == '') {
+        } 
+        elseif($this->admin_enabled && $module=='admin'){
+            $this->admin = true;
+            $module.=DS;
+        }
+        elseif ($module == '') {
             $module = $this->default_module;
         } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
             $pages[1] = $module;
@@ -3152,12 +3162,15 @@ class System
      * Load class from php files
      *
      * @param object $class Class name
+     * @param string $class_name
      *
      * @return bool
      */
-    public function load_class($class)
+    public function load_class($class,$class_name='')
     {
-        if (!class_exists($class)) {
+        if(!$class_name)
+            $class_name=$class;
+        if (!class_exists($class_name)) {
             $paths = explode('.', $class);
             $file_path = $class . '.php';
             if (count($paths) > 1) {
