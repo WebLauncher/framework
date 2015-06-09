@@ -36,7 +36,6 @@
 						<div role="tabpanel" id="div_statistics" class="tab-pane panel panel-default active">
 							<div class="panel-body">
 							    <h3><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Time</h3>
-							    <?php echopre($times); ?>
 							    <table class="table table-condensed">
 							        <tr class="active">
 							        	<th style="width:30%;">Total execution:</th>
