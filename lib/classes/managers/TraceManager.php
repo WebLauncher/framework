@@ -67,10 +67,8 @@ class TraceManager {
         if ($page -> logger -> active && $page -> logger -> no)
             $page -> trace_page .= '<button onclick="jQuery(\'#page_log_' . $random . '\').toggle();" style="' . $btn_style . '">log (' . $page -> logger -> no . ')</button>';
         $page -> trace_page .= '</div>';
-
-        ob_start();
-        include __DIR__ . '/../../templates/trace/trace_page.php';
-        self::$trace = ob_get_clean();
+        
+        
         $page -> trace_page .= '</div>';
         if ($page -> debug)
             $page -> trace_page .= '<div id="page_template_0101" style="background:#fff;display:none;clear:both; border:1px solid #000; height:400px;"><br/><iframe id="page_template_0101_frame" frameborder="0"  vspace="0"  hspace="0"  marginwidth="0"  marginheight="0" width="100%" height="100%"></iframe></div>';
@@ -78,8 +76,12 @@ class TraceManager {
         if ($page -> logger -> active && $page -> logger -> no)
             $page -> trace_page .= '<div id="page_log_' . $random . '" style="background:#fff;display:none;clear:both; border:1px solid #000; height:400px; overflow:scroll;">
 						' . $page -> logger -> get() . '</div>';
-        if($save)
+        if($save){
+            ob_start();
+            include __DIR__ . '/../../templates/trace/trace_page.php';
+            self::$trace = ob_get_clean();
             self::save();
+        }
     }
 
     /**

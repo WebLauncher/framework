@@ -946,80 +946,76 @@ class System
         // init mailer
         $this->_initMail();
 
-        // connect to database
-        if ($this->db_conn_enabled) {
+        // init DAL
+        $this->_initDal();
 
-            // init DAL
-            $this->_initDal();
-
-            // execute console
-            if ($this->console) {
-                ConsoleManager::execute();
-            }
-
-            // init migrations
-            $this->_initMigrations();
-
-            // init minify
-            $this->_initMinify();
-
-            // pagination
-            $this->_initPagination();
-
-            // get settings from db
-            $this->_initSettings();
-
-            // init session
-            $this->init_session();
-
-            // check if script file request
-            $this->_initJsScript();
-
-            // check if signature requested
-            $this->_initSignature();
-
-            // get user info
-            $this->_initUser();
-
-            // set language
-            $this->_initLanguage();
-
-            // set errors
-            $this->_initErrors();
-
-            // set messages
-            $this->_initMessages();
-
-            // secure link request and post
-            $this->_initSecurity();
-
-            // save history
-            $this->_initHistoy();
-
-            // validate if postback
-            $this->_initValidation();
-
-            // init uploads
-            $this->_initUploads();
-
-            // download manager
-            $this->_initDownloads();
-
-            // clear state
-            $this->_initState();
-
-            // check if authentication requested
-            $this->_initAuthentication();
-
-            // get metas from db
-            $this->_initMetas();
-
-            // init title
-            $this->_initTitle();
-
-            // apply page settings
-            $this->_initPageSettings();
+        // execute console
+        if ($this->console) {
+            ConsoleManager::execute();
         }
+
+        // init migrations
+        $this->_initMigrations();
+
+        // init minify
+        $this->_initMinify();
+
+        // pagination
+        $this->_initPagination();
+
+        // get settings from db
+        $this->_initSettings();
+
+        // init session
+        $this->init_session();
+
+        // check if script file request
+        $this->_initJsScript();
+
+        // check if signature requested
+        $this->_initSignature();
+
+        // get user info
+        $this->_initUser();
+
+        // set language
+        $this->_initLanguage();
+
+        // set errors
+        $this->_initErrors();
+
+        // set messages
+        $this->_initMessages();
+
+        // secure link request and post
+        $this->_initSecurity();
+
+        // save history
+        $this->_initHistoy();
+
+        // validate if postback
+        $this->_initValidation();
+
+        // init uploads
+        $this->_initUploads();
+
+        // download manager
+        $this->_initDownloads();
+
+        // clear state
+        $this->_initState();
+
+        // check if authentication requested
+        $this->_initAuthentication();
+
+        // get metas from db
+        $this->_initMetas();
+
+        // init title
+        $this->_initTitle();
+
+        // apply page settings
+        $this->_initPageSettings();
 
         // init template manager
         $this->_initTemplate();
@@ -1623,12 +1619,12 @@ class System
             $this->no_cache = true;
         }
         if ($this->cache_enabled) {
-            $this->import('library','stash');
+            $this->import('library', 'stash');
             if (!$this->cache_options) {
                 $this->cache_options = array('short' => array(
                         'type' => 'file',
                         'default' => true,
-                        'options' => array('path' => $this->paths['root_cache'].'_system/')
+                        'options' => array('path' => $this->paths['root_cache'] . '_system/')
                     ));
             }
             $this->cache = new CacheManager($this->cache_options);
@@ -1877,30 +1873,31 @@ class System
      */
     private function _initLanguage()
     {
-        if (!isset($this->session['language_id'])) {
-            if ($this->admin) {
-                if (isset($this->settings['admin_default_language']['id'])) {
-                    $this->session['language_id'] = $this->settings['admin_default_language']['id'];
+        if ($this->multi_language) {
+            if (!isset($this->session['language_id'])) {
+                if ($this->admin) {
+                    if (isset($this->settings['admin_default_language']['id'])) {
+                        $this->session['language_id'] = $this->settings['admin_default_language']['id'];
+                    } else {
+                        $this->logger->log('settings_error', 'Setting field "admin_default_language" not found!');
+                    }
                 } else {
-                    $this->logger->log('settings_error', 'Setting field "admin_default_language" not found!');
-                }
-            } else {
-                if (isset($this->settings['default_language_id']['id'])) {
-                    $this->session['language_id'] = $this->settings['default_language_id']['id'];
-                } else {
-                    $this->logger->log('settings_error', 'Setting field "default_language_id" not found!');
+                    if (isset($this->settings['default_language_id']['id'])) {
+                        $this->session['language_id'] = $this->settings['default_language_id']['id'];
+                    } else {
+                        $this->logger->log('settings_error', 'Setting field "default_language_id" not found!');
+                    }
                 }
             }
-        }
 
-        // check if language change requested
-        if (isset($_REQUEST['language'])) {
-            $this->session['language_id'] = $_REQUEST['language'];
-            $this->redirect($this->paths['current']);
-        }
+            // check if language change requested
+            if (isset($_REQUEST['language'])) {
+                $this->session['language_id'] = $_REQUEST['language'];
+                $this->redirect($this->paths['current']);
+            }
 
-        // set locale
-        if ($this->multi_language) {
+            // set locale
+
             $language = $this->db_conn->getRow('select * from `' . $this->libraries_settings['wbl_locale']['table'] . '` where id=' . $this->session['language_id']);
             if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win'])) {
                 setlocale(LC_ALL, $language['locale_win']);
@@ -2558,8 +2555,8 @@ class System
             $this->db_conn = new DbManager();
             $this->db_conn->trace = $this->trace;
             $this->add_tables();
-            $this->db_conn_enabled=$this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
-            if(!$this->db_conn_enabled)
+            $this->db_conn_enabled = $this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
+            if (!$this->db_conn_enabled)
                 unset($this->db_conn);
         }
     }

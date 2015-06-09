@@ -36,6 +36,7 @@
 						<div role="tabpanel" id="div_statistics" class="tab-pane panel panel-default active">
 							<div class="panel-body">
 							    <h3><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Time</h3>
+							    <?php echopre($times); ?>
 							    <table class="table table-condensed">
 							        <tr class="active">
 							        	<th style="width:30%;">Total execution:</th>
@@ -134,6 +135,7 @@
                             <?=$template ?>
                             </div>
                         </div>
+                        <?php if($page->db_conn) { ?>
 						<div role="tabpanel" id="div_db" class="tab-pane panel panel-default">
 		                    <div class="panel-body">
 		                        <table class="table table-condensed">
@@ -161,6 +163,7 @@
 		                        
 		                    </div>
 						</div>
+						<?php } ?>
 						<?php if($page->logged) { ?>
 						<div role="tabpanel" id="div_user" class="tab-pane panel panel-default">
 		                    <div class="panel-body">
