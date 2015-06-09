@@ -1031,6 +1031,7 @@ class System
         $this->_initSystemError();
         $this->hocks->after_init();
         $this->memory->save('system_after_init');
+        $this->time->end('init');
     }
 
     /**
@@ -1261,6 +1262,7 @@ class System
         $this->time = new TimeLogger($this->trace);
 
         $this->time->start('system');
+        $this->time->start('init');
         $this->memory->save('max', ini_get('memory_limit'), '%s');
         $this->memory->save('system_before_init');
     }
@@ -2040,7 +2042,7 @@ class System
         $this->hocks->before_render();
 
         // load variables
-        $this->render_variables();
+        $this->_renderVariables();
 
         // load scripts
         $this->time->start('render_scripts');
@@ -2244,11 +2246,8 @@ class System
             $template_folder = $this->paths['root_dir'];
             $cache_folder = $this->paths['root_cache'] . '_index/';
 
-            $this->time->end('system');
-            $this->time->end('render_templates');
-            $this->memory->save('system_after_render');
             if ($this->trace) {
-                TraceManager::generate();
+                TraceManager::generate(0);
                 $this->assign('page_trace', $this->trace_page);
             }
 
@@ -2267,6 +2266,12 @@ class System
                 $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
             } else {
                 $this->template->display(__DIR__ . '/templates/system/' . $this->layout . '.tpl', $this->cache_hash);
+            }
+            $this->time->end('system');
+            $this->time->end('render_templates');
+            $this->memory->save('system_after_render');
+            if ($this->trace) {
+                TraceManager::generate();
             }
         } catch(Exception $ex) {
             trigger_error('Template Exception: ' . $ex->getMessage());
@@ -2487,7 +2492,7 @@ class System
      *
      * @return none
      */
-    public function render_variables()
+    private function _renderVariables()
     {
         if ($this->response_type == 'html') {
             $this->assign('random', md5(time() . rand()));

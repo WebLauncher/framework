@@ -37,10 +37,14 @@
 							<div class="panel-body">
 							    <h3><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Time</h3>
 							    <table class="table table-condensed">
-							        <tr>
-							        	<td style="width:30%;">Total execution:</td>
-							        	<td><strong><?=isset_or($times['system'],'N/A'); ?> s</strong></td>
+							        <tr class="active">
+							        	<th style="width:30%;">Total execution:</th>
+							        	<th><strong><?=isset_or($times['system'],'N/A'); ?> s</strong></th>
 							        </tr>
+							        <tr>
+                                        <td>Init:</td>
+                                        <td><strong><?=isset_or($times['init'],'N/A'); ?> s</strong></td>
+                                    </tr>
 							        <tr>
 							        	<td>Scripts execution:</td>
 							        	<td><strong><?=isset_or($times['render_scripts'],'N/A'); ?> s</strong></td>
