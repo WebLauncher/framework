@@ -91,8 +91,7 @@ class DbManager {
         try {
             $this->db_connection = new PDO($dns, $this->db_user, $this->db_password,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));   
         } catch (PDOException $e) {
-            trigger_error(get_class($this) .
-                          '::connect() Could not connect to database: ' .
+            trigger_error('Could not connect to database: ' .
                           $e->getMessage(), E_USER_ERROR);
             return false;
         }

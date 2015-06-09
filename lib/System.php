@@ -1669,7 +1669,7 @@ class System
      */
     private function _initPageSettings()
     {
-        if ($this->seo_enabled && !$this->ajax) {
+        if ($this->seo_enabled && !$this->ajax && $this->db_conn) {
             $pagepath = $this->paths['current_full'];
             $model = $this->libraries_settings['wbl_seo']['links_table'];
             $pg = $this->models->{$model}->get_cond('page="' . $pagepath . '"');
@@ -1790,7 +1790,7 @@ class System
      */
     private function _initMetas()
     {
-        if (!$this->ajax && $this->seo_enabled) {
+        if (!$this->ajax && $this->seo_enabled && $this->db_conn) {
             $query = 'select `name`,`content` from `' . $this->libraries_settings['wbl_seo']['metas_table'] . '` where is_active=1';
             $metas = $this->db_conn->getAll($query);
             foreach ($metas as $v) {
@@ -2558,7 +2558,9 @@ class System
             $this->db_conn = new DbManager();
             $this->db_conn->trace = $this->trace;
             $this->add_tables();
-            $this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
+            $this->db_conn_enabled=$this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
+            if(!$this->db_conn_enabled)
+                unset($this->db_conn);
         }
     }
 

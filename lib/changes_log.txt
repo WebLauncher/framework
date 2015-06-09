@@ -1,4 +1,5 @@
 2.7.3
+- db connection not required for the system to work
 - update Smarty 3 library v3.1.24
 - fix time and memory logging to be more accurate to the execution of the script
 2.7.2

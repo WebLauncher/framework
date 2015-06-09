@@ -51,7 +51,7 @@ class TraceManager {
         $request = self::get_debug($_REQUEST);
         
         $db_conn = array();
-        if (is_a($page -> db_conn -> tables, 'TablesManager')) {
+        if ($page->db_conn && is_a($page -> db_conn -> tables, 'TablesManager')) {
             $db_conn['dns'] = $page -> db_conn -> get_dns();
             $db_conn['tables'] = self::get_debug($page -> db_conn -> get_tables());
             $db_conn['db_no_valid_queries'] = $page -> db_conn -> num_valid_queries;

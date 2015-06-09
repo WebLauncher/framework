@@ -53,10 +53,12 @@
 							        	<td>Templates render:</td>
 							        	<td><strong><?=isset_or($times['render_templates'],'N/A'); ?> s</strong></td>
 							        </tr>
+							        <?php if($page->db_conn) {?>
 							        <tr>
                                         <td>DB queries:</td>
                                         <td><strong><?=$page -> db_conn -> total_execution_time() ?> s</strong></td>
                                     </tr>
+                                    <?php } ?>
 							    </table>
 							    <h3><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Memory</h3>
 							    <table class="table table-condensed">
