@@ -38,7 +38,7 @@ class SessionManager {
     /**
      * @var string $method Session store method
      */
-    private static $method = 'db';
+    private static $method = 'php';
     /**
      * @var object $handler Session handler
      */
@@ -75,6 +75,13 @@ class SessionManager {
      * Save to database
      */
     private static function save_db() {
+
+    }
+    
+    /**
+     * Save to database
+     */
+    private static function save_php() {
 
     }
 
@@ -137,6 +144,33 @@ class SessionManager {
         self::$array = &$_SESSION;
     }
 
+    /**
+     * Init to database
+     * @param string $_cookie
+     */
+    private static function init_php($_cookie = 'default') {
+        session_set_cookie_params(self::$default_offset);
+        if ($_cookie) {
+            if (!isset($_COOKIE[$_cookie]))
+                self::$create = true;
+            self::$cookie_name = $_cookie;
+            @session_start();
+        }
+        if (!isset($_SESSION['expire']) || $_SESSION['expire'] < time()) {
+            session_unset();
+            if (!isset($_SESSION))
+                @session_start();
+            $_SESSION['_timestamp_created'] = time();
+            $_SESSION['_hash'] = session_id();
+        }
+        $offset = self::$default_offset;
+        if (isset($_SESSION['remmember']))
+            $offset = self::$remmember_offset;
+        $_SESSION['expire'] = time() + $offset;
+        session_set_cookie_params($offset);
+        setcookie(session_name(), session_id(), time() + $offset, '/');
+        self::$array = &$_SESSION;
+    }
 }
 
 /**

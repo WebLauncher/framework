@@ -25,7 +25,7 @@ class TraceManager {
     /**
      * Generate trace
      */
-    public static function generate() {
+    public static function generate($save=true) {
         global $page;
         $page -> import('library', 'kint');
         
@@ -51,7 +51,7 @@ class TraceManager {
         $request = self::get_debug($_REQUEST);
         
         $db_conn = array();
-        if (is_a($page -> db_conn -> tables, 'TablesManager')) {
+        if ($page->db_conn && is_a($page -> db_conn -> tables, 'TablesManager')) {
             $db_conn['dns'] = $page -> db_conn -> get_dns();
             $db_conn['tables'] = self::get_debug($page -> db_conn -> get_tables());
             $db_conn['db_no_valid_queries'] = $page -> db_conn -> num_valid_queries;
@@ -59,7 +59,6 @@ class TraceManager {
             $db_conn['db_queries'] = self::get_debug($page -> db_conn -> queries);
             $db_conn['db_slowest_query'] = self::get_debug($page -> db_conn -> get_slowest_query());
         }
-        //$db_conn = self::get_debug($db_conn);
 
         $btn_style = "border:1px solid #ccc; color:#000; background:#efefef;margin-right:4px; border-top:0;height:auto;padding:auto;margin:auto; clear:none; float:left; width:auto;";
         $page -> trace_page = '<div style="clear:both; position:fixed;bottom:0px; z-index:20000000000;"><button id="btn_page_trace_' . $random . '" onclick="window.open(\'' . $page -> paths['root'] . '?a=__sys_trace&page=' . $page -> session['__current_trace'] . '\');" style="' . $btn_style . '">&raquo;</button>';
@@ -68,10 +67,8 @@ class TraceManager {
         if ($page -> logger -> active && $page -> logger -> no)
             $page -> trace_page .= '<button onclick="jQuery(\'#page_log_' . $random . '\').toggle();" style="' . $btn_style . '">log (' . $page -> logger -> no . ')</button>';
         $page -> trace_page .= '</div>';
-
-        ob_start();
-        include __DIR__ . '/../../templates/trace/trace_page.php';
-        self::$trace = ob_get_clean();
+        
+        
         $page -> trace_page .= '</div>';
         if ($page -> debug)
             $page -> trace_page .= '<div id="page_template_0101" style="background:#fff;display:none;clear:both; border:1px solid #000; height:400px;"><br/><iframe id="page_template_0101_frame" frameborder="0"  vspace="0"  hspace="0"  marginwidth="0"  marginheight="0" width="100%" height="100%"></iframe></div>';
@@ -79,7 +76,12 @@ class TraceManager {
         if ($page -> logger -> active && $page -> logger -> no)
             $page -> trace_page .= '<div id="page_log_' . $random . '" style="background:#fff;display:none;clear:both; border:1px solid #000; height:400px; overflow:scroll;">
 						' . $page -> logger -> get() . '</div>';
-        self::save();
+        if($save){
+            ob_start();
+            include __DIR__ . '/../../templates/trace/trace_page.php';
+            self::$trace = ob_get_clean();
+            self::save();
+        }
     }
 
     /**

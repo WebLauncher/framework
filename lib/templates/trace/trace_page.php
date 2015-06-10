@@ -37,10 +37,14 @@
 							<div class="panel-body">
 							    <h3><span class="glyphicon glyphicon-time" aria-hidden="true"></span> Time</h3>
 							    <table class="table table-condensed">
-							        <tr>
-							        	<td style="width:30%;">Total execution:</td>
-							        	<td><strong><?=isset_or($times['system'],'N/A'); ?> s</strong></td>
+							        <tr class="active">
+							        	<th style="width:30%;">Total execution:</th>
+							        	<th><strong><?=isset_or($times['system'],'N/A'); ?> s</strong></th>
 							        </tr>
+							        <tr>
+                                        <td>Init:</td>
+                                        <td><strong><?=isset_or($times['init'],'N/A'); ?> s</strong></td>
+                                    </tr>
 							        <tr>
 							        	<td>Scripts execution:</td>
 							        	<td><strong><?=isset_or($times['render_scripts'],'N/A'); ?> s</strong></td>
@@ -49,10 +53,12 @@
 							        	<td>Templates render:</td>
 							        	<td><strong><?=isset_or($times['render_templates'],'N/A'); ?> s</strong></td>
 							        </tr>
+							        <?php if($page->db_conn) {?>
 							        <tr>
                                         <td>DB queries:</td>
                                         <td><strong><?=$page -> db_conn -> total_execution_time() ?> s</strong></td>
                                     </tr>
+                                    <?php } ?>
 							    </table>
 							    <h3><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Memory</h3>
 							    <table class="table table-condensed">
@@ -128,6 +134,7 @@
                             <?=$template ?>
                             </div>
                         </div>
+                        <?php if($page->db_conn) { ?>
 						<div role="tabpanel" id="div_db" class="tab-pane panel panel-default">
 		                    <div class="panel-body">
 		                        <table class="table table-condensed">
@@ -155,6 +162,7 @@
 		                        
 		                    </div>
 						</div>
+						<?php } ?>
 						<?php if($page->logged) { ?>
 						<div role="tabpanel" id="div_user" class="tab-pane panel panel-default">
 		                    <div class="panel-body">
