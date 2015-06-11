@@ -345,7 +345,7 @@ class _Base implements ArrayAccess {
             $this,
             '_process_row'
         ), $arr) : $arr;
-        return $arr; // new DbRowObjectList($arr,$this);
+        return $arr; //new DbRowObjectList($arr,$this);
     }
 
     /**
@@ -353,7 +353,6 @@ class _Base implements ArrayAccess {
      * @param array $row
      */
     private function _process_row($row) {
-        // $row=new DbRowObject($row, $this);
         if ($this -> process) {
             if (is_callable($this -> process_row_func))
                 $row=call_user_func($this -> process_row_func, $row);
@@ -795,7 +794,7 @@ class _Base implements ArrayAccess {
      */
     function join($table, $condition = '', $type = '') {
         $obj = clone $this;
-        $obj -> joins[] = array(
+        $obj -> joins[$table] = array(
             'table' => $table,
             'on' => $condition,
             'type' => $type
