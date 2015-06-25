@@ -37,6 +37,7 @@ class InstallInfo
         echo self::check('MOD Filter: ',in_array ('mod_filter', apache_get_modules ()));
         echo self::check('MOD Deflate: ',in_array ('mod_deflate', apache_get_modules ()));
         echo self::check('MOD Expires: ',in_array ('mod_expires', apache_get_modules ()));
+        echo self::check('MOD Headers: ',in_array ('mod_headers', apache_get_modules ()));
         
         echo '<h3>PHP</h3>';
         echo self::check('APC or eAccelerator or OPCache : ', extension_loaded('apc') || extension_loaded('eaccelerator') || function_exists('opcache_reset'));
