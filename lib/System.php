@@ -937,7 +937,8 @@ class System
         $this->_initCheck();
 
         // init trace
-        $this->_initTrace();
+        if($this->trace)
+            $this->_initTrace();
 
         // init image modifier
         $this->_initImageModifier();
