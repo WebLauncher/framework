@@ -584,4 +584,13 @@ if (!function_exists('array_column')) {
 	}
 
 }
+
+function ucwords_d($string,$delimiter=''){
+	if($delimiter) {
+		return implode('_',array_map('ucwords',explode($delimiter,$string)));
+	}
+	else {
+		return ucwords($string);
+	}
+}
 ?>

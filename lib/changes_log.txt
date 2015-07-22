@@ -1,6 +1,10 @@
 2.8.0
 - 
 
+
+2.7.4
+- function cleanup on System (backward compatible)
+- added 'config.26.php' that can be used for backward compatibility db tables from version 2.6
 2.7.3
 - db connection not required for the system to work
 - update Smarty 3 library v3.1.24
