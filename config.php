@@ -13,7 +13,7 @@
 */
 
 $this->add_config('production', 'example.com');
-$this->add_config('development', 'localhost:10001');
+$this->add_config('development', array('localhost:10001','localhost:8888'));
 
 /*
 	Use to import CSS files into template

@@ -1364,7 +1364,7 @@ class System
         if (defined('MODULE_CONFIG_PATH')) {
             include MODULE_CONFIG_PATH . 'config.php';
         } else {
-            include $this->paths['root_code'] . $this->module . 'config.php';
+            $this->loadFile($this->paths['root_code'] . $this->module . 'config.php');
         }
         $this->_initDebug();
         if (!isset($this->db_connections) || !is_array($this->db_connections) || !count($this->db_connections)) {
