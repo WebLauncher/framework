@@ -29,9 +29,10 @@ class TraceManager {
         global $page;
         $page -> import('library', 'kint');
         
-        $file_name = microtime(true) . '_' . sha1($page -> paths['root']) . '_' . sha1($page -> query) . '_' . sha1(echopre_r($_REQUEST)) . '.html';
-        $page -> session['__current_trace'] = $file_name;
-
+        if(!$save){
+            $file_name = microtime(true) . '_' . sha1($page -> paths['root']) . '_' . sha1($page -> query) . '_' . sha1(echopre_r($_REQUEST)) . '.html';
+            $page -> session['__current_trace'] = $file_name;
+        }
         $db = self::get_debug($page -> get_page());
 
         $session = self::get_debug($page -> session);
@@ -61,7 +62,7 @@ class TraceManager {
         }
 
         $btn_style = "border:1px solid #ccc; color:#000; background:#efefef;margin-right:4px; border-top:0;height:auto;padding:auto;margin:auto; clear:none; float:left; width:auto;";
-        $page -> trace_page = '<div style="clear:both; position:fixed;bottom:0px; z-index:20000000000;"><button id="btn_page_trace_' . $random . '" onclick="window.open(\'' . $page -> paths['root'] . '?a=__sys_trace&page=' . $page -> session['__current_trace'] . '\');" style="' . $btn_style . '">&raquo;</button>';
+        $page -> trace_page = '<div style="clear:both; position:fixed;bottom:0px; z-index:20000000000;"><button id="btn_page_trace_' . $random . '" onclick="window.open(\'' . $page -> paths['root'] . '?a=__sys_trace&page=' . urlencode($page -> session['__current_trace']) . '\');" style="' . $btn_style . '">&raquo;</button>';
         if ($page -> debug)
             $page -> trace_page .= '';
         if ($page -> logger -> active && $page -> logger -> no)
@@ -175,9 +176,7 @@ class TraceManager {
     public static function init() {
         global $page;
         if ($trace_dir = self::check_dir()) {
-            if (isset_or($page -> actions[0]) == '__sys_trace' || isset_or($page -> actions[0]) == '__sys_trace_build') {
-                $page->import('library','wbl_system');
-            } else if (isset_or($page -> actions[0]) == '__sys_trace_phpinfo') {
+            if (isset_or($page -> actions[0]) == '__sys_trace_phpinfo') {
                 phpinfo();die;
             } else if (isset_or($page -> actions[0]) == '__sys_trace_get') {
                 if(file_exists($trace_dir . $_REQUEST['page']))
@@ -185,7 +184,9 @@ class TraceManager {
                 else 
                     echo 'File not found for trace: '.$_REQUEST['page'];
                 die ;            
-            }
+            } else if (($pos=strpos(isset_or($page -> actions[0]),'__sys_trace'))!==FALSE && $pos==0) {
+                $page->import('library','wbl_system');
+            } 
         }
     }
 

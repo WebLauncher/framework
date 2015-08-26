@@ -1,4 +1,5 @@
 <?php
+
 /**
  * System class.
  *
@@ -78,6 +79,11 @@ class System
      * @var flag if administrative zone
      */
     public $admin = 0;
+
+    /**
+     * @var flag if default admin zone is enabled
+     */
+    public $admin_enabled = true;
 
     /**
      * @var page query
@@ -820,6 +826,37 @@ class System
             $this->_404();
             break;
         }
+        if ($name) {
+            $name = str_replace('_', '', lcfirst(ucwords_d($name, '_')));
+            if (method_exists($this, $name)) {
+                return call_user_func_array(array(
+                    $this,
+                    $name
+                ), $args);
+            }
+        }
+    }
+
+    /**
+     * Set magic method
+     *
+     * @param string $name Name of attribute
+     * @param string $value Value of the attribute
+     *
+     * @return none
+     */
+    function __set($name, $value)
+    {
+        switch($name) {
+        case 'metas_enabled' :
+            $this->seo_enabled = $value;
+            break;
+        case 'visits_logs_enabled' :
+            $this->visits_logs_enabled = $value;
+            break;
+        default :
+            $this->{$name} = $value;
+        }
     }
 
     /**
@@ -859,6 +896,12 @@ class System
         case 'ssl' :
             return isset($_SERVER['HTTPS']);
             break;
+        case 'metas_enabled' :
+            return $this->seo_enabled;
+            break;
+        case 'visits_logs_enabled' :
+            return $this->logins_logs_enabled;
+            break;
 
         case 'request_method' :
             $methods = array(
@@ -889,7 +932,7 @@ class System
             'file',
             'model'
         );
-        return in_array($type, $types) && $this->{"load_" . $type}($file);
+        return in_array($type, $types) && $this->{"load" . ucfirst($type)}($file);
     }
 
     /**
@@ -932,7 +975,9 @@ class System
         $this->_initCheck();
 
         // init trace
-        $this->_initTrace();
+        if ($this->trace) {
+            $this->_initTrace();
+        }
 
         // init image modifier
         $this->_initImageModifier();
@@ -1186,7 +1231,7 @@ class System
      *
      * @return bool
      */
-    public function add_hock($name, $function)
+    public function addHock($name, $function)
     {
         $this->hocks->add($name, $function);
         return true;
@@ -1218,7 +1263,7 @@ class System
         }
 
         // get environment
-        $configs = $this->get_configs();
+        $configs = $this->_getConfigs();
         foreach ($configs as $env) {
             if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php')) {
                 include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php';
@@ -1277,8 +1322,8 @@ class System
         if ($this->template_engine == 'smarty') {
             $this->import('library', 'wbl_smarty');
         }
-        $this->change_template_dir($this->paths['root_code']);
-        $this->change_cache_dir($this->paths['root_cache']);
+        $this->changeTemplateDir($this->paths['root_code']);
+        $this->changeCacheDir($this->paths['root_cache']);
         if (isset_or($_REQUEST['__clear_cache'])) {
             $current_url = str_replace('?__clear_cache=1', '', $this->paths['current_full']);
             $current_url = str_replace('&__clear_cache=1', '', $current_url);
@@ -1296,10 +1341,7 @@ class System
     private function _initDal()
     {
         global $dal;
-
-        if ($this->admin) {
-            $this->import('class', 'objects.BaseAdmin');
-        } else {
+        if (!$this->admin) {
             $this->import('class', 'objects.Base');
         }
 
@@ -1322,7 +1364,7 @@ class System
         if (defined('MODULE_CONFIG_PATH')) {
             include MODULE_CONFIG_PATH . 'config.php';
         } else {
-            include $this->paths['root_code'] . $this->module . 'config.php';
+            $this->loadFile($this->paths['root_code'] . $this->module . 'config.php');
         }
         $this->_initDebug();
         if (!isset($this->db_connections) || !is_array($this->db_connections) || !count($this->db_connections)) {
@@ -1363,10 +1405,8 @@ class System
     {
         if ($this->content == 'img_mod') {
             ini_set('memory_limit', '128M');
-            $this->load_library("images");
+            $this->loadLibrary("images");
             $path = str_replace($this->paths['root'], $this->paths['dir'], $_REQUEST['_file']);
-
-            $this->import('library', 'image');
 
             // get cache path
             $img_cache = $this->paths['root_cache'] . 'img_mod/';
@@ -1531,6 +1571,7 @@ class System
             $url = parse_url($this->query);
             $q = $url['path'];
         }
+
         // set reponse type
         if (isset($_REQUEST['response']) && in_array(strtolower($_REQUEST['response']), $this->response_types)) {
             $this->response_type = strtolower($_REQUEST['response']);
@@ -1538,7 +1579,7 @@ class System
             $this->response_type = strtolower(pathinfo($q, PATHINFO_EXTENSION));
             $q = substr($q, 0, strlen($q) - strlen($this->response_type) - 1);
         }
-        $this->set_query($q);
+        $this->setQuery($q);
 
         // inexistent file request
         if (is_dir($this->subquery[0])) {
@@ -1604,6 +1645,10 @@ class System
         $this->_initSkin();
         $this->render_all = !$this->ajax;
         $this->render_type = $this->_getRenderType();
+
+        if ($this->admin) {
+            $this->import('library', 'wbl_admin');
+        }
     }
 
     /**
@@ -1636,7 +1681,7 @@ class System
      *
      * @return none
      */
-    public function _initSkin()
+    private function _initSkin()
     {
 
         // set skins folders
@@ -1692,8 +1737,8 @@ class System
 
             // apply settings
             $this->title = str_replace('%title%', $this->title, $this->page['title']);
-            $this->set_meta_tag('keywords', $this->get_meta_tag('keywords') ? str_replace('%main%', $this->get_meta_tag('keywords'), $this->page['keywords']) : $this->page['keywords']);
-            $this->set_meta_tag('description', $this->get_meta_tag('description') ? str_replace('%main%', $this->get_meta_tag('description'), $this->page['description']) : $this->page['description']);
+            $this->setMetaTag('keywords', $this->get_meta_tag('keywords') ? str_replace('%main%', $this->get_meta_tag('keywords'), $this->page['keywords']) : $this->page['keywords']);
+            $this->setMetaTag('description', $this->get_meta_tag('description') ? str_replace('%main%', $this->get_meta_tag('description'), $this->page['description']) : $this->page['description']);
         }
     }
 
@@ -1761,7 +1806,7 @@ class System
      */
     private function _initJsScript()
     {
-        if (strpos($this->subquery[1], 'script_file_') !== FALSE) {
+        if (strpos($this->subquery[1], 'script_file_') !== false) {
             header('Content-Type: application/javascript');
             header('Expires: Thu, 4 Oct 2014 20:00:00 GMT');
             header('Cache-Control: public, max-age=31536000');
@@ -1769,7 +1814,7 @@ class System
 
             echo @$this->session['script'];
             unset($this->session['script']);
-            @$this->save_session();
+            @$this->saveSession();
 
             exit();
             die();
@@ -1790,7 +1835,7 @@ class System
             $query = 'select `name`,`content` from `' . $this->libraries_settings['wbl_seo']['metas_table'] . '` where is_active=1';
             $metas = $this->db_conn->getAll($query);
             foreach ($metas as $v) {
-                $this->set_meta_tag($v['name'], $v['content']);
+                $this->setMetaTag($v['name'], $v['content']);
             }
         }
     }
@@ -1835,7 +1880,7 @@ class System
         if (isset($this->actions[0]) && $this->actions[0] == 'signature') {
             $obj = new SignatureManager($this->session);
             $obj->display(5, dirname(__FILE__) . '/font.ttf');
-            $this->save_session();
+            $this->saveSession();
             die ;
         }
     }
@@ -1934,7 +1979,7 @@ class System
      *
      * @return string
      */
-    public function get_meta_tag($name)
+    public function getMetaTag($name)
     {
         return isset($this->meta_tags[$name]) ? $this->meta_tags[$name]['content'] : '';
     }
@@ -1947,7 +1992,7 @@ class System
      *
      * @return none
      */
-    public function set_meta_tag($name, $content)
+    public function setMetaTag($name, $content)
     {
         if (isset($this->meta_tags[$name])) {
             $this->meta_tags[$name]['content'] = $content;
@@ -1968,7 +2013,7 @@ class System
      *
      * @return none
      */
-    public function add_js_file($file, $local = true, $type = 'text/javascript')
+    public function addJsFile($file, $local = true, $type = 'text/javascript')
     {
         $file = str_replace(isset_or($this->paths['skin_scripts']), '{$skin_scripts}', $file);
         $file = str_replace(isset_or($this->paths['root_scripts']), '{$root_scripts}', $file);
@@ -1984,7 +2029,7 @@ class System
      *
      * @return none
      */
-    public function save_js_files()
+    public function saveJsFiles()
     {
         $this->session['__js_files'] = array();
         $js_files = $this->js_files;
@@ -1996,16 +2041,16 @@ class System
             if (isset_or($v['src'])) {
                 if ($v['local']) {
                     $this->session['__js_files'][$group][] = str_replace('{$skin_scripts}', '//' . $this->skins_folder . $this->skin . '/' . $this->module . 'scripts/', str_replace('{$root_scripts}', '//assets/scripts/', $v['src']));
-                    $this->add_js_file($this->paths['root'] . 'min/?g=js_site' . $group . '&module=' . $module . '&ck=' . $this->session_cookie . '&skin=' . $this->skin, false);
+                    $this->addJsFile($this->paths['root'] . 'min/?g=js_site' . $group . '&module=' . $module . '&ck=' . $this->session_cookie . '&skin=' . $this->skin, false);
                 } else {
-                    $this->add_js_file($v['src'], false, $v['type']);
+                    $this->addJsFile($v['src'], false, $v['type']);
                     $group++;
                 }
             }
         }
 
-        $this->save_session();
-        $this->assign('p', $this->get_page());
+        $this->saveSession();
+        $this->assign('p', $this->getPage());
     }
 
     /**
@@ -2018,7 +2063,7 @@ class System
      *
      * @return none
      */
-    public function add_css_file($file, $type = 'text/css', $media = 'screen, projection', $browser_cond = '')
+    public function addCssFile($file, $type = 'text/css', $media = 'screen, projection', $browser_cond = '')
     {
         $this->css_files[$file] = array(
             'href' => $file,
@@ -2055,7 +2100,7 @@ class System
         $this->_savePageSettings();
 
         // save session
-        $this->save_session();
+        $this->saveSession();
     }
 
     /**
@@ -2065,7 +2110,7 @@ class System
      *
      * @return bool
      */
-    public function change_cache_dir($dir)
+    public function changeCacheDir($dir)
     {
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {
@@ -2085,7 +2130,7 @@ class System
      *
      * @return none
      */
-    public function clear_cache($url = '')
+    public function clearCache($url = '')
     {
         if (!$url) {
             $url = $this->paths['current_full'];
@@ -2102,7 +2147,7 @@ class System
      *
      * @return none
      */
-    public function change_template_dir($dir)
+    public function changeTemplateDir($dir)
     {
         TemplatesManager::set_template_dir($dir);
         if (!is_dir(TemplatesManager::get_template_dir())) {
@@ -2120,9 +2165,9 @@ class System
      *
      * @return string
      */
-    public function fetch_template($name, $file, $cache_folder, $return = false)
+    public function fetchTemplate($name, $file, $cache_folder, $return = false)
     {
-        $this->change_cache_dir($cache_folder);
+        $this->changeCacheDir($cache_folder);
         if (is_file($file)) {
             try {
                 if ($return) {
@@ -2252,12 +2297,12 @@ class System
             $this->assign('title', $this->title);
             $this->assign('render_type', $this->render_type);
 
-            $this->assign('p', $this->get_page());
+            $this->assign('p', $this->getPage());
         }
         if (!headers_sent()) {
             header('Content-Type: ' . $this->content_type);
         }
-        $this->change_cache_dir($cache_folder);
+        $this->changeCacheDir($cache_folder);
         try {
             if (is_file($template_folder . $this->layout . '.tpl')) {
                 $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
@@ -2321,7 +2366,6 @@ class System
     {
 
         if ($this->admin) {
-            $this->import('class', 'objects.PageAdmin');
             $this->import('library', 'wbl_admin');
         } else {
             $this->import('class', 'objects.Page');
@@ -2376,7 +2420,7 @@ class System
         }
 
         // page object
-        $this->assign('p', $this->get_page());
+        $this->assign('p', $this->getPage());
     }
 
     /**
@@ -2425,7 +2469,7 @@ class System
      *
      * @return none
      */
-    public function init_session()
+    public function initSession()
     {
 
         // set cookie for module
@@ -2478,7 +2522,7 @@ class System
      *
      * @return none
      */
-    public function check_cookies()
+    public function checkCookies()
     {
         $this->check_cookies = true;
         $this->_initCheck_cookies();
@@ -2556,8 +2600,9 @@ class System
             $this->db_conn->trace = $this->trace;
             $this->add_tables();
             $this->db_conn_enabled = $this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
-            if (!$this->db_conn_enabled)
+            if (!$this->db_conn_enabled) {
                 unset($this->db_conn);
+            }
         }
     }
 
@@ -2568,7 +2613,7 @@ class System
      *
      * @return none
      */
-    public function set_module_user_type($type)
+    public function setModuleUserType($type)
     {
         $this->module_user_type = $type;
 
@@ -2586,7 +2631,7 @@ class System
      *
      * @return none
      */
-    public function add_message($type, $text)
+    public function addMessage($type, $text)
     {
         if (@!is_array(@$this->session['messages'])) {
             $this->session['messages'] = array();
@@ -2596,7 +2641,7 @@ class System
             'text' => $text,
             'showed' => 0
         );
-        $this->save_session();
+        $this->saveSession();
         $this->messages = $this->session['messages'];
     }
 
@@ -2608,7 +2653,7 @@ class System
      *
      * @return none
      */
-    public function add_error($field, $text)
+    public function addError($field, $text)
     {
         if (!isset($this->session['errors']) || !is_array($this->session['errors'])) {
             $this->session['errors'] = array();
@@ -2629,7 +2674,7 @@ class System
      *
      * @return none
      */
-    public function set_query($query)
+    public function setQuery($query)
     {
         $this->query = $query;
         $pages = explode('/', $query);
@@ -2637,6 +2682,9 @@ class System
         $module = trim($pages[0]);
         if (($module != '' && is_dir($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
             $module .= '/';
+        } elseif ($this->admin_enabled && $module == 'admin') {
+            $this->admin = true;
+            $module .= DS;
         } elseif ($module == '') {
             $module = $this->default_module;
         } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
@@ -2670,7 +2718,7 @@ class System
      *
      * @return none
      */
-    public function add_meta_tag($name, $content)
+    public function addMetaTag($name, $content)
     {
         $this->meta_tags[$name] = array(
             'name' => $name,
@@ -2686,7 +2734,7 @@ class System
      *
      * @return none
      */
-    public function add_path($name, $value)
+    public function addPath($name, $value)
     {
         $this->paths[$name] = $value;
     }
@@ -2696,7 +2744,7 @@ class System
      *
      * @return none
      */
-    public function save_session()
+    public function saveSession()
     {
         $_SESSION = $this->session;
     }
@@ -2706,7 +2754,7 @@ class System
      *
      * @return none
      */
-    public function save_state()
+    public function saveState()
     {
         if (isset($this->history[0])) {
             $this->session['state_link'] = $this->history[0];
@@ -2715,7 +2763,7 @@ class System
         }
 
         $this->session['state'] = $_REQUEST;
-        $this->save_session();
+        $this->saveSession();
     }
 
     /**
@@ -2728,7 +2776,7 @@ class System
         if (isset($this->session['state_link']) && $this->session['state_link'] != $this->paths['current_full']) {
             $this->session['state'] = '';
             $this->session['state_link'] = '';
-            $this->save_session();
+            $this->saveSession();
         }
     }
 
@@ -2761,8 +2809,10 @@ class System
      */
     private function _initUser()
     {
-        $this->_initAuthenticate();
-        $this->authenticate->init_user();
+        if (count($this->user_types_tables) && $this->module_user_type) {
+            $this->_initAuthenticate();
+            $this->authenticate->init_user();
+        }
     }
 
     /**
@@ -2770,7 +2820,7 @@ class System
      *
      * @return none
      */
-    public function clear_messages()
+    public function clearMessages()
     {
         if (isset($this->session['messages'])) {
             foreach ($this->session['messages'] as $k => $v) {
@@ -2788,7 +2838,7 @@ class System
      *
      * @return none
      */
-    public function clear_errors()
+    public function clearErrors()
     {
         if (isset($this->session['errors'])) {
             foreach ($this->session['errors'] as $k => $v) {
@@ -2807,7 +2857,7 @@ class System
      *
      * @return none
      */
-    public function add_tables()
+    public function addTables()
     {
         if (is_array($this->tables)) {
             $tables = new stdClass();
@@ -2838,7 +2888,7 @@ class System
      *
      * @return none
      */
-    public function update_visit_log()
+    public function updateVisitLog()
     {
         $this->_initAuthenticate();
         $this->authenticate->update_visit_log();
@@ -2882,14 +2932,14 @@ class System
      *
      * @return none
      */
-    public function validate_form($form_id)
+    public function validateForm($form_id)
     {
         if (isset($this->validate[$form_id]) && !$this->validate[$form_id]->validate()) {
             $errors = $this->validate[$form_id]->get_errors();
             foreach ($errors as $f => $e) {
                 $this->add_error($f, $e);
             }
-            $this->save_session();
+            $this->saveSession();
         }
     }
 
@@ -2905,7 +2955,7 @@ class System
      *
      * @return none
      */
-    public function add_validator($form_id, $field, $rule, $message = '', $client = false, $server = true)
+    public function addValidator($form_id, $field, $rule, $message = '', $client = false, $server = true)
     {
         if ($server) {
             $hash = $this->validate->get_form_hash($form_id);
@@ -2924,7 +2974,7 @@ class System
         if ($client) {
             $this->scripts->add_validator($form_id, $field, $rule, $message);
         }
-        $this->save_session();
+        $this->saveSession();
     }
 
     /**
@@ -2939,7 +2989,7 @@ class System
      *
      * @return none
      */
-    public function add_filter($form_id, $field, $filter, $params = '', $client = false, $server = true)
+    public function addFilter($form_id, $field, $filter, $params = '', $client = false, $server = true)
     {
         if ($server) {
             $hash = $this->validate->get_form_hash($form_id);
@@ -2956,10 +3006,12 @@ class System
             $this->validate->add_filter($form_id, $field, $filter, $params);
         }
         if ($client) {
+
             // no client filters yet
             // $this -> scripts -> add_validator($form_id, $field, $rule, $message);
+
         }
-        $this->save_session();
+        $this->saveSession();
     }
 
     /**
@@ -3000,7 +3052,7 @@ class System
      *
      * @return none
      */
-    public function redirect_ssl($url = '')
+    public function redirectSsl($url = '')
     {
         $this->clear_cache($url);
         $this->save_state();
@@ -3041,7 +3093,7 @@ class System
      *
      * @return mixed
      */
-    public function get_page()
+    public function getPage()
     {
         $arr = array();
         if ($this->trace) {
@@ -3124,11 +3176,11 @@ class System
      *
      * @return bool
      */
-    public function load_library($library)
+    public function loadLibrary($library)
     {
         if (!isset($this->loaded_libraries[$library])) {
-            if (!$this->load_file(dirname(__FILE__) . '/libraries/' . $library . '/import.php')) {
-                $this->logger->log('load_library', 'Import file for library "' . $library . '" was not found at: "' . dirname(__FILE__) . '/lib/libraries/' . $library . '/import.php"');
+            if (!$this->loadFile(dirname(__FILE__) . '/libraries/' . $library . '/import.php')) {
+                $this->logger->log('loadLibrary', 'Import file for library "' . $library . '" was not found at: "' . dirname(__FILE__) . '/lib/libraries/' . $library . '/import.php"');
                 return false;
             }
             $this->loaded_libraries[$library] = 1;
@@ -3143,7 +3195,7 @@ class System
      *
      * @return bool
      */
-    public function load_model($model)
+    public function loadModel($model)
     {
         if (!$this->models->import($model)) {
             $this->logger->log('load_dal', 'File for model "' . $model . '" was not found in any models folders.');
@@ -3156,19 +3208,22 @@ class System
      * Load class from php files
      *
      * @param object $class Class name
+     * @param string $class_name
      *
      * @return bool
      */
-    public function load_class($class)
+    public function loadClass($class, $class_name = '')
     {
-        if (!class_exists($class)) {
+        if (!$class_name)
+            $class_name = $class;
+        if (!class_exists($class_name)) {
             $paths = explode('.', $class);
             $file_path = $class . '.php';
             if (count($paths) > 1) {
                 $paths[count($paths) - 1] = $paths[count($paths) - 1] . '.php';
                 $file_path = implode('/', $paths);
             }
-            if (!$this->load_file(dirname(__FILE__) . '/classes/' . $file_path)) {
+            if (!$this->loadFile(dirname(__FILE__) . '/classes/' . $file_path)) {
                 $this->logger->log('load_class', 'File for class "' . $class . '" was not found at: "' . dirname(__FILE__) . '/lib/classes/' . $file_path . '"');
                 return false;
             }
@@ -3184,7 +3239,7 @@ class System
      *
      * @return bool
      */
-    public function load_file($file)
+    public function loadFile($file)
     {
         if (is_file($file)) {
             try {
@@ -3317,7 +3372,7 @@ class System
      *
      * @return none
      */
-    public function add_config($name, $hostnames)
+    public function addConfig($name, $hostnames)
     {
         if (!isset($this->environments[$name])) {
             $this->environments[$name] = array();
@@ -3336,7 +3391,7 @@ class System
      *
      * @return mixed
      */
-    public function get_configs()
+    private function _getConfigs()
     {
         $found = array();
         self::get_hostname();
@@ -3357,7 +3412,7 @@ class System
      *
      * @return string
      */
-    public function get_response()
+    public function getResponse()
     {
         if ($this->response_type == 'json') {
             $arr = $this->response_data;
