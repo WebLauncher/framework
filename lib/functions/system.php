@@ -314,8 +314,8 @@ function decrypt($crypted_text) {
  * @param string $tags
  */
 function tr($content, $language_id = 0, $tags = 'site') {
-	if ($content != "") {
-		global $page;
+    global $page;
+	if ($content != "" && $page->multi_language) {
 		$language = $language_id ? $language_id : isset($page -> session['language_id']) ? $page -> session['language_id'] : 0;
 		$quer = $content;
 

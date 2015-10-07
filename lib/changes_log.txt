@@ -1,4 +1,5 @@
 2.7.4
+- function tr() only work when $page->multi_language is true
 - function cleanup on System (backward compatible)
 - added 'config.26.php' that can be used for backward compatibility db tables from version 2.6
 2.7.3
