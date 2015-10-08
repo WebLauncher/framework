@@ -492,9 +492,10 @@ class _Page
             $this->system->change_template_dir($s_t_dir);
             $this->system->change_cache_dir($s_c_dir);
         }
-        if ($message) {
+        if ($message) 
             return $this->system->mail->compose($params['email'], $params['subject'], $message, $params['from'], $params['fromname'], isset_or($params['reply_to']), isset_or($params['reply_name']), isset_or($params['attachments']), isset_or($params['mail_in']), isset_or($params['sender']), isset_or($params['others']))->send();
-        }
+        else
+            System::triggerError('No mail content was found at path: '.$template_path);
         return false;
     }
 
