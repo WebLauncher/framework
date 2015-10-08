@@ -91,8 +91,7 @@ class DbManager {
         try {
             $this->db_connection = new PDO($dns, $this->db_user, $this->db_password,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));   
         } catch (PDOException $e) {
-            trigger_error('Could not connect to database: ' .
-                          $e->getMessage(), E_USER_ERROR);
+            System::triggerError('Could not connect to database: ' .$e->getMessage());
             return false;
         }
         return true;
@@ -148,10 +147,10 @@ class DbManager {
                 $error=$query->errorInfo();
                 if($this->trace)
                     $this->num_invalid_queries++;
-                trigger_error(
+                System::triggerError(
                                     'Sql Query Error '.' ('.$error[0].','.$error[1].') ' .': ' .
                                     $error[2].
-                                    ' (SQL: ' . $sql . ')', E_USER_ERROR);
+                                    ' (SQL: ' . $sql . ')');
                 $ret=false;
                 $this->db_resource=null;    
             }
@@ -167,10 +166,10 @@ class DbManager {
         catch(Exception $ex){
             if($this->trace)
                 $this->num_invalid_queries++;
-                trigger_error(get_class($this) .
+                System::triggerError(get_class($this) .
                                 '->query() Could not execute: ' .
                                 print_r($this->db_connection->errorInfo(),true) .
-                                ' (SQL: ' . $sql . ')',E_USER_ERROR);
+                                ' (SQL: ' . $sql . ')');
             $ret=false;
             $this->db_resource=null;
         }
@@ -249,7 +248,7 @@ class DbManager {
 
         $return = array();
         if (! is_object($this->db_resource)) {
-            trigger_error(get_class($this) .
+            System::triggerError(get_class($this) .
                                 '::getAll() : Previous query did not return a valid result!'
                                 , E_USER_ERROR);
             return $return;

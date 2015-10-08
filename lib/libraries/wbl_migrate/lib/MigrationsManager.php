@@ -105,7 +105,7 @@ class MigrationsManager {
             $object = new $name();
             return $object -> run($direction);
         } else
-            trigger_error('Could not locate migration file for ' . $name);
+            System::triggerError('Could not locate migration file for ' . $name);
         return false;
     }
 

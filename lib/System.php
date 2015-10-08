@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.4');
+define('SYS_VERSION', '2.7.5');
 
 /**
  * System Class.
@@ -1259,7 +1259,7 @@ class System
         } elseif (defined('SYSTEM_CONFIG_PATH') && is_file(SYSTEM_CONFIG_PATH . $this->config_file)) {
             include_once SYSTEM_CONFIG_PATH . $this->config_file;
         } else {
-            trigger_error('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this->config_file . '" missing!');
+            System::triggerError('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this->config_file . '" missing!');
         }
 
         // get environment
@@ -1268,7 +1268,7 @@ class System
             if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php')) {
                 include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php';
             } else {
-                trigger_error('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php" missing!');
+                System::triggerError('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php" missing!');
             }
         }
         if (substr($this->default_module, -1) !== '/') {
@@ -2176,7 +2176,7 @@ class System
                     $this->assign($name, $this->template->fetch($file, $this->cache_hash));
                 }
             } catch(Exception $ex) {
-                trigger_error('Template Exception: ' . $ex->getMessage());
+                System::triggerError('Template Exception: ' . $ex->getMessage());
             }
         } else {
             $this->logger->log('Templates_Error', 'Can not fetch template "' . $name . '" from file "' . $file . '"!');
@@ -2281,7 +2281,7 @@ class System
                 }
                 $this->redirect($this->paths['current']);
             } else {
-                trigger_error('No class named PageIndex extending Page provided in "index.php" file provided for module ' . $this->module);
+                System::triggerError('No class named PageIndex extending Page provided in "index.php" file provided for module ' . $this->module);
             }
 
             // change smarty template and cache dir for main index
@@ -2316,7 +2316,7 @@ class System
                 TraceManager::generate();
             }
         } catch(Exception $ex) {
-            trigger_error('Template Exception: ' . $ex->getMessage());
+            System::triggerError('Template Exception: ' . $ex->getMessage());
         }
     }
 
@@ -2397,7 +2397,7 @@ class System
                 $this->obj_index->_render();
             }
         } catch(Exception $ex) {
-            trigger_error('Exception: ' . $ex->getMessage());
+            System::triggerError('Exception: ' . $ex->getMessage());
         }
 
         // get database pages number if required
@@ -3247,7 +3247,7 @@ class System
                 include $file;
                 return true;
             } catch(Exception $ex) {
-                trigger_error('Error loading file "' . $file . '": ' . $ex->getMessage());
+                System::triggerError('Error loading file "' . $file . '": ' . $ex->getMessage());
             }
         }
         $this->logger->log('load_file', 'File "' . $file . '" was not found!');
@@ -3431,6 +3431,10 @@ class System
             echo json_encode($arr);
             die ;
         }
+    }
+    
+    public static function triggerError($message,$type=E_USER_NOTICE){
+        trigger_error('[File] '.$trace[1]['file'].'['. $trace[1]['line'].']'. $message, E_USER_NOTICE);
     }
 
 }

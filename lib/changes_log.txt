@@ -1,3 +1,6 @@
+2.7.5
+- added System::triggerError($message) to trigger system error that can be managed (for now same as trigger_error())
+- updated Smarty 3
 2.7.4
 - function tr() only work when $page->multi_language is true
 - function cleanup on System (backward compatible)
