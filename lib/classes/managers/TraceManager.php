@@ -109,7 +109,7 @@ class TraceManager {
     public static function check_dir() {
         global $page;
         $trace_dir = sys_get_temp_dir() . '/wbl_sys_trace/';
-        if (!is_dir($trace_dir) ) {
+        if (!file_exists($trace_dir) ) {
             if (!mkdir($trace_dir, 0777, true)) {
                 $this -> logger -> log('Cache_Write_Error', 'Can not create dir "' . $trace_dir . '" to cache folder!');
                 return false;
@@ -118,7 +118,7 @@ class TraceManager {
         elseif(!is_writable ($trace_dir))
         {
             $trace_dir = $page->paths['root_cache'] . 'wbl_sys_trace/';
-            if (!is_dir($trace_dir) && !mkdir($trace_dir, 0777, true)) {
+            if (!file_exists($trace_dir) && !mkdir($trace_dir, 0777, true)) {
                 $this -> logger -> log('Cache_Write_Error', 'Can not create dir "' . $trace_dir . '" to cache folder!');
                 return false;
             }

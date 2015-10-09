@@ -34,7 +34,7 @@ class PageIndex extends Page
             $http_path=str_replace($this->paths['main_root_code'],$this->paths['root'],str_replace('components/','',$path.$dir));
             
             $arr=array('component'=>$dir,'path'=>$http_path);
-            if(is_dir($path.$dir.'/components/')){
+            if(file_exists($path.$dir.'/components/')){
                 $kids=array();
                 $kids=$this->components($path.$dir.'/components/');
                 if(count($kids))

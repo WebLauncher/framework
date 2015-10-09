@@ -9,7 +9,7 @@
 	require_once dirname(__FILE__).'/lib/Parser.php';
     
     global $page;
-    if(!is_dir($page->paths['root_dir'].$page->modules_folder.DS.$page->module) && $page->module!='site/'){
+    if(!file_exists($page->paths['root_dir'].$page->modules_folder.DS.$page->module) && $page->module!='site/'){
         $page->paths['main_root_dir']=$page->paths['root_dir'];
         $page->paths['main_root_code']=$page->paths['root_code'];
         $page->main_module=$page->module;

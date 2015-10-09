@@ -1409,7 +1409,7 @@ class System
 
             // get cache path
             $img_cache = $this->paths['root_cache'] . 'img_mod/';
-            if (!is_dir($img_cache)) {
+            if (!file_exists($img_cache)) {
                 if (!mkdir($img_cache, 0777, true)) {
                     $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $dir . '" to cache folder!');
                     return false;
@@ -1581,7 +1581,7 @@ class System
         $this->setQuery($q);
 
         // inexistent file request
-        if (is_dir($this->subquery[0])) {
+        if (file_exists($this->subquery[0])) {
             die('Inexistent module requested!');
         }
 
@@ -1686,7 +1686,7 @@ class System
         // set skins folders
         if ($this->module != '') {
             $skin_path = ($this->skin_server_path) ? $this->skin_server_path : $this->paths['root'] . $this->skins_folder;
-            if (is_dir($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
+            if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
                 $this->add_path('skin_images', $skin_path . $this->skin . '/' . $this->module . 'images/');
                 $this->add_path('skin_scripts', $skin_path . $this->skin . '/' . $this->module . 'scripts/');
                 $this->add_path('skin_styles', $skin_path . $this->skin . '/' . $this->module . 'styles/');
@@ -2111,7 +2111,7 @@ class System
      */
     public function changeCacheDir($dir)
     {
-        if (!is_dir($dir)) {
+        if (!file_exists($dir)) {
             if (!mkdir($dir, 0777, true)) {
                 $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $dir . '" to cache folder!');
                 return false;
@@ -2149,7 +2149,7 @@ class System
     public function changeTemplateDir($dir)
     {
         TemplatesManager::set_template_dir($dir);
-        if (!is_dir(TemplatesManager::get_template_dir())) {
+        if (!file_exists(TemplatesManager::get_template_dir())) {
             $this->logger->log('Templates_Error', 'Can not find templates directory "' . $dir . '"!');
         }
     }
@@ -2220,7 +2220,7 @@ class System
 
             // get skin
             $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->default_skin . '/' . $this->module;
-            if (is_dir($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
+            if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
                 $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->skin . '/' . $this->module;
             }
         }
@@ -2255,9 +2255,9 @@ class System
 
             // change smarty template dir for module
             $template_folder = $this->paths['root_code'] . $this->module . 'views/';
-            if (is_dir($this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/')) {
+            if (file_exists($this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/')) {
                 $template_folder = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/';
-            } elseif (is_dir($this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/')) {
+            } elseif (file_exists($this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/')) {
                 $template_folder = $this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/';
             }
 
@@ -2431,7 +2431,7 @@ class System
     {
 
         // load objects
-        if (is_dir($this->paths['root_objects_inc'])) {
+        if (file_exists($this->paths['root_objects_inc'])) {
             $files = scandir($this->paths['root_objects_inc']);
             foreach ($files as $k => $v) {
                 if ($v != '.' && $v != '..' && $v != '') {
@@ -2679,14 +2679,14 @@ class System
         $pages = explode('/', $query);
 
         $module = trim($pages[0]);
-        if (($module != '' && is_dir($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
+        if (($module != '' && file_exists($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
             $module .= '/';
         } elseif ($this->admin_enabled && $module == 'admin') {
             $this->admin = true;
             $module .= DS;
         } elseif ($module == '') {
             $module = $this->default_module;
-        } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
+        } elseif (($module != '' && file_exists($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
             $pages[1] = $module;
             $module = $this->default_module;
         } else {
@@ -3224,7 +3224,7 @@ class System
      */
     public function loadFile($file)
     {
-        if (is_file($file)) {
+        if (file_exists($file)) {
             try {
                 global $page;
                 include $file;
