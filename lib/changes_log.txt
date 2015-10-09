@@ -1,4 +1,5 @@
 2.7.5
+- removed Kint library because it was slowing down debugging
 - added System::triggerError($message) to trigger system error that can be managed (for now same as trigger_error())
 - updated Smarty 3
 - update email manager to give more error feedback when e-mail could not be delivered

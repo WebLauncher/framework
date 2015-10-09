@@ -429,7 +429,7 @@ class System
     /**
      * @var flag if settings are enabled
      */
-    public $settings_enabled = true;
+    public $settings_enabled = false;
 
     /**
      * @var page settings array
@@ -565,7 +565,7 @@ class System
     /**
      * @var search engine optimization per page activated
      */
-    public $seo_enabled = true;
+    public $seo_enabled = false;
 
     /**
      * @var flag to secure request ( IDS )
@@ -1245,6 +1245,7 @@ class System
     private function _initConfig()
     {
         global $page;
+        $this->tables=new TablesManager();
         if (defined('SYSTEM_CONFIG_FILE')) {
             $this->config_file = SYSTEM_CONFIG_FILE;
         }
@@ -1284,9 +1285,7 @@ class System
      */
     private function _initFunctions()
     {
-
         // general functions
-        $this->import('library', 'kint');
         $this->import('file', __DIR__ . '/functions/system.php');
         $this->import('file', __DIR__ . '/functions/password.php');
     }
@@ -1847,8 +1846,8 @@ class System
      */
     private function _initSettings()
     {
-        if ($this->settings_enabled && isset($this->db_conn->tables['settings'])) {
-            $query = 'select * from ' . $this->db_conn->tables['settings'];
+        if ($this->settings_enabled && isset($this->db_conn->tables[$this->settings_table])) {
+            $query = 'select * from ' . $this->db_conn->tables[$this->settings_table];
             $arr = $this->db_conn->getAll($query);
             $return = array();
             foreach ($arr as $k => $v) {
@@ -2596,9 +2595,9 @@ class System
     private function _dbConnect()
     {
         if (isset($this->db_connections[0])) {
-            $this->db_conn = new DbManager();
+            $this->addTables();
+            $this->db_conn = new DbManager($this->tables);
             $this->db_conn->trace = $this->trace;
-            $this->add_tables();
             $this->db_conn_enabled = $this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
             if (!$this->db_conn_enabled) {
                 unset($this->db_conn);
@@ -2849,22 +2848,6 @@ class System
                 }
             }
             $this->_initErrors();
-        }
-    }
-
-    /**
-     * Get db tables form the global
-     *
-     * @return none
-     */
-    public function addTables()
-    {
-        if (is_array($this->tables)) {
-            $tables = new stdClass();
-            foreach ($this->tables as $k => $v) {
-                $tables->$k = $v;
-            }
-            $this->tables = $tables;
         }
     }
 
@@ -3433,8 +3416,29 @@ class System
         }
     }
     
+    /** 
+     * Trigger Error
+     * 
+     * @param string $message
+     * @param int $type
+     */
     public static function triggerError($message,$type=E_USER_NOTICE){
         trigger_error('[File] '.$trace[1]['file'].'['. $trace[1]['line'].']'. $message, E_USER_NOTICE);
     }
 
+    /**
+     * Get db tables form the global
+     *
+     * @return none
+     */
+    public function addTables()
+    {
+        if (is_array($this->tables)) {
+            $tables = $this->tables;
+            $this->tables=new TablesManager();
+            foreach ($tables as $k => $v) {
+                $this->tables[$k] = $v;
+            }
+        }
+    }
 }

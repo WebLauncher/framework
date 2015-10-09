@@ -62,8 +62,10 @@ class DbManager {
     /**
      * Constructor
      */
-    public function __construct(){
-        $this->tables_manager=new TablesManager();
+    public function __construct($tables_manager=''){
+        if(!$tables_manager)
+            $tables_manager=new TablesManager();
+        $this->tables_manager=$tables_manager;
     }
 
     /**

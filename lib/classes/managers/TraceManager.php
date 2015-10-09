@@ -27,7 +27,6 @@ class TraceManager {
      */
     public static function generate($save=true) {
         global $page;
-        $page -> import('library', 'kint');
         
         if(!$save){
             $file_name = microtime(true) . '_' . sha1($page -> paths['root']) . '_' . sha1($page -> query) . '_' . sha1(echopre_r($_REQUEST)) . '.html';
@@ -90,9 +89,7 @@ class TraceManager {
      * @param object $data
      */
     public static function get_debug($data) {
-        ob_start();
-        !d($data);
-        return ob_get_clean();
+        return echopre($data,true);
     }
 
     /**

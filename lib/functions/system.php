@@ -10,9 +10,9 @@
  * @package WebLauncher\Functions
  */
 function echopre($arr, $return = false) {
-	$text = '<div align="left" style="font-size:-1;"><pre class="debug">';
-	$text .= @d($arr);
-	$text .= '</pre></div>';
+	$text = '<pre class="debug">';
+	$text .= print_r($arr,true);
+	$text .= '</pre>';
 	if ($return)
 		return $text;
 	echo $text;
