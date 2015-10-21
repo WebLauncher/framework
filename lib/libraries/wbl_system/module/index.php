@@ -25,6 +25,7 @@ class PageIndex extends Page
         $components=array('component'=>$this->system->main_module,'path'=>$this->paths['root'].$this->system->main_module);
         $components['kids']=$this->components($this->paths['main_root_code'].$this->system->main_module.'components/');
         $this->assign('components',$components);
+        $this->assign('models',$this->get_models());
     }
     
     function components($path){
@@ -43,6 +44,28 @@ class PageIndex extends Page
             $result[]=$arr;
         }
         return $result;
+    }
+    
+    function get_models(){
+        $tables=$this->system->db_conn->get_tables();
+        $files=$this->system->uploads->file_array($this->paths['main_root_code'].$this->system->main_module.'models'.DS);
+        $models=array();
+        foreach($tables as $v){
+            $model=array('name'=>array_values($v)[0]);
+            $model['db']=true;
+            $model['file']=in_array($model['name'].'.php',$files);
+            $models[$model['name']]=$model;
+        }
+        foreach($files as $f){
+            if(!isset($models[basename($f,'.php')]))
+            {
+                $model=array('name'=>basename($f,'.php'));
+                $model['db']=false;
+                $model['file']=true;
+                $models[$model['name']]=$model;
+            }
+        }      
+        return $models;
     }
 }
 ?>

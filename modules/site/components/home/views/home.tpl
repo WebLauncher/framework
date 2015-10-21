@@ -24,7 +24,7 @@
 		</div>
 	</div>
 </div>
-<div class="panel panel-danger">
+<div class="panel panel-primary">
 	<div class="panel-heading">System Check</div>
 	<div class="panel-body">
 		<iframe src="{$root}_check" frameborder="0" width="100%" height="200px"></iframe>
@@ -32,7 +32,7 @@
 </div>
 
 <h2>Learn <strong>WebLauncher Framework</strong></h2>
-<div class="panel panel-default">
+<div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
 			<p>
@@ -52,7 +52,7 @@
 </div>
 
 <h2>Contribute on <strong>WebLauncher Framework</strong></h2>
-<div class="panel panel-default">
+<div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
 			<p>
