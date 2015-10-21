@@ -5,7 +5,7 @@
 <div class="panel panel-primary">
 	<div class="panel-body">
 		<div class="col-md-6">
-			<a href="{$root}?a=__sys_trace" class="btn btn-primary">Start building using System Tools</a>
+			<a href="{$root}?a=__sys_trace#build" class="btn btn-primary">Start building using System Tools</a>
 			<p>
 				<h4>Start editing you site by changing:</h4>
 				- <strong>/modules/site/views/index.tpl</strong> for general layout <br/>
