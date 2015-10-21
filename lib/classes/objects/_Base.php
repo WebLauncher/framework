@@ -132,7 +132,7 @@ class _Base implements ArrayAccess {
                 return $name;
         }
         $trace = debug_backtrace();
-        trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+        System::triggerError('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
         return null;
     }
 
@@ -158,7 +158,7 @@ class _Base implements ArrayAccess {
                 $this -> Extensions,
                 $name
             ), $arguments);
-        trigger_error('Model for ' . $this -> table . ' does not have method "' . $name . '" defined!');
+        System::triggerError('Model for ' . $this -> table . ' does not have method "' . $name . '" defined!');
     }
 
     /**
@@ -504,7 +504,7 @@ class _Base implements ArrayAccess {
             if (isset_or($params[$this -> id_field]))
                 $cond = '`' . $this -> id_field . '`="' . $params[$this -> id_field] . '"';
             else {
-                trigger_error('Wrong call of function ' . get_class($this) . '->update() :' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+                System::triggerError('Wrong call of function ' . get_class($this) . '->update() :' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
                 return null;
             }
         }

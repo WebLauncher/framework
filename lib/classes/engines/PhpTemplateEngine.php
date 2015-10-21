@@ -11,7 +11,7 @@ class PhpTemplateEngine implements TemplateEngine{
 		if(isset($this->_variables[$name]))
 			return $this->_variables[$name];
 		else
-			trigger_error('Variable '.$name.' is not defined in template!');
+			System::triggerError('Variable '.$name.' is not defined in template!');
 	}
 	
 	public function assign($var,$value=''){

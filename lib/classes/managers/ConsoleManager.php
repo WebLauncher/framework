@@ -122,7 +122,7 @@ class ConsoleManager {
 			$time = '* * * * *';
 		$params = explode(' ', $time);
 		if (count($params) != 5)
-			trigger_error('Cronjob ' . print_r($cron, true) . ' time not well defined!');
+			System::triggerError('Cronjob ' . print_r($cron, true) . ' time not well defined!');
 		if (!self::$date)
 			self::$date = getdate();
 

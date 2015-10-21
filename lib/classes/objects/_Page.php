@@ -407,9 +407,9 @@ class _Page
             $this->template_file = $this->view . '.tpl';
             // page content
             $path = $this->_folder . 'views/';
-            if (is_dir($this->_folder . 'views/' . $this->skin . '/'))
+            if (file_exists($this->_folder . 'views/' . $this->skin . '/'))
                 $path = $this->_folder . 'views/' . $this->skin . '/';
-            elseif (is_dir($this->_folder . 'views/' . $this->system->default_skin . '/'))
+            elseif (file_exists($this->_folder . 'views/' . $this->system->default_skin . '/'))
                 $path = $this->_folder . 'views/' . $this->system->default_skin . '/';
 
             if ($this->subpage && TemplatesManager::get_template_var($this->subpage->_template_var))
@@ -476,7 +476,7 @@ class _Page
 
             $base_path = isset($params['base_path']) ? $params['base_path'] : $this->paths['root_code'] . $this->system->module . 'objects' . DS . $this->skin . DS;
 
-            if (!is_dir($base_path))
+            if (!file_exists($base_path))
                 $base_path = isset($params['base_path']) ? $params['base_path'] : $this->paths['root_code'] . $this->system->module . 'objects' . DS;
 
             $this->system->change_template_dir($base_path);
@@ -492,9 +492,10 @@ class _Page
             $this->system->change_template_dir($s_t_dir);
             $this->system->change_cache_dir($s_c_dir);
         }
-        if ($message) {
+        if ($message) 
             return $this->system->mail->compose($params['email'], $params['subject'], $message, $params['from'], $params['fromname'], isset_or($params['reply_to']), isset_or($params['reply_name']), isset_or($params['attachments']), isset_or($params['mail_in']), isset_or($params['sender']), isset_or($params['others']))->send();
-        }
+        else
+            System::triggerError('No mail content was found at path: '.$template_path);
         return false;
     }
 
@@ -506,7 +507,7 @@ class _Page
     {
         // page content
         $path = $this->_folder;
-        if (!is_dir($this->_folder . 'views/' . $this->skin . '/'))
+        if (!file_exists($this->_folder . 'views/' . $this->skin . '/'))
             $path = $this->_folder . 'views/' . $this->system->default_skin . '/';
         else
             $path = $this->_folder . 'views/' . $this->skin . '/';

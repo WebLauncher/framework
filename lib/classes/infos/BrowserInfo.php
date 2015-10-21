@@ -945,8 +945,10 @@
 		 */
 		public static function get($UA){
 			self::$USER_AGENT = $UA;
-			self::Resolve();
-			self::$Resolved = true;
+            if(!self::$Resolved){
+			 self::Resolve();
+			 self::$Resolved = true;
+            }
 
 			$arr=array();
 			$arr['user_agent']=self::$USER_AGENT;

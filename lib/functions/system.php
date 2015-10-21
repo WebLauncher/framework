@@ -10,9 +10,9 @@
  * @package WebLauncher\Functions
  */
 function echopre($arr, $return = false) {
-	$text = '<div align="left" style="font-size:-1;"><pre class="debug">';
-	$text .= @d($arr);
-	$text .= '</pre></div>';
+	$text = '<pre class="debug">';
+	$text .= print_r($arr,true);
+	$text .= '</pre>';
 	if ($return)
 		return $text;
 	echo $text;
@@ -314,8 +314,8 @@ function decrypt($crypted_text) {
  * @param string $tags
  */
 function tr($content, $language_id = 0, $tags = 'site') {
-	if ($content != "") {
-		global $page;
+    global $page;
+	if ($content != "" && $page->multi_language) {
 		$language = $language_id ? $language_id : isset($page -> session['language_id']) ? $page -> session['language_id'] : 0;
 		$quer = $content;
 
@@ -583,5 +583,14 @@ if (!function_exists('array_column')) {
 		return $values;
 	}
 
+}
+
+function ucwords_d($string,$delimiter=''){
+	if($delimiter) {
+		return implode('_',array_map('ucwords',explode($delimiter,$string)));
+	}
+	else {
+		return ucwords($string);
+	}
 }
 ?>

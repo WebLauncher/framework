@@ -12,7 +12,7 @@ $this -> build_auto = false;
 
 
 $this -> db_connections = array(0 => array(
-        'host' => 'localhost',
+        'host' => '127.0.0.1',
         'user' => 'root',
         'password' => '',
         'dbname' => 'base'
