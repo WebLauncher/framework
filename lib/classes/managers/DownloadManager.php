@@ -236,7 +236,7 @@ class DownloadManager {
 
 		while ($file = readdir($dir)) {
 			if (empty($file_path) && $file != '.' && $file != '..') {
-				if (is_dir($dirname.'/'.$file)) {
+				if (file_exists($dirname.'/'.$file)) {
 					DownloadManager::find_file($dirname.'/'.$file, $fname, $file_path);
 				}
 				else {

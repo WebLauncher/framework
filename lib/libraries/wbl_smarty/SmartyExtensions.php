@@ -328,7 +328,7 @@ class SmartyExtensions {
 	{
 		$smarty=&$template->smarty;
 	    if (empty($params['path'])) {
-	        trigger_error("{element}: missing 'path' parameter");
+	        System::triggerError("{element}: missing 'path' parameter");
 	        return;
 	    }
 		
@@ -364,7 +364,7 @@ class SmartyExtensions {
 		    }
 	    }	
 		else{
-			trigger_error("{element}: template file not found at: ".$template_path);
+			System::triggerError("{element}: template file not found at: ".$template_path);
 	        return;	
 		}
 	}
@@ -434,22 +434,22 @@ class SmartyExtensions {
 	function validator($params, &$smarty)
 	{
 	    if (empty($params['form'])) {
-	        trigger_error("validator: missing 'form' parameter");
+	        System::triggerError("validator: missing 'form' parameter");
 	        return;
 	    }
 		
 		if (empty($params['field'])) {
-	        trigger_error("validator: missing 'field' parameter");
+	        System::triggerError("validator: missing 'field' parameter");
 	        return;
 	    }
 		
 		if (empty($params['rule'])) {
-	        trigger_error("validator: missing 'rule' parameter");
+	        System::triggerError("validator: missing 'rule' parameter");
 	        return;
 	    }
 		
 		if (empty($params['message'])) {
-	        trigger_error("validator: missing 'message' parameter");
+	        System::triggerError("validator: missing 'message' parameter");
 	        return;
 	    }
 	

@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.3');
+define('SYS_VERSION', '2.7.5');
 
 /**
  * System Class.
@@ -429,7 +429,7 @@ class System
     /**
      * @var flag if settings are enabled
      */
-    public $settings_enabled = true;
+    public $settings_enabled = false;
 
     /**
      * @var page settings array
@@ -565,7 +565,7 @@ class System
     /**
      * @var search engine optimization per page activated
      */
-    public $seo_enabled = true;
+    public $seo_enabled = false;
 
     /**
      * @var flag to secure request ( IDS )
@@ -1245,6 +1245,7 @@ class System
     private function _initConfig()
     {
         global $page;
+        $this->tables=new TablesManager();
         if (defined('SYSTEM_CONFIG_FILE')) {
             $this->config_file = SYSTEM_CONFIG_FILE;
         }
@@ -1259,7 +1260,7 @@ class System
         } elseif (defined('SYSTEM_CONFIG_PATH') && is_file(SYSTEM_CONFIG_PATH . $this->config_file)) {
             include_once SYSTEM_CONFIG_PATH . $this->config_file;
         } else {
-            trigger_error('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this->config_file . '" missing!');
+            System::triggerError('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . $this->config_file . '" missing!');
         }
 
         // get environment
@@ -1268,7 +1269,7 @@ class System
             if (isset($_SERVER["SCRIPT_FILENAME"]) && is_file(dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php')) {
                 include_once dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php';
             } else {
-                trigger_error('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php" missing!');
+                System::triggerError('Configuration file "' . dirname($_SERVER["SCRIPT_FILENAME"]) . DS . 'config.' . $env . '.php" missing!');
             }
         }
         if (substr($this->default_module, -1) !== '/') {
@@ -1284,9 +1285,7 @@ class System
      */
     private function _initFunctions()
     {
-
         // general functions
-        $this->import('library', 'kint');
         $this->import('file', __DIR__ . '/functions/system.php');
         $this->import('file', __DIR__ . '/functions/password.php');
     }
@@ -1410,7 +1409,7 @@ class System
 
             // get cache path
             $img_cache = $this->paths['root_cache'] . 'img_mod/';
-            if (!is_dir($img_cache)) {
+            if (!file_exists($img_cache)) {
                 if (!mkdir($img_cache, 0777, true)) {
                     $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $dir . '" to cache folder!');
                     return false;
@@ -1582,7 +1581,7 @@ class System
         $this->setQuery($q);
 
         // inexistent file request
-        if (is_dir($this->subquery[0])) {
+        if (file_exists($this->subquery[0])) {
             die('Inexistent module requested!');
         }
 
@@ -1687,7 +1686,7 @@ class System
         // set skins folders
         if ($this->module != '') {
             $skin_path = ($this->skin_server_path) ? $this->skin_server_path : $this->paths['root'] . $this->skins_folder;
-            if (is_dir($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
+            if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
                 $this->add_path('skin_images', $skin_path . $this->skin . '/' . $this->module . 'images/');
                 $this->add_path('skin_scripts', $skin_path . $this->skin . '/' . $this->module . 'scripts/');
                 $this->add_path('skin_styles', $skin_path . $this->skin . '/' . $this->module . 'styles/');
@@ -1847,8 +1846,8 @@ class System
      */
     private function _initSettings()
     {
-        if ($this->settings_enabled && isset($this->db_conn->tables['settings'])) {
-            $query = 'select * from ' . $this->db_conn->tables['settings'];
+        if ($this->settings_enabled && isset($this->db_conn->tables[$this->settings_table])) {
+            $query = 'select * from ' . $this->db_conn->tables[$this->settings_table];
             $arr = $this->db_conn->getAll($query);
             $return = array();
             foreach ($arr as $k => $v) {
@@ -2112,7 +2111,7 @@ class System
      */
     public function changeCacheDir($dir)
     {
-        if (!is_dir($dir)) {
+        if (!file_exists($dir)) {
             if (!mkdir($dir, 0777, true)) {
                 $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $dir . '" to cache folder!');
                 return false;
@@ -2150,7 +2149,7 @@ class System
     public function changeTemplateDir($dir)
     {
         TemplatesManager::set_template_dir($dir);
-        if (!is_dir(TemplatesManager::get_template_dir())) {
+        if (!file_exists(TemplatesManager::get_template_dir())) {
             $this->logger->log('Templates_Error', 'Can not find templates directory "' . $dir . '"!');
         }
     }
@@ -2176,7 +2175,7 @@ class System
                     $this->assign($name, $this->template->fetch($file, $this->cache_hash));
                 }
             } catch(Exception $ex) {
-                trigger_error('Template Exception: ' . $ex->getMessage());
+                System::triggerError('Template Exception: ' . $ex->getMessage());
             }
         } else {
             $this->logger->log('Templates_Error', 'Can not fetch template "' . $name . '" from file "' . $file . '"!');
@@ -2221,7 +2220,7 @@ class System
 
             // get skin
             $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->default_skin . '/' . $this->module;
-            if (is_dir($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
+            if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
                 $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->skin . '/' . $this->module;
             }
         }
@@ -2256,9 +2255,9 @@ class System
 
             // change smarty template dir for module
             $template_folder = $this->paths['root_code'] . $this->module . 'views/';
-            if (is_dir($this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/')) {
+            if (file_exists($this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/')) {
                 $template_folder = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/';
-            } elseif (is_dir($this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/')) {
+            } elseif (file_exists($this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/')) {
                 $template_folder = $this->paths['root_code'] . $this->module . 'views/' . $this->default_skin . '/';
             }
 
@@ -2281,7 +2280,7 @@ class System
                 }
                 $this->redirect($this->paths['current']);
             } else {
-                trigger_error('No class named PageIndex extending Page provided in "index.php" file provided for module ' . $this->module);
+                System::triggerError('No class named PageIndex extending Page provided in "index.php" file provided for module ' . $this->module);
             }
 
             // change smarty template and cache dir for main index
@@ -2316,7 +2315,7 @@ class System
                 TraceManager::generate();
             }
         } catch(Exception $ex) {
-            trigger_error('Template Exception: ' . $ex->getMessage());
+            System::triggerError('Template Exception: ' . $ex->getMessage());
         }
     }
 
@@ -2397,7 +2396,7 @@ class System
                 $this->obj_index->_render();
             }
         } catch(Exception $ex) {
-            trigger_error('Exception: ' . $ex->getMessage());
+            System::triggerError('Exception: ' . $ex->getMessage());
         }
 
         // get database pages number if required
@@ -2432,7 +2431,7 @@ class System
     {
 
         // load objects
-        if (is_dir($this->paths['root_objects_inc'])) {
+        if (file_exists($this->paths['root_objects_inc'])) {
             $files = scandir($this->paths['root_objects_inc']);
             foreach ($files as $k => $v) {
                 if ($v != '.' && $v != '..' && $v != '') {
@@ -2596,9 +2595,9 @@ class System
     private function _dbConnect()
     {
         if (isset($this->db_connections[0])) {
-            $this->db_conn = new DbManager();
+            $this->addTables();
+            $this->db_conn = new DbManager($this->tables);
             $this->db_conn->trace = $this->trace;
-            $this->add_tables();
             $this->db_conn_enabled = $this->db_conn->connect($this->db_connections[0]['host'], $this->db_connections[0]['user'], $this->db_connections[0]['password'], $this->db_connections[0]['dbname'], isset_or($this->db_connections[0]['type'], 'mysql'));
             if (!$this->db_conn_enabled) {
                 unset($this->db_conn);
@@ -2680,14 +2679,14 @@ class System
         $pages = explode('/', $query);
 
         $module = trim($pages[0]);
-        if (($module != '' && is_dir($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
+        if (($module != '' && file_exists($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
             $module .= '/';
         } elseif ($this->admin_enabled && $module == 'admin') {
             $this->admin = true;
             $module .= DS;
         } elseif ($module == '') {
             $module = $this->default_module;
-        } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
+        } elseif (($module != '' && file_exists($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
             $pages[1] = $module;
             $module = $this->default_module;
         } else {
@@ -2849,22 +2848,6 @@ class System
                 }
             }
             $this->_initErrors();
-        }
-    }
-
-    /**
-     * Get db tables form the global
-     *
-     * @return none
-     */
-    public function addTables()
-    {
-        if (is_array($this->tables)) {
-            $tables = new stdClass();
-            foreach ($this->tables as $k => $v) {
-                $tables->$k = $v;
-            }
-            $this->tables = $tables;
         }
     }
 
@@ -3241,13 +3224,13 @@ class System
      */
     public function loadFile($file)
     {
-        if (is_file($file)) {
+        if (file_exists($file)) {
             try {
                 global $page;
                 include $file;
                 return true;
             } catch(Exception $ex) {
-                trigger_error('Error loading file "' . $file . '": ' . $ex->getMessage());
+                System::triggerError('Error loading file "' . $file . '": ' . $ex->getMessage());
             }
         }
         $this->logger->log('load_file', 'File "' . $file . '" was not found!');
@@ -3432,5 +3415,30 @@ class System
             die ;
         }
     }
+    
+    /** 
+     * Trigger Error
+     * 
+     * @param string $message
+     * @param int $type
+     */
+    public static function triggerError($message,$type=E_USER_NOTICE){
+        trigger_error('[File] '.$trace[1]['file'].'['. $trace[1]['line'].']'. $message, E_USER_NOTICE);
+    }
 
+    /**
+     * Get db tables form the global
+     *
+     * @return none
+     */
+    public function addTables()
+    {
+        if (is_array($this->tables)) {
+            $tables = $this->tables;
+            $this->tables=new TablesManager();
+            foreach ($tables as $k => $v) {
+                $this->tables[$k] = $v;
+            }
+        }
+    }
 }

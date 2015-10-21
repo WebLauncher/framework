@@ -36,7 +36,7 @@ class ModelsManager
 		else
 		{
 			$trace = debug_backtrace();
-	        trigger_error(
+	        System::triggerError(
 	            'Undefined table for model in php.config.php file via __get(): ' . $name .
 	            ' in ' . $trace[0]['file'] .
 	            ' on line ' . $trace[0]['line'],
@@ -56,7 +56,7 @@ class ModelsManager
 		else
 		{
 			$trace = debug_backtrace();
-	        trigger_error(
+	        System::triggerError(
 	            'Undefined table for model in php.config.php file via __call(): ' . $name .
 	            ' in ' . $trace[0]['file'] .
 	            ' on line ' . $trace[0]['line'],

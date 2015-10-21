@@ -23,3 +23,7 @@
 [OPTIONAL]
 Replace $page->metas_enabled with $page->seo_enabled
 Replace $page->visits_logs_enabled with $page->logins_logs_enabled
+
+[NOTE]
+`config.26.php` tries to solve the above by adding handlers and backward setting configurations. 
+This might not work on all websites. Please test before using this in production.

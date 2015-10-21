@@ -681,7 +681,7 @@ class FormObject {
 		elseif(isset($_REQUEST[$field]))
 			return $_REQUEST[$field];
 		else
-			trigger_error('No field "'.$field.'" registered in form "'.$this->_form_id.'"');
+			System::triggerError('No field "'.$field.'" registered in form "'.$this->_form_id.'"');
 	}
     
 	/**
