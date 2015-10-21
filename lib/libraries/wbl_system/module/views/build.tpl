@@ -47,13 +47,12 @@
 		color: #337ab7;
 	}
 	input.error {
-	    border:1px solid #f00;
+		border: 1px solid #f00;
 	}
 	label.error {
-	    color:#f00;
-	    font-weight:normal;
+		color: #f00;
+		font-weight: normal;
 	}
-	
 
 </style>
 <script>
@@ -70,102 +69,135 @@
 			}
 			e.stopPropagation();
 		});
-		$('.tree li>a').click(function() {
+		$('.tree li>a.btn-select').click(function() {
 			$('[name="path"]').val($(this).attr('path'));
-			$('[name="parent"]').val($(this).html());
+			$('[name="parent"]').val($(this).attr('path'));
 			$('.tree li>a.active').removeClass('active');
 			$(this).addClass('active');
 			return false;
 		});
 		$('#add_component').submit(function() {
-			if($('#add_component').valid()){
+			if ($('#add_component').valid()) {
 				$.get($('#add_component [name="path"]').val() + '/' + $('#add_component [name="name"]').val(), {
 					a : 'build'
 				}, function() {
 					load_build();
-					status('Component <strong>'+$('#add_component [name="name"]').val()+'</strong> was created!');
+					status('Component <strong>' + $('#add_component [name="name"]').val() + '</strong> was created!');
 				});
-			}
-			else alert('Please fill in the form properly!');
+			} else
+				alert('Please fill in the form properly!');
 			return false;
 		});
 		$('#add_model').submit(function() {
-			if($('#add_model').valid()){
+			if ($('#add_model').valid()) {
 				$.get($('#add_model [name="path"]').val() + '/', {
 					a : 'build-model:' + $('#add_model [name="name"]').val()
 				}, function() {
 					load_build();
-					status('Model <strong>'+$('#add_model [name="name"]').val()+'</strong> was created!');
+					status('Model <strong>' + $('#add_model [name="name"]').val() + '</strong> was created!');
 				});
-			}
-			else alert('Please fill in the form properly!');
+			} else
+				alert('Please fill in the form properly!');
 			return false;
 		});
-	});
+		$('.btn-add-model').click(function() {
+		    var model=$(this).attr('model');
+		    $(this).hide();
+			$.get(root, {
+				a : 'build-model:' + model
+			}, function() {
+                status('Model <strong>' + model + '</strong> was created!');
+				load_build();
+			});
+		});
+	}); 
 </script>
 {/literal}
 <div class="clearfix col-md-12">
-	<h2>Components</h2>
-	<div class="alert alert-info" role="alert">Select a component to add sub-components.</div>
-	<div class="col-md-3">
-		<div class="tree">
-			<ul>
-				{include file="component.tpl" obj=$components}
-			</ul>
-		</div>
-	</div>
-	<div class="col-md-9">
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					Add new component
-				</div>
-				<div class="panel-body">
-					<form id="add_component">
-						<input type="hidden" name="path" value="{$components.path}"/>
-						<div class="form-group">
-							<label for="exampleInputEmail1">Parent Component</label>
-							<input type="text" class="form-control" readonly="readonly" name="parent" value="{$main_module|default:'site'}">
-						</div>
-						<div class="form-group">
-							<label for="exampleInputEmail1">Name</label>
-							<input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
-							{validator form="add_component" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
-						</div>
-						<div class="form-group">
-							<label for="exampleInputPassword1">Title</label>
-							<input type="text" class="form-control" name="title" placeholder="Title">
-						</div>
-						<button type="submit" class="btn btn-default">
-							Add
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					Add new model
-				</div>
-				<div class="panel-body">
-					<form id="add_model">
-						<input type="hidden" name="path" value="{$components.path}"/>
-						<div class="form-group">
-							<label for="exampleInputEmail1">Parent Component</label>
-							<input type="text" class="form-control" name="parent" readonly="readonly" value="{$main_module|default:'site'}">
-						</div>
-						<div class="form-group">
-							<label for="exampleInputEmail1">Name</label>
-							<input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
-							{validator form="add_model" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
-						</div>
-						<button type="submit" class="btn btn-default">
-							Add
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="alert alert-default" role="alert">
+        Select a component to add sub-components or models. We recommend adding models in the root of the module so they can be accessed from any component.
+    </div>
+    <div class="col-md-6">
+        <h3>Components</h3>
+        <div class="tree">
+            <ul style="margin:0;padding:0;">
+                {include file="component.tpl" obj=$components}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <h3>Models</h3>
+        <div class="clearfix">
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-hdd"></span> DB Table
+            </div>
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-file"></span> Class File
+            </div>
+        </div>
+        <ul class="list-group">
+            {foreach item="model" from=$models}
+            <li class="list-group-item">
+                {if $model.db}<span class="glyphicon glyphicon-hdd"></span>{/if}
+                {if $model.file}<span class="glyphicon glyphicon-file"></span>{/if}
+                {$model.name}
+                {if !$model.file}<a href="#" class="btn btn-primary badge btn-add-model" model="{$model.name}" title="Add class file"><span class="glyphicon glyphicon-plus"></span></a>{/if}
+            </li>
+            {/foreach}
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Add new component
+                </div>
+                <div class="panel-body">
+                    <form id="add_component">
+                        <input type="hidden" name="path" value="{$components.path}"/>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Parent Component</label>
+                            <input type="text" class="form-control" readonly="readonly" name="parent" value="{$main_module|default:'site'}">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Name</label>
+                            <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+                            {validator form="add_component" field="name" rule="pattern|^[a-z_][a-z0-9]+$" message="Please user only [a-z] and _ (underscore)." }
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Title</label>
+                            <input type="text" class="form-control" name="title" placeholder="Title">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Add new model class
+                </div>
+                <div class="panel-body">
+                    <form id="add_model">
+                        <input type="hidden" name="path" value="{$components.path}"/>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Parent Component</label>
+                            <input type="text" class="form-control" name="parent" readonly="readonly" value="{$main_module|default:'site'}">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Name</label>
+                            <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+                            {validator form="add_model" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

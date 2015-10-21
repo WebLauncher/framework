@@ -1,6 +1,6 @@
 files
 cache
-.settings/com.aptana.editor.php.prefs
+.settings
 errs.log.csv
 errs.log.json
 .idea
