@@ -4,23 +4,24 @@
 {else}
 <div class="panel panel-primary">
 	<div class="panel-body">
-		<div class="col-md-6">
-			<a href="{$root}?a=__sys_trace#build" class="btn btn-primary">Start building using System Tools</a>
+		<div class="col-md-9">
 			<p>
 				<h4>Start editing you site by changing:</h4>
-				- <strong>/modules/site/views/index.tpl</strong> for general layout <br/>
-				- <strong>/modules/site/components/home/views/home.tpl</strong> for home page 
+				- <a href="file:///{$p.paths.root_dir}modules/site/views/index.tpl"><strong>{$p.paths.root_dir}modules/site/views/index.tpl</strong></a> for general layout <br/>
+				- <a href="file:///{$p.paths.root_dir}modules/site/components/home/views/home.tpl"><strong>{$p.paths.root_dir}modules/site/components/home/views/home.tpl</strong></a> for home page 
 			</p>
-		</div>
-		<div class="col-md-6">
 			<p>
-				<h4>
-					For configurations edit:
-				</h4>
-				- config.php<br/>
-				- config.development.php<br/>
-				- config.production.php<br/>
-			</p>
+                <h4>
+                    For configurations edit:
+                </h4>
+                - <a href="file:///{$p.paths.root_dir}config.php">{$p.paths.root_dir}config.php</a> global configurations<br/>
+                - <a href="file:///{$p.paths.root_dir}config.development.php">{$p.paths.root_dir}config.development.php</a> development configurations<br/>
+                - <a href="file:///{$p.paths.root_dir}config.production.php">{$p.paths.root_dir}config.production.php</a> production configurations<br/>
+            </p>
+		</div>
+		<div class="col-md-3">
+			<a href="{$root}?a=__sys_trace#build" class="btn btn-primary btn-block">Build using System Tools</a>
+			<a href="{$root}?a=__sys_trace#phpinfo" class="btn btn-primary btn-block">PHPInfo in System Tools</a>
 		</div>
 	</div>
 </div>
@@ -31,8 +32,8 @@
 	</div>
 </div>
 
-<h2>Learn <strong>WebLauncher Framework</strong></h2>
 <div class="panel panel-primary">
+    <div class="panel-heading">Learn <strong>WebLauncher Framework</strong></div>
 	<div class="panel-body">
 		<div class="col-md-6">
 			<p>
@@ -51,8 +52,8 @@
 	</div>
 </div>
 
-<h2>Contribute on <strong>WebLauncher Framework</strong></h2>
 <div class="panel panel-primary">
+    <div class="panel-heading">Contribute on <strong>WebLauncher Framework</strong></div>
 	<div class="panel-body">
 		<div class="col-md-6">
 			<p>
