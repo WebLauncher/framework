@@ -702,12 +702,6 @@ class System
     static $hostname = '';
 
     /**
-     * Bowser IP
-     * @var string $bowser_ip
-     */
-    public $browser_ip = '';
-
-    /**
      * Render Type
      * @var string $render_type
      */
