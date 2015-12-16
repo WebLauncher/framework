@@ -1,7 +1,7 @@
 WebLauncher Framework
 =====================
 
-Version: 2.7.4
+Version: 2.7.6
 
 This is a bootstrap for a new project using in-house WebLauncher Framework.
 
