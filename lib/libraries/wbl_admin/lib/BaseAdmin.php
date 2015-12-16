@@ -50,7 +50,7 @@ class Base extends _Base {
                 $this -> add_action("Delete", "", "", 'delete:{$o.id.value}', 1, "fa-trash-o", "Are you sure you want to delete this?");
             } else {
                 $trace = debug_backtrace();
-                trigger_error('Undefined function ' . get_class($this) . '->' . $this -> admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+                System::triggerError('Undefined function ' . get_class($this) . '->' . $this -> admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
                 return null;
             }
         }
@@ -213,7 +213,7 @@ class Base extends _Base {
             $this -> $admin_init_function();
         } else {
             $trace = debug_backtrace();
-            trigger_error('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+            System::triggerError('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
             return null;
         }
         global $page;
@@ -256,7 +256,7 @@ class Base extends _Base {
             $this -> $admin_init_function();
         } else {
             $trace = debug_backtrace();
-            trigger_error('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+            System::triggerError('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
             return null;
         }
         global $page;

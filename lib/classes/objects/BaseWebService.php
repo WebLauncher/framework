@@ -63,7 +63,7 @@
 					$this->_client->__setLocation($this->service_location);
 			}
 			else
-				trigger_error('No wsdl provided for model '.get_class($this->_model));
+				System::triggerError('No wsdl provided for model '.get_class($this->_model));
 		}
 		
 		/**
@@ -100,7 +100,7 @@
 					call_user_func($this -> after_call_execute, $method,$params,$response);
 			} catch(Exception $ex)
 			{
-				trigger_error('Webservice Error: ' . $ex -> getMessage() . '<br>' . $ex);
+				System::triggerError('Webservice Error: ' . $ex -> getMessage() . '<br>' . $ex);
 			}
 			return $this -> _process_response($response);
 		}

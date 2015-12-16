@@ -14,7 +14,7 @@
 		 */
 		public function offsetSet($offset, $value) {
 			global $page;        
-	        $page->tables->{$offset} = $value;        
+	        $page->tables->{$offset} = $this->_cleanValue($value);
 	    }
 		/**
 		 * ArrayAccess exists
@@ -22,6 +22,7 @@
 		 */
 	    public function offsetExists($offset) {
 	    	global $page;
+            $offset=$this->_cleanValue($offset);
 			if(!isset($page->tables->{$offset}))
 				$page->tables->{$offset}=$offset;
 	        return isset($page->tables->{$offset});
@@ -32,6 +33,7 @@
 		 */
 	    public function offsetUnset($offset) {
 	    	global $page;
+            $offset=$this->_cleanValue($offset);
 	        unset($page->tables->{$offset});
 	    }
 		/**
@@ -40,6 +42,7 @@
 		 */
 	    public function offsetGet($offset) {
 	    	global $page;
+            $offset=$this->_cleanValue($offset);
 	        return isset($page->tables->{$offset}) ? $page->tables->{$offset} : $offset;
 	    }
 		/**
@@ -48,6 +51,7 @@
 		 */
 		public function __get($name){
 			global $page;
+            $name=$this->_cleanValue($name);
 			return $this[$name];
 		}
 		/**
@@ -56,7 +60,16 @@
 		 * @param string $value
 		 */
 		public function __set($name,$value){
+            $name=$this->_cleanValue($name);
+            $value=$this->_cleanValue($value);
 			$this[$name]=$value;
 		}	
+        /**
+         * Clean old tbl_ and trigger error
+         * @param string $value
+         */
+        private function _cleanValue($value){
+            return substr( $value, 0, 4 )=='tbl_'?substr($value,4):$value;
+        }
 	}
 ?>

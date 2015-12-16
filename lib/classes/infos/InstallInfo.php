@@ -16,35 +16,41 @@ class InstallInfo
     {
         global $page;
         echo 'Checking if server is compatible<br/>';
-        echo apache_get_version().'<br/>';
-        
+
+        $is_apache = function_exists('apache_get_version');
+
+        echo $is_apache ? apache_get_version() : $_SERVER['SERVER_SOFTWARE'] . '<br/>';
+
         echo '<h2>Required</h2>';
 
-        echo '<h3>Apache</h3>';
-        echo self::check('MOD Rewrite: ',in_array ('mod_rewrite', apache_get_modules ()));
-        
+        if ($is_apache) {
+            echo '<h3>Apache</h3>';
+            echo self::check('MOD Rewrite: ', in_array('mod_rewrite', apache_get_modules()));
+        }
+
         echo '<h3>PHP</h3>';
-        echo self::check('PHP version >= 5.3.3 [Found '.phpversion().']: ', phpversion() > '5.3.3');
+        echo self::check('PHP version >= 5.3.3 [Found ' . phpversion() . ']: ', phpversion() > '5.3.3');
         echo self::check('PDO : ', extension_loaded('pdo'));
         echo self::check('GD2 : ', extension_loaded('gd') && function_exists('gd_info'));
         echo self::check('MCrypt : ', (function_exists('mcrypt_decrypt')));
         echo self::check('CURL : ', extension_loaded('curl'));
         echo self::check('MBstring : ', extension_loaded('mbstring'));
-        
+
         echo '<h2>Recomended [mostly for production]</h2>';
-        echo '<h3>Apache</h3>';
-        echo self::check('MOD Security: ',in_array ('mod_security', apache_get_modules ()));
-        echo self::check('MOD Filter: ',in_array ('mod_filter', apache_get_modules ()));
-        echo self::check('MOD Deflate: ',in_array ('mod_deflate', apache_get_modules ()));
-        echo self::check('MOD Expires: ',in_array ('mod_expires', apache_get_modules ()));
-        echo self::check('MOD Headers: ',in_array ('mod_headers', apache_get_modules ()));
-        
+        if ($is_apache) {
+            echo '<h3>Apache</h3>';
+            echo self::check('MOD Security: ', in_array('mod_security', apache_get_modules()));
+            echo self::check('MOD Filter: ', in_array('mod_filter', apache_get_modules()));
+            echo self::check('MOD Deflate: ', in_array('mod_deflate', apache_get_modules()));
+            echo self::check('MOD Expires: ', in_array('mod_expires', apache_get_modules()));
+            echo self::check('MOD Headers: ', in_array('mod_headers', apache_get_modules()));
+        }
+
         echo '<h3>PHP</h3>';
         echo self::check('APC or eAccelerator or OPCache : ', extension_loaded('apc') || extension_loaded('eaccelerator') || function_exists('opcache_reset'));
         echo self::check('SOAP : ', extension_loaded('soap'));
         echo self::check('Posix : ', extension_loaded('posix'));
         echo self::check('MBregex : ', extension_loaded('mbregex'));
-        
 
         echo '<br/>';
         if (isset($page->db_connections[0])) {

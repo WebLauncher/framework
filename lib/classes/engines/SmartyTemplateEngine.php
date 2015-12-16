@@ -157,7 +157,7 @@ class SmartyTemplateEngine implements TemplateEngine{
 	}
 	
 	protected function _get_engine(){
-		if(!is_dir($this->_params['cache_dir'].'smarty_cache/'))
+		if(!file_exists($this->_params['cache_dir'].'smarty_cache/'))
 			mkdir($this->_params['cache_dir'].'smarty_cache/');
 		switch($this->_version)
 		{

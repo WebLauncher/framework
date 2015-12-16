@@ -127,15 +127,7 @@ class BuildManager
  		$class.="*/\n";
 		$class.="class ".$component."_page extends Page\n";
 		$class.="{\n";
-		$class.="	function on_init()\n";
-		$class.="	{\n";
-		$class.="	}\n";
-		$class.="\n";
 		$class.="	function index()\n";
-		$class.="	{\n";
-		$class.="	}\n";
-		$class.="\n";
-		$class.="	function on_load()\n";
 		$class.="	{\n";
 		$class.="	}\n";
 		$class.="}\n";

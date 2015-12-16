@@ -44,7 +44,7 @@
 				return $this->_list[$name];
 			if(isset($this->_aliases[$name]))
 				return $this->_list[$this->_aliases[$name]];
-			trigger_error('Extenssion '.$name.' not found on model '.get_class($this->_model).'.');
+			System::triggerError('Extenssion '.$name.' not found on model '.get_class($this->_model).'.');
 		}
 		
 		/**
