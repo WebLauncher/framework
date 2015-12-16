@@ -1564,7 +1564,6 @@ class System
             $url = parse_url($this->query);
             $q = $url['path'];
         }
-
         // set reponse type
         if (isset($_REQUEST['response']) && in_array(strtolower($_REQUEST['response']), $this->response_types)) {
             $this->response_type = strtolower($_REQUEST['response']);
@@ -1572,10 +1571,10 @@ class System
             $this->response_type = strtolower(pathinfo($q, PATHINFO_EXTENSION));
             $q = substr($q, 0, strlen($q) - strlen($this->response_type) - 1);
         }
-        $this->setQuery($q);
+        $this->set_query($q);
 
         // inexistent file request
-        if (file_exists($this->subquery[0])) {
+        if (is_dir($this->subquery[0])) {
             die('Inexistent module requested!');
         }
 
@@ -2667,22 +2666,21 @@ class System
      *
      * @return none
      */
-    public function setQuery($query)
+    public function set_query($query)
     {
         $this->query = $query;
         $pages = explode('/', $query);
-
         $module = trim($pages[0]);
-        if (($module != '' && file_exists($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
+        if (($module != '' && is_dir($this->paths['root_code'] . $module)) || (!$this->live && $this->build_enabled && isset_or($_REQUEST['a']) == 'build-module')) {
             $module .= '/';
         } elseif ($this->admin_enabled && $module == 'admin') {
             $this->admin = true;
             $module .= DS;
         } elseif ($module == '') {
             $module = $this->default_module;
-        } elseif (($module != '' && file_exists($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
-            $pages[1] = $module;
-            $module = $this->default_module;
+        } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
+            $module=$this->default_module;
+            array_unshift($pages,str_replace('/', '',$this->default_module));
         } else {
             if ($module == 'img_mod' || $module == 'min' || $module == '_check') {
                 $pages[1] = $module;
@@ -2691,12 +2689,11 @@ class System
                     $module = $pages[0] . '/';
                 }
             } else {
-                $pages[1] = $module;
-                $module = $this->default_module;
+                $module=$this->default_module;
+                array_unshift($pages,str_replace('/', '',$this->default_module));
             }
         }
         $this->module = $module;
-        $pages[0] = $this->module;
         if (isset_or($pages[1])) {
             $this->content = $pages[1];
         }
@@ -3005,6 +3002,8 @@ class System
             $this->save_state();
         }
         if ($this->trace) {
+            $this->time->end('render_scripts');
+            $this->time->end('render_templates');
             $this->time->end('system');
             TraceManager::generate();
         }

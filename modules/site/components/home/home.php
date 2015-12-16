@@ -5,6 +5,8 @@
  *
  */
 class home_page extends Page {
+    public $title='Home Page';
+    
     function index() {
     }
 }
