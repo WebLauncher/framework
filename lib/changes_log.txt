@@ -1,5 +1,6 @@
 2.7.6
 - update Smarty 3
+- build manager enhancements
 2.7.5
 - removed Kint library because it was slowing down debugging
 - added System::triggerError($message) to trigger system error that can be managed (for now same as trigger_error())

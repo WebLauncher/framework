@@ -54,6 +54,7 @@ class PageIndex extends Page
             $model=array('name'=>array_values($v)[0]);
             $model['db']=true;
             $model['file']=in_array($model['name'].'.php',$files);
+            $model['path']=$this->paths['main_root_code'].$this->system->main_module.'models'.DS.$model['name'].'.php';
             $models[$model['name']]=$model;
         }
         foreach($files as $f){

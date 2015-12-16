@@ -33,7 +33,7 @@ class BuildManager
 	 * @param string $component
 	 * @param string $skin 
 	 */
-	function add($path,$component,$skin='default')
+	function add($path,$component,$skin='default',$title='')
 	{
 		if(!$this->files->add_dir($path))
 		{
@@ -51,7 +51,7 @@ class BuildManager
 		{
 			$this->errors[]=('Could not write file:"'.$path.'views/'.$skin.'/'.$component.'.tpl"!');
 		}
-		if(!$this->files->save_file($path.$component.'.php',$this->get_component_class($component)))
+		if(!$this->files->save_file($path.$component.'.php',$this->get_component_class($component,$title)))
 		{
 			$this->errors[]=('Could not write file:"'.$path.$component.'.php"!');
 		}
@@ -117,8 +117,10 @@ class BuildManager
 	 * Get generated code for component class
 	 * @param string $component
 	 */
-	function get_component_class($component)
+	function get_component_class($component,$title='')
 	{
+	    if(!$title)
+            $title=$component;
 		$class="<?php\n";
 		$class.="/**\n";
  		$class.="* Class ".$component."_page\n";
@@ -127,9 +129,10 @@ class BuildManager
  		$class.="*/\n";
 		$class.="class ".$component."_page extends Page\n";
 		$class.="{\n";
-		$class.="	function index()\n";
-		$class.="	{\n";
-		$class.="	}\n";
+        $class.="    public \$title='".$title."';\n \n";
+		$class.="    function index()\n";
+		$class.="    {\n";
+		$class.="    }\n";
 		$class.="}\n";
 		$class.="?>";
 		return $class;

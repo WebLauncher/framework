@@ -3005,6 +3005,8 @@ class System
             $this->save_state();
         }
         if ($this->trace) {
+            $this->time->end('render_scripts');
+            $this->time->end('render_templates');
             $this->time->end('system');
             TraceManager::generate();
         }

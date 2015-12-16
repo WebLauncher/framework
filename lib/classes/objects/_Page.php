@@ -61,7 +61,7 @@ class _Page
     /**
      * @var string Controller Title
      */
-    var $title = 'not assigned';
+    var $title = '';
     /**
      * @var int Execution duration (ms)
      */
@@ -238,6 +238,8 @@ class _Page
      */
     function _on_init()
     {
+        if($this->title)
+            $this->system->title=$this->title;
         $this->assign('p', $this->system->get_page());
         if (method_exists($this, 'on_init'))
             $this->_execute_result($this->on_init());
@@ -353,7 +355,7 @@ class _Page
                 $this->system->actions = $this->subquery;
             } elseif (!$this->system->live && $this->system->build_enabled && isset($this->system->actions[0]) && $this->system->actions[0] == 'build') {
                 $build = new BuildManager($this->system->uploads);
-                if (!$build->add($this->_folder . 'components' . DS . $c_name . '/', $c_name)) {
+                if (!$build->add($this->_folder . 'components' . DS . $c_name . '/', $c_name,$this->skin,isset_or($_REQUEST['title']))) {
                     foreach ($build->errors as $e)
                         $this->system->logger->log('builder_error', $e);
                 }
