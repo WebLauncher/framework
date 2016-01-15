@@ -210,7 +210,7 @@ class _Page
         if (method_exists($this, 'on_load'))
             $this->_execute_result($this->on_load());
 
-        $this->assign('p', $this->system->get_page());
+        $this->assign('p', $this->system->getPage());
     }
 
     function _has_action($name)
@@ -240,7 +240,7 @@ class _Page
     {
         if($this->title)
             $this->system->title=$this->title;
-        $this->assign('p', $this->system->get_page());
+        $this->assign('p', $this->system->getPage());
         if (method_exists($this, 'on_init'))
             $this->_execute_result($this->on_init());
         $this->_check_ssl();
@@ -487,7 +487,7 @@ class _Page
             $this->system->template->assign($params);
             $this->system->template->assign("params", $params);
 
-            $this->system->template->assign("p", $this->system->get_page());
+            $this->system->template->assign("p", $this->system->getPage());
             $message = $this->system->template->fetch($template_path);
 
             //reset smarty dirs

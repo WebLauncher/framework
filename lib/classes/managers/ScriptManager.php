@@ -18,7 +18,7 @@ class ScriptManager
 	 */
 	var $after_load='';
 	/**
-	 * @var array $forms forms used
+	 * @var mixed $forms forms used
 	 */
 	var $forms=array();
 	
@@ -81,5 +81,3 @@ class ScriptManager
 		$page->session['script']=$this->get_script();
 	}
 }
-
-?>

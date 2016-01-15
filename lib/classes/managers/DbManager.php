@@ -1,15 +1,18 @@
 <?php
-if(!class_exists('TablesManager'))
-    include __DIR__.'/TablesManager.php';
+if (!class_exists('TablesManager'))
+    include __DIR__ . '/TablesManager.php';
 /**
  * Database Manager Class
  */
+
 /**
  * PDO Database Manager Class
+ * @property array tables
  * @example $this->models->db
  * @package WebLauncher\Managers
  */
-class DbManager {
+class DbManager
+{
     /**
      * @var int $num_valid_queries Number of valid queries
      */
@@ -21,51 +24,53 @@ class DbManager {
     /**
      * @var array $queries Queries data array
      */
-    var $queries=array();
+    var $queries = array();
     /**
      * @var bool $trace Flag if trace is enabled
      */
-    var $trace=false;
+    var $trace = false;
     /**
-     * @var /PDO $db_connection PDO Object
+     * @var PDO $db_connection PDO Object
      */
-    private $db_connection=null;
+    private $db_connection = null;
     /**
      * @var object $db_resource DB Resource var
      */
-    private $db_resource=null;
+    private $db_resource = null;
     /**
      * @var string $db_type Database engine type
      */
-    private $db_type='';
+    private $db_type = '';
     /**
      * @var string $db_name Database name
      */
-    private $db_name='';
+    private $db_name = '';
     /**
      * @var string $db_server Database server
      */
-    private $db_server='';
+    private $db_server = '';
     /**
      * @var string $db_user Database user
      */
-    private $db_user='';
+    private $db_user = '';
     /**
      * @var string $db_password Database password
      */
-    private $db_password='';
+    private $db_password = '';
     /**
      * @var /TablesManager $tables_manager Table manager object
      */
-    private $tables_manager='';
-    
+    private $tables_manager = '';
+
     /**
      * Constructor
+     * @param string $tables_manager
      */
-    public function __construct($tables_manager=''){
-        if(!$tables_manager)
-            $tables_manager=new TablesManager();
-        $this->tables_manager=$tables_manager;
+    public function __construct($tables_manager = '')
+    {
+        if (!$tables_manager)
+            $tables_manager = new TablesManager();
+        $this->tables_manager = $tables_manager;
     }
 
     /**
@@ -74,111 +79,109 @@ class DbManager {
      * @return  boolean
      * @access  public
      *
-     * @param   string $host  (optional) Host name (Server name)
-     * @param   string $user  (optional) User Name
-     * @param   string $pass  (optional) User Password
-     * @param   string $dbname  (optional) Database Name
+     * @param   string $host (optional) Host name (Server name)
+     * @param   string $user (optional) User Name
+     * @param   string $pass (optional) User Password
+     * @param   string $dbname (optional) Database Name
      * @param   string $db_type (optional) Database engine
      */
-    function connect($host='',$user='',$pass='',$dbname='',$db_type='mysql')
+    function connect($host = '', $user = '', $pass = '', $dbname = '', $db_type = 'mysql')
     {
-        $this->db_server=$host;
-        $this->db_user=$user;
-        $this->db_password=$pass;
-        $this->db_name=$dbname;
-        $this->db_type=$db_type;
+        $this->db_server = $host;
+        $this->db_user = $user;
+        $this->db_password = $pass;
+        $this->db_name = $dbname;
+        $this->db_type = $db_type;
 
         $dns = $this->get_dns();
 
         try {
-            $this->db_connection = new PDO($dns, $this->db_user, $this->db_password,array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));   
+            $this->db_connection = new PDO($dns, $this->db_user, $this->db_password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
         } catch (PDOException $e) {
-            System::triggerError('Could not connect to database: ' .$e->getMessage());
+            System::triggerError('Could not connect to database: ' . $e->getMessage());
             return false;
         }
         return true;
     }
-    
+
     /**
      * Get magic method
-     * @param string $key 
+     * @param string $key
      * @return string Table name foudn using $key
      */
-    public function __get($key){
-        if($key=='tables')
+    public function __get($key)
+    {
+        if ($key == 'tables')
             return $this->tables_manager;
         return null;
     }
-    
+
     /**
      * Get DNS for PDO
-     * 
+     *
      */
     public function get_dns()
     {
-        return ($this->db_type.':dbname='.$this->db_name.';host='.$this->db_server.';charset=utf8');
+        return ($this->db_type . ':dbname=' . $this->db_name . ';host=' . $this->db_server . ';charset=utf8');
     }
-    
+
     /**
      * Get DB tables
      */
-    public function get_tables(){
+    public function get_tables()
+    {
         return $this->getAll('SHOW TABLES;');
     }
-    
+
     /**
      * Execute a query
      * @param string $sql SQL query
      * @param array $args Prepare statement arguments
+     * @return bool
      */
-    public function query($sql,$args=array())
+    public function query($sql, $args = array())
     {
-        $ret=true;
-        if($this->trace)
-        {
-            $this->queries[count($this->queries)]=array();
-            $this->queries[count($this->queries)-1]['query']=$sql;
-            $this->queries[count($this->queries)-1]['args']=$args;
-            $this->queries[count($this->queries)-1]['start']=microtime(1);
+        // $ret=true;
+        if ($this->trace) {
+            $this->queries[count($this->queries)] = array();
+            $this->queries[count($this->queries) - 1]['query'] = $sql;
+            $this->queries[count($this->queries) - 1]['args'] = $args;
+            $this->queries[count($this->queries) - 1]['start'] = microtime(1);
         }
-        try{
-            $query=$this->db_connection->prepare($sql);
+        try {
+            /** @var PDOStatement $query */
+            $query = $this->db_connection->prepare($sql);
             $query->execute($args);
-            if($query->errorCode() != 0)
-            {
-                $error=$query->errorInfo();
-                if($this->trace)
+            if ($query->errorCode() != 0) {
+                $error = $query->errorInfo();
+                if ($this->trace)
                     $this->num_invalid_queries++;
                 System::triggerError(
-                                    'Sql Query Error '.' ('.$error[0].','.$error[1].') ' .': ' .
-                                    $error[2].
-                                    ' (SQL: ' . $sql . ')');
-                $ret=false;
-                $this->db_resource=null;    
-            }
-            else
-            {
-                if($this->trace)
+                    'Sql Query Error ' . ' (' . $error[0] . ',' . $error[1] . ') ' . ': ' .
+                    $error[2] .
+                    ' (SQL: ' . $sql . ')');
+                $ret = false;
+                $this->db_resource = null;
+            } else {
+                if ($this->trace)
                     $this->num_valid_queries++;
-                $ret=true;
-                $this->db_resource=$query;
+                $ret = true;
+                $this->db_resource = $query;
             }
             unset($query);
-        }
-        catch(Exception $ex){
-            if($this->trace)
+        } catch (Exception $ex) {
+            if ($this->trace)
                 $this->num_invalid_queries++;
-                System::triggerError(get_class($this) .
-                                '->query() Could not execute: ' .
-                                print_r($this->db_connection->errorInfo(),true) .
-                                ' (SQL: ' . $sql . ')');
-            $ret=false;
-            $this->db_resource=null;
+            System::triggerError(get_class($this) .
+                '->query() Could not execute: ' .
+                print_r($this->db_connection->errorInfo(), true) .
+                ' (SQL: ' . $sql . ')');
+            $ret = false;
+            $this->db_resource = null;
         }
-        
-        if($this->trace)
-        {
-            $this->queries[count($this->queries)-1]['duration']=microtime(1)-$this->queries[count($this->queries)-1]['start'];
+
+        if ($this->trace) {
+            $this->queries[count($this->queries) - 1]['duration'] = microtime(1) - $this->queries[count($this->queries) - 1]['start'];
         }
         return $ret;
     }
@@ -189,7 +192,8 @@ class DbManager {
      * @return  void
      * @access  public
      */
-    function BEGIN() {
+    function BEGIN()
+    {
 
         $this->query('SET AUTOCOMMIT=0');
         $this->query('START TRANSACTION');
@@ -202,7 +206,8 @@ class DbManager {
      * @return  void
      * @access  public
      */
-    function ROLLBACK() {
+    function ROLLBACK()
+    {
 
         $this->query('ROLLBACK');
         $this->query('SET AUTOCOMMIT=1');
@@ -215,7 +220,8 @@ class DbManager {
      * @return  void
      * @access  public
      */
-    function COMMIT() {
+    function COMMIT()
+    {
 
         $this->query('COMMIT');
         $this->query('SET AUTOCOMMIT=1');
@@ -241,22 +247,22 @@ class DbManager {
      * @param   string $query (optional) SQL to execute
      * @param   array $args (optional) Prepare statement arguments
      */
-    function &getAll($query='',$args=array()) {
+    function &getAll($query = '', $args = array())
+    {
 
         // Look for a SQL string supplied
         if ($query) {
-            $this->query($query,$args);
+            $this->query($query, $args);
         }
 
         $return = array();
-        if (! is_object($this->db_resource)) {
+        if (!is_object($this->db_resource)) {
             System::triggerError(get_class($this) .
-                                '::getAll() : Previous query did not return a valid result!'
-                                , E_USER_ERROR);
+                '::getAll() : Previous query did not return a valid result!'
+                , E_USER_ERROR);
             return $return;
-        }
-        else {
-            $arr=$this->db_resource->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $arr = $this->db_resource->fetchAll(PDO::FETCH_ASSOC);
             return $arr;
         }
     }
@@ -275,22 +281,22 @@ class DbManager {
      *
      * @param   string $query (optional) SQL to execute
      * @param   array $args (optional) Prepare statement arguments
-    */
-    function &getRow($query,$args=array()) {
-        if(!preg_match('/LIMIT/i',$query)){
+     */
+    function &getRow($query, $args = array())
+    {
+        if (!preg_match('/LIMIT/i', $query)) {
             $query .= ' LIMIT 0,1';
         }//end if (!preg_match('/LIMIT/',$sql))
         // Look for a SQL string supplied
         if ($query) {
-            $this->query($query,$args);
+            $this->query($query, $args);
         }
-        
+
         if (is_null($this->db_resource)) {
             $return = array();
             return $return;
-        }
-        else {
-            $res=$this->db_resource->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $res = $this->db_resource->fetch(PDO::FETCH_ASSOC);
             return $res;
         }
     }
@@ -308,21 +314,21 @@ class DbManager {
      * @access  public
      *
      * @param   string $query (optional) SQL to execute
-     * @param   string $args (optional) Prepare statement arguments
-    */
-    function getOne($query,$args=array()) {
-        if(!preg_match('/LIMIT/i',$query)){
+     * @param   array $args (optional) Prepare statement arguments
+     */
+    function getOne($query, $args = array())
+    {
+        if (!preg_match('/LIMIT/i', $query)) {
             $query .= ' LIMIT 0,1';
         }//end if (!preg_match('/LIMIT/',$sql))
         // Look for a SQL string supplied
         if ($query) {
-            $this->query($query,$args);
+            $this->query($query, $args);
         }
 
-        if ($this->db_resource==null) {
+        if ($this->db_resource == null) {
             return null;
-        }
-        else {
+        } else {
             $row = $this->db_resource->fetch(PDO::FETCH_NUM);
             return $row[0];
         }
@@ -333,8 +339,9 @@ class DbManager {
      *
      * @return  mixed
      * @access  public
-    */
-    function nextId() {
+     */
+    function nextId()
+    {
         return NULL;
     }
 
@@ -344,8 +351,9 @@ class DbManager {
      *
      * @return  mixed
      * @access  public
-    */
-    function last_id() {
+     */
+    function last_id()
+    {
         return $this->db_connection->lastInsertId();
     }
 
@@ -354,8 +362,9 @@ class DbManager {
      *
      * @return  int
      * @access  public
-    */
-    function numRows() {
+     */
+    function numRows()
+    {
         return count($this->db_resource->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -364,10 +373,11 @@ class DbManager {
      *
      * @return  int
      * @access  public
-    */
-    function countTotalRows() {
+     */
+    function countTotalRows()
+    {
         $do_sql = 'SELECT FOUND_ROWS() AS total';
-        $res =  $this->getOne($do_sql);
+        $res = $this->getOne($do_sql);
         return $res;
     }
 
@@ -376,8 +386,9 @@ class DbManager {
      *
      * @return  int
      * @access  public
-    */
-    function affectedRows() {
+     */
+    function affectedRows()
+    {
         return $this->db_resource->rowCount();
     }
 
@@ -388,12 +399,10 @@ class DbManager {
      * @access  public
      *
      * @param   string $var String to add slashes
-    */
-    function stripMagicQuotes($var){
-        if(get_magic_quotes_gpc())
-            return stripslashes($var);
-        else
-            return $var;
+     */
+    function stripMagicQuotes($var)
+    {
+        return $var;
     }
 
     /**
@@ -403,8 +412,9 @@ class DbManager {
      * @access  public
      *
      * @param   string $value String to escape
-    */
-    function escape($value) {
+     */
+    function escape($value)
+    {
         $value = $this->stripMagicQuotes($value);
         return $this->mysql_escape_mimic($value);
     }
@@ -412,8 +422,10 @@ class DbManager {
     /**
      * Mimic function for mysql_real_escape_string
      * @param string $inp
+     * @return string
      */
-    function mysql_escape_mimic($inp) {
+    function mysql_escape_mimic($inp)
+    {
         return substr($this->db_connection->quote($inp), 1, -1);
     }
 
@@ -424,22 +436,22 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to escape
-    */
-    function stringEscape($Value) {
+     */
+    function stringEscape($Value)
+    {
         return '\'' . $this->escape($Value) . '\'';
     }
-    
+
     /**
      * Return total execution time of the queries
      */
     function total_execution_time()
     {
-        if($this->trace)
-        {
-            $total=0;
-            foreach($this->queries as $v)
-                if(isset($v['duration']))
-                    $total+=$v['duration'];
+        if ($this->trace) {
+            $total = 0;
+            foreach ($this->queries as $v)
+                if (isset($v['duration']))
+                    $total += $v['duration'];
             return $total;
         }
         return 0;
@@ -452,12 +464,12 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to evaluate
-    */
-    function nullOrString($Value) {
+     */
+    function nullOrString($Value)
+    {
         if (empty($Value)) {
             return 'NULL';
-        }
-        else {
+        } else {
             return '\'' . addslashes($Value) . '\'';
         }
     }
@@ -469,12 +481,12 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to evaluate
-    */
-    function nullOrDate($Value) {
+     */
+    function nullOrDate($Value)
+    {
         if (empty($Value)) {
             return 'NULL';
-        }
-        else {
+        } else {
             return '\'' . date('Y-m-d', strtotime($Value)) . '\'';
         }
     }
@@ -486,13 +498,13 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to evaluate
-    */
-    function nullOrInt($Value) {
+     */
+    function nullOrInt($Value)
+    {
         if (empty($Value)) {
             return 'NULL';
-        }
-        else {
-            return (int) $Value;
+        } else {
+            return (int)$Value;
         }
     }
 
@@ -503,13 +515,13 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to evaluate
-    */
-    function nullOrDouble($Value) {
+     */
+    function nullOrDouble($Value)
+    {
         if (empty($Value)) {
             return 'NULL';
-        }
-        else {
-            return (double) $Value;
+        } else {
+            return (double)$Value;
         }
     }
 
@@ -520,50 +532,52 @@ class DbManager {
      * @access  public
      *
      * @param   string $Value String to evaluate
-    */
-    function stringOrDate($Value) {
+     */
+    function stringOrDate($Value)
+    {
         if (empty($Value)) {
             return '0000-00-00';
-        }
-        else {
+        } else {
             return '\'' . date('Y-m-d', strtotime($Value)) . '\'';
         }
     }
-    
+
     /**
      * Get the slowest query
      */
-    function get_slowest_query(){
-        $slowest=array();
-        $min=0;
-        foreach($this->queries as $v)
-            if($min<$v['duration']){
-                $slowest=$v;
-                $min=$v['duration'];
+    function get_slowest_query()
+    {
+        $slowest = array();
+        $min = 0;
+        foreach ($this->queries as $v)
+            if ($min < $v['duration']) {
+                $slowest = $v;
+                $min = $v['duration'];
             }
         return $slowest;
     }
-    
+
     /**
      * Disconnect from server
      */
     function disconnect()
     {
-        $this->db_connection=null;
+        $this->db_connection = null;
     }
-    
+
     /**
      * Destroy magic method
      */
-    function __destroy(){
-        $this->db_connection=null;
+    function __destroy()
+    {
+        $this->db_connection = null;
     }
 
     /**
      * Get PDO connection
      */
-    function get_connection(){
+    function get_connection()
+    {
         return $this->db_connection;
     }
 }
-?>

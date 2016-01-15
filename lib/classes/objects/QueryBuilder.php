@@ -18,13 +18,13 @@ class QueryBuilder
 	 */
 	private $table='';
 	/**
-	 * @var /DbManager $db DB Manager object
+	 * @var DbManager $db DB Manager object
 	 */
 	private $db=null;
 	/**
 	 * @var string $query_type Query type 
 	 */
-	private $query_type='';
+	private $query_type='select';
 	/**
 	 * @var bool $calculate Calculate lines flag
 	 */
@@ -40,7 +40,7 @@ class QueryBuilder
 
 	/**
 	 * Constructor
-	 * @param string $table
+	 * @param mixed $table
 	 * @param string $query
 	 */
 	function __construct($table,$query='')
@@ -68,21 +68,24 @@ class QueryBuilder
 	{
 		$this->query.=($sql_text.$separator);
 	}
-	
-	/**
-	 * Add having to query
-	 */
+
+    /**
+     * Add having to query
+     * @param mixed $condition
+     * @return $this
+     */
 	function having($condition){
 		if($condition)
 			$this->append('having '.$condition);
 		return $this;
 	}
-	
-	/**
-	 * Start update query
-	 * @param array $fields
-	 * @param bool $escape
-	 */
+
+    /**
+     * Start update query
+     * @param array $fields
+     * @param bool $escape
+     * @return $this
+     */
 	function update($fields=array(),$escape=true)
 	{
 		$this->query_type='query';
@@ -111,11 +114,12 @@ class QueryBuilder
 		}
 		return $this;
 	}
-	
-	/**
-	 * Start insert query
-	 * @param array $fields
-	 */
+
+    /**
+     * Start insert query
+     * @param array $fields
+     * @return $this
+     */
 	function insert($fields=array())
 	{
 		$this->query_type='insert';
@@ -143,6 +147,8 @@ class QueryBuilder
 	 * Add values to query
 	 * @param array $values
 	 * @param bool $escape
+     *
+     * @return $this
 	 */
 	function values($values,$escape=true)
 	{
@@ -184,11 +190,12 @@ class QueryBuilder
 
 		return $this;
 	}
-	
-	/**
-	 * Start select query
-	 * @param array $fields
-	 */
+
+    /**
+     * Start select query
+     * @param array $fields
+     * @return $this
+     */
 	function select($fields=array())
 	{
 		$this->query_type='select';
@@ -226,8 +233,10 @@ class QueryBuilder
 	/**
 	 * Add field to query
 	 * @param string $field
-	 * @param string $as
+	 * @param int $as
 	 * @param string $separator
+     *
+     * @return $this
 	 */
 	function field($field,$as=0,$separator=',')
 	{
@@ -237,13 +246,14 @@ class QueryBuilder
 			$this->append($field,$separator);
 		return $this;
 	}
-	
-	/**
-	 * Add join to query
-	 * @param string|array $table
-	 * @param string $condition
-	 * @param string $join_type
-	 */
+
+    /**
+     * Add join to query
+     * @param string|array $table
+     * @param string $condition
+     * @param string $join_type
+     * @return $this
+     */
 	function join($table,$condition='',$join_type='')
 	{
 		if(is_array($table)){
@@ -269,11 +279,12 @@ class QueryBuilder
 		if($condition)
 			$this->append('on '.$condition);
 	}
-	
-	/**
-	 * Add group to query
-	 * @param array $fields
-	 */
+
+    /**
+     * Add group to query
+     * @param array $fields
+     * @return $this
+     */
 	function group($fields)
 	{
 		if($no_fields=count($fields))
@@ -294,6 +305,8 @@ class QueryBuilder
 	 * Add order to query
 	 * @param array $fields
 	 * @param array $directions
+     *
+     * @return $this
 	 */
 	function order($fields,$directions)
 	{
@@ -314,6 +327,8 @@ class QueryBuilder
 	/**
 	 * Escape names
 	 * @param  string $name
+     *
+     * @return string
 	 */
 	function escape_name($name){
 		if(substr($name,0,1)=='@')
@@ -325,6 +340,8 @@ class QueryBuilder
 	/**
 	 * Add where to query
 	 * @param string $condition
+     *
+     * @return $this
 	 */
 	function where($condition)
 	{
@@ -337,8 +354,10 @@ class QueryBuilder
 	 * Add limit to query
 	 * @param int $start
 	 * @param int $no_rows
+     *
+     * @return $this
 	 */
-	function limit($start=0,$no_rows='')
+	function limit($start=0,$no_rows=1)
 	{
 		$this->append('limit '.$start.','.$no_rows);
 		return $this;
@@ -347,6 +366,7 @@ class QueryBuilder
 	/**
 	 * Execute current query
 	 * @param string $query_type
+	 * @return mixed
 	 */
 	function execute($query_type='')
 	{
@@ -358,6 +378,7 @@ class QueryBuilder
 			$this->reset();
 			return $return;
 		}
+		return false;
 	}
 	
 	/**
@@ -399,8 +420,10 @@ class QueryBuilder
 	
 	/**
 	 * Execute query for all rows returned by query
+     *
+     * @return mixed
 	 */
-	private function execute_select()
+	protected function execute_select()
 	{
 		return $this->db->getAll($this->query,$this->args);
 	}
@@ -408,7 +431,7 @@ class QueryBuilder
 	/**
 	 * Execute simple query with no response
 	 */
-	private function execute_query()
+    protected function execute_query()
 	{
 		$this->db->query($this->query,$this->args);
 	}
@@ -416,7 +439,7 @@ class QueryBuilder
 	/**
 	 * Execute insert query
 	 */
-	private function execute_insert()
+    protected function execute_insert()
 	{
 		$this->db->query($this->query,$this->args);
 		return $this->db->last_id();
@@ -439,5 +462,3 @@ class QueryBuilder
 		return $this->query;
 	}
 }
-
-?>

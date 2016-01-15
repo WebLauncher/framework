@@ -1,3 +1,7 @@
+2.7.7
+- some documentation cleanup
+- added Base->fields (this defines the default columns that should be retrieved from the table when using get methods)
+- speed enhancements
 2.7.6
 - update Smarty 3
 - build manager enhancements

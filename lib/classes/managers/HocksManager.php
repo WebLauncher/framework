@@ -6,6 +6,16 @@
 	/**
 	 * Code Hocks Manager Class
 	 * @package WebLauncher\Managers
+	 * @method before_init
+	 * @method after_init
+	 * @method before_render
+	 * @method after_render
+	 * @method before_session_init
+	 * @method after_session_init
+	 * @method before_logout
+	 * @method after_logout
+	 * @method before_login
+	 * @method after_login
 	 */
 	class HocksManager
 	{
@@ -64,6 +74,5 @@
 				foreach($this->_data[$name] as $func)
 					call_user_func_array($func, $arguments);
 		}
-
 	}
 ?>
