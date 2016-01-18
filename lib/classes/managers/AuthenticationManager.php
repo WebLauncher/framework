@@ -227,13 +227,15 @@
 		function update_visit_log() {
 			global $page;
 			if ($this -> logins_logs_enabled && $page -> logged && isset($page -> session['visit_log_id'])) {
-				$obj = $page -> models -> {$this->logins_logs_model} -> get($page -> session['visit_log_id']);
+				$query = new QueryBuilder($this->logins_logs_model);
+				$obj = $query->select()->where('id='.sat($page -> session['visit_log_id']))->first();
 				$params = array();
 	
 				$params['refresh_datetime'] = @date('Y-m-d H:i:s');
 				$params['duration'] = @strtotime($params['refresh_datetime']) - @strtotime($obj['login_datetime']);
-	
-				$page -> models -> {$this->logins_logs_model} -> update($params, 'id=' . $page -> session['visit_log_id']);
+
+				$query=new QueryBuilder($this->logins_logs_model);
+				$query->update($params)->where('id=' . $page -> session['visit_log_id'])->execute();
 				if(class_exists('LoginLoggerExtension'))
 					LoginLoggerExtension::update_visit_log($page->session['user_id'],$page -> session['visit_log_id']);
 				return $page -> session['visit_log_id'];

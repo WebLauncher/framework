@@ -126,6 +126,12 @@ class QueryBuilder
 		$this->append('insert into');
 		$this->append('`'.$this->table.'`');
 
+		$is_assoc=array_keys($fields)!==range(0,count($fields));
+		if($is_assoc) {
+			$values=array_values($fields);
+			$fields = array_keys($fields);
+		}
+
 		if($no_fields=count($fields))
 		{
 			$this->append('(');
@@ -140,6 +146,8 @@ class QueryBuilder
 			}
 			$this->append(') values');
 		}
+		if($values)
+			$this->values($values);
 		return $this;
 	}
 	

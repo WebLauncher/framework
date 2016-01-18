@@ -854,13 +854,12 @@ class System
      */
     function __call($name, $args)
     {
-        switch ($name) {
+        switch (trim($name)) {
             case 'get_meta_tags' :
-                return $$this->meta_tags;
+                return $this->meta_tags;
                 break;
-
-            case 'call_404' :
-                $this->_404();
+            case 'call_404':
+                return $this->_404();
                 break;
         }
         if ($name) {
@@ -872,7 +871,7 @@ class System
                 ), $args);
             }
         }
-        $this->triggerError("Method " . $name . " not defined on System class.");
+        $this->triggerError("Method " . $name . "(".implode(',',$args).") not defined on System class.");
         return null;
     }
 
@@ -980,6 +979,7 @@ class System
             'file',
             'model'
         );
+        if($type=='dal')$type='model';
         return in_array($type, $types) && $this->{"load" . ucfirst($type)}($file);
     }
 
@@ -1693,13 +1693,15 @@ class System
         if ($this->seo_enabled && !$this->ajax && $this->db_conn) {
             $pagepath = $this->paths['current_full'];
             $model = $this->libraries_settings['wbl_seo']['links_table'];
-            $pg = $this->models->{$model}->get_cond('page="' . $pagepath . '"');
+            $query=new QueryBuilder($model);
+            $pg = $query->select()->where('page="' . $pagepath . '"')->first();
             if ($pg) {
                 $params = array();
                 $pg['views']++;
                 $params['views'] = $pg['views'];
 
-                $this->models->{$model}->update($params, 'id=' . $pg['id']);
+                $query=new QueryBuilder($model);
+                $query->update($params)->where('id=' . $pg['id'])->execute();
             } else {
                 $params = array();
                 $params['page'] = $pagepath;
@@ -1709,7 +1711,8 @@ class System
                 $params['keywords'] = $this->getMetaTag('keywords') ? $this->getMetaTag('keywords') : '';
                 $params['description'] = $this->getMetaTag('description') ? $this->getMetaTag('description') : '';
 
-                $id = $this->models->{$model}->insert($params);
+                $query=new QueryBuilder($model);
+                $id = $query->insert($params)->execute();
                 $pg = $params;
                 $pg['id'] = $id;
             }
@@ -1905,7 +1908,7 @@ class System
 
             $query=new QueryBuilder($this->libraries_settings['wbl_locale']['table']);
             $language = $query->select()->where('id=' . $this->session['language_id'])->first();
-            if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win'])) {
+            if (!isset($this->browser['os']) || (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))) {
                 setlocale(LC_ALL, $language['locale_win']);
             } elseif (isset_or($language['locale_linux'])) {
                 setlocale(LC_ALL, $language['locale_linux']);
