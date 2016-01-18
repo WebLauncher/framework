@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.7');
+define('SYS_VERSION', '2.7.8');
 
 /**
  * System Class.
@@ -826,6 +826,12 @@ class System
     public $router = null;
 
     /**
+     * If it should use browscap.ini or not
+     * @var bool
+     */
+    public $browser_enabled=false;
+
+    /**
      * System predefined modules
      * @var array
      */
@@ -901,7 +907,10 @@ class System
     {
         switch ($name) {
             case 'browser' :
-                return BrowserInfo::get(isset_or($_SERVER['HTTP_USER_AGENT']));
+                if($this->browser_enabled)
+                    return BrowserInfo::get(isset_or($_SERVER['HTTP_USER_AGENT']));
+                else
+                    return array('user_agent'=>isset_or($_SERVER['HTTP_USER_AGENT']));
                 break;
 
             case 'browser_ip' :
@@ -3076,7 +3085,6 @@ class System
         $arr['user'] = $this->user;
         $arr['history'] = $this->history;
         $arr['server'] = $this->server;
-        $arr['browser'] = $this->browser;
         $arr['paths'] = $this->paths;
         $arr['objects'] = $this->objects;
         $arr['valid'] = $this->valid;
