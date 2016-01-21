@@ -1,5 +1,5 @@
 <?php if($render_type=='all'):?>
-	
+
 <?php echo $p['doctype'];?>
 <?php echo $p['html_tag'];?>
 <head>
@@ -24,7 +24,7 @@
 }?>
 
 <?php if(isset_or($p['session']['script'])) {
-	echo '<script src="'.$root_module.'script_file_'.$random.'.js" type="text/javascript"></script>';	
+	echo '<script src="'.$root_module.'script_file_'.$random.'.js" type="text/javascript"></script>';
 }?>
 
 <?php echo isset_or($page_before_close_head); ?>

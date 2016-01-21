@@ -57,7 +57,7 @@
 			{
 				$this->search_keyword=$_GET['kwd'];
 			}
-			@$page->session['pages'][$this->id]=$page->page_skip/$page->page_offset;
+			$page->session['pages'][$this->id]=$page->page_skip/$page->page_offset;
 			$page->save_session();
 		}
 		

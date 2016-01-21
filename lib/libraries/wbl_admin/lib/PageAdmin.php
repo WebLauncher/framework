@@ -24,7 +24,12 @@ class Page extends _Page
     /**
      * @var string $model_name Model name for the current page to use
      */
-    var $model_name=''; 
+    var $model_name='';
+	/**
+	 * Model condition filtering the table
+	 * @var string
+	 */
+	var $model_filter='';
     /**
      * @var bool $can_add Flag if add action is active
      */
@@ -41,10 +46,11 @@ class Page extends _Page
      * @var bool $can_active Flag if active action is active
      */
     var $can_active = true;
-	
+
 	/**
 	 * Set model for current cotroller to use
-	 * @param \Base $model
+	 * @param Base $model
+	 * @param string $model_name
 	 */
 	public function set_model($model,$model_name=''){
 	    $this->model_name=$model_name;
@@ -64,11 +70,12 @@ class Page extends _Page
 	
 	/**
 	 * Get gridview table for model display
-	 * @param bool $data Load data or just header
+	 * @param int $data Load data or just header
+	 * @return string
 	 */
 	public function get_model_table($data=0){
 		if($this->model)
-			return $this->model->get_admin_table('table_'.get_class($this).'_'.get_class($this->model), $data);
+			return $this->model->get_admin_table('table_'.get_class($this).'_'.get_class($this->model), $data, $this->model_filter);
 		return '';
 	}
 	
@@ -105,8 +112,11 @@ class Page extends _Page
 			$this->assign('form',$this->model->get_admin_form('Edit '.$this->model_name,'',$this->paths['current'],'save:'.$id,$id));
 		}
 	}
-    
-    function action_delete($id){
+
+	/**
+	 * @param $id
+     */
+	function action_delete($id){
         if($this->model && $this->can_delete){
             $this->model->delete($id);            
         }

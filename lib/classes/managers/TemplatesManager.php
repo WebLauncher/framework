@@ -64,9 +64,12 @@ class TemplatesManager
 		if(self::$engine)
 			return self::$engine->clear_cache($cache_id);
 	}
+
+	public static function template_exists($template){
+		return self::$engine->template_exists($template);
+	}
 	
 	public static function is_cached($template,$cache_id=''){
 		return self::$engine->is_cached($template,$cache_id='');
 	}
 }
-?>

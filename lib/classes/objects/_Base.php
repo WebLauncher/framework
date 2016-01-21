@@ -452,10 +452,11 @@ class _Base implements ArrayAccess
      */
     public function insert($params, $callbacks = true)
     {
+        echopre($params);
         if (is_array($params)) {
             if ($callbacks)
                 $this->_before_insert($params);
-            $this->_last_inserted_id = $this->builder()->insert(array_keys($params))->values($params)->execute();
+            $this->_last_inserted_id = $this->builder()->insert(array_keys($params))->values(array_values($params))->execute();
             if ($this->_last_inserted_id && isset($params[$this->id_field]))
                 $this->_last_inserted_id = $params[$this->id_field];
 
@@ -909,7 +910,7 @@ class _Base implements ArrayAccess
     {
         if (!$data)
             $data = $this->map();
-        if (isset_or($data[$this->id_field]))
+        if (isset($data[$this->id_field]))
             $this->update($data);
         else
             $data[$this->id_field] = $this->insert($data);

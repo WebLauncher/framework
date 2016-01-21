@@ -1,4 +1,9 @@
 2.7.8
+- added GenericTemplateEngine:
+    - this handles both PhpTemplate or SmartyTemplate based on the extension of the file (.tpl or .php)
+    - extra configurations available:
+        - $this->template_engine='generic'
+        - $this->template_extension='.tpl' // this will be in case you want to specify default template extension
 - switched BrowserInfo to browscap.ini approach (use only if necessary uses a lot of resources)
 - added $page->browser_enabled=false to check the browser when needed
 - some bug fixes

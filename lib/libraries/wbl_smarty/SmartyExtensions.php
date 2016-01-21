@@ -38,10 +38,7 @@ class SmartyExtensions {
 	
 	function register_plugin($type,$plugin){
 		$method=$this->get_plugin_method($plugin);
-		if($this->version=='v2')
-			$this->system->template->{'register_'.$type}($plugin, $method);
-		elseif($this->version=='v3')
-			$this->system->template->registerPlugin($type, $plugin, $method);
+		$this->system->template->register_plugin($plugin, $method, $type);
 	}
 	
 	function get_plugin_method($plugin){

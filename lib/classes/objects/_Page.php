@@ -406,7 +406,7 @@ class _Page
         if ($this->subpage && $render_type != $this->_template_var)
             $this->subpage->_render_template($render_type);
         if ($render_type == 'all' || $render_type == $this->_template_var) {
-            $this->template_file = $this->view . '.tpl';
+            $this->template_file = $this->view;
             // page content
             $path = $this->_folder . 'views/';
             if (file_exists($this->_folder . 'views/' . $this->skin . '/'))
@@ -465,7 +465,7 @@ class _Page
                 $params['template'] = $this->models->email_templates->get_cond("`name`='" . $template . "' ");
                 if ($params['template']) {
                     $params = array_merge($params['template'], $params);
-                    $template_path = $template_obj['template_path'];
+                    $template_path = $template['template_path'];
                 }
             }
         }
@@ -484,17 +484,17 @@ class _Page
             $this->system->change_template_dir($base_path);
             $this->system->change_cache_dir($this->paths['root_cache'] . $this->system->module . DS . "email" . DS);
 
-            $this->system->template->assign($params);
-            $this->system->template->assign("params", $params);
+            $this->assign($params);
+            $this->assign("params", $params);
 
-            $this->system->template->assign("p", $this->system->getPage());
+            $this->assign("p", $this->system->getPage());
             $message = $this->system->template->fetch($template_path);
 
             //reset smarty dirs
             $this->system->change_template_dir($s_t_dir);
             $this->system->change_cache_dir($s_c_dir);
         }
-        if ($message) 
+        if ($message)
             return $this->system->mail->compose($params['email'], $params['subject'], $message, $params['from'], $params['fromname'], isset_or($params['reply_to']), isset_or($params['reply_name']), isset_or($params['attachments']), isset_or($params['mail_in']), isset_or($params['sender']), isset_or($params['others']))->send();
         else
             System::triggerError('No mail content was found at path: '.$template_path);
@@ -513,13 +513,13 @@ class _Page
             $path = $this->_folder . 'views/' . $this->system->default_skin . '/';
         else
             $path = $this->_folder . 'views/' . $this->skin . '/';
-        return file_exists($path . $view . '.tpl');
+        return $this->template->template_exists($path . $view);
     }
 
     /**
-     * Returns the referer URL
+     * Returns the referrer URL
      */
-    public function referer()
+    public function referrer()
     {
         return isset_or($_SERVER["HTTP_REFERER"], '/');
     }

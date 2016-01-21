@@ -679,6 +679,12 @@ class System
     public $template_engine = 'smarty';
 
     /**
+     * Template file extension
+     * @var string
+     */
+    public $template_extension = '.tpl';
+
+    /**
      * Models Manager
      * @var ModelsManager
      */
@@ -817,7 +823,7 @@ class System
      * Layout file
      * @var string
      */
-    public $layout = 'index';
+    public $layout = 'layout';
 
     /**
      * Routes Manager
@@ -1182,9 +1188,9 @@ class System
     {
         if ($this->system_error_enabled && ($this->system_error || $message)) {
             $this->system_error = $message ? $message : $this->system_error;
-            $err_file = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/' . $code . '.tpl';
+            $err_file = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/' . $code . $this->template_extension;
             if (!is_file($err_file)) {
-                $err_file = $this->paths['root_code'] . $this->default_module . 'views/' . $this->skin . '/' . $code . '.tpl';
+                $err_file = $this->paths['root_code'] . $this->default_module . 'views/' . $this->skin . '/' . $code . $this->template_extension;
                 $this->assign('code', $code);
                 $this->assign('message', $this->system_error);
             }
@@ -1332,7 +1338,7 @@ class System
         $this->import('library', 'Smarty');
         $smarty = TemplatesManager::get_engine($this->template_engine, $this->libraries_settings['smarty']['version'], $this->paths['root_code'], $this->paths['root_cache'], $this->trace, $this->debug, $this->page_cache_enabled);
         $this->template = &$smarty;
-        if ($this->template_engine == 'smarty') {
+        if ($this->template_engine == 'smarty' || $this->template_engine == 'generic') {
             $this->import('library', 'wbl_smarty');
         }
         $this->changeTemplateDir($this->paths['root_code']);
@@ -2128,7 +2134,7 @@ class System
     public function fetchTemplate($name, $file, $cache_folder, $return = false)
     {
         $this->changeCacheDir($cache_folder);
-        if (is_file($file)) {
+        if ($this->template->template_exists($file)) {
             try {
                 if ($return) {
                     return $this->template->fetch($file, $this->cache_hash);
@@ -2197,18 +2203,18 @@ class System
         if ($this->live && $this->render_type == 'all') {
             $this->saveJsFiles();
         }
-        if (!$this->no_cache && (TemplatesManager::is_cached($this->paths['root_dir'] . $this->layout . '.tpl', $this->cache_hash) || TemplatesManager::is_cached(__DIR__ . '/objects/system/' . $this->layout . '.tpl', $this->cache_hash))) {
+        if (!$this->no_cache && (TemplatesManager::is_cached($this->paths['root_dir'] . $this->layout.$this->template_extension , $this->cache_hash) || TemplatesManager::is_cached(__DIR__ . '/objects/system/' . $this->layout . $this->template_extension, $this->cache_hash))) {
             header('Content-Type: ' . $this->content_type);
             TemplatesManager::set_cache(true);
-            if (is_file($template_folder . $this->layout . '.tpl')) {
-                $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
+            if (is_file($template_folder . $this->layout . $this->template_extension)) {
+                $this->template->display($template_folder . $this->layout.$this->template_extension, $this->cache_hash);
             } else {
-                $this->template->display(__DIR__ . '/objects/system/' . $this->layout . '.tpl', $this->cache_hash);
+                $this->template->display(__DIR__ . '/objects/system/' . $this->layout.$this->template_extension, $this->cache_hash);
             }
             die;
         }
         $cache_folder = $this->paths['root_cache'];
-        if (!TemplatesManager::is_cached($template_folder . $this->layout . '.tpl', $this->cache_hash)) {
+        if (!TemplatesManager::is_cached($template_folder . $this->layout.$this->template_extension, $this->cache_hash)) {
             $this->_renderSkin();
 
             // change smarty template dir for module
@@ -2261,10 +2267,10 @@ class System
         }
         $this->changeCacheDir($cache_folder);
         try {
-            if (is_file($template_folder . $this->layout . '.tpl')) {
-                $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
+            if (is_file($template_folder . $this->layout .  $this->template_extension)) {
+                $this->template->display($template_folder . $this->layout.$this->template_extension, $this->cache_hash);
             } else {
-                $this->template->display(__DIR__ . '/templates/system/' . $this->layout . '.tpl', $this->cache_hash);
+                $this->template->display(__DIR__ . '/templates/system/' . $this->layout.$this->template_extension, $this->cache_hash);
             }
             $this->time->end('system');
             $this->time->end('render_templates');
