@@ -79,6 +79,10 @@ class ConsoleManager {
 				}
 				die ;
 			break;
+			case '--migrate':
+				self::line("Executing migrations");
+				die;
+				break;
 			case '--email' :
 				self::line("Executing e-mail queue");
 				die ;

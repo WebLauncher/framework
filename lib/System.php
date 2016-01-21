@@ -23,11 +23,15 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.5');
+define('SYS_VERSION', '2.7.8');
 
 /**
  * System Class.
  *
+ * @property mixed ispostback
+ * @property string visits_logs_enabled
+ * @property mixed ajax
+ * @property mixed browser
  * @category Class
  * @package  WebLauncher\System
  * @author   WebLauncher <contact@weblauncher.ro>
@@ -71,284 +75,287 @@ class System
     public $title_setting = 'general_page_title';
 
     /**
-     * @var flag if page is live
+     * @var boolean flag if page is live
      */
     public $live = false;
 
     /**
-     * @var flag if administrative zone
+     * @var int flag if administrative zone
      */
     public $admin = 0;
 
     /**
-     * @var flag if default admin zone is enabled
+     * @var boolean flag if default admin zone is enabled
      */
     public $admin_enabled = true;
 
     /**
-     * @var page query
+     * @var string page query
      */
     public $query = '';
 
     /**
-     * @var page subqueries array
+     * @var array page subqueries array
      */
-    public $sub_query = array();
+    public $subquery = array();
 
     /**
-     * @var page content
+     * @var string page content
      */
     public $content = 'home';
 
     /**
-     * @var page components
+     * @var array page components
      */
     public $components = array();
 
     /**
-     * @var page component
+     * @var string page component
      */
     public $component = '';
 
     /**
-     * @var Subcomponents Name
+     * @var string Subcomponents Name
      */
     public $subcomponent = '';
 
     /**
-     * @var page meta tags array
+     * @var array page meta tags array
      */
     public $meta_tags = array();
 
     /**
-     * @var page skin
+     * @var string page skin
      */
     public $skin = 'default';
 
     /**
-     * @var page default skin
+     * @var string page default skin
      */
     public $default_skin = 'default';
 
     /**
-     * @var Skins Folder ( default:'skins/' )
+     * @var string Skins Folder ( default:'skins/' )
      */
     public $skins_folder = 'assets/skins/';
 
     /**
-     * @var skin server path
+     * @var string skin server path
      */
     public $skin_server_path = '';
 
     /**
-     * @var assets server path
+     * @var string assets server path
      */
     public $assets_server_path = '';
 
     /**
-     * @var page default module
+     * @var string page default module
      */
     public $default_module = 'site/';
 
     /**
-     * @var page module
+     * @var string page module
      */
     public $module = '';
 
     /**
-     * @var current module user type for authentication
+     * @var string current module user type for authentication
      */
     public $module_user_type = '';
 
     /**
-     * @var Modules folder path
+     * @var string Modules folder path
      */
     public $modules_folder = 'modules';
 
     /**
-     * @var current actions array
+     * @var array current actions array
      */
     public $actions = array();
 
     /**
-     * @var Actions executed list
+     * @var array Actions executed list
      */
     public $actions_executed = array();
 
     /**
-     * @var current errors array
+     * @var array current errors array
      */
     public $errors = array();
 
     /**
      * Error log files path e.g. /home/errors/
-     * @var unknown_type
+     * @var string
      */
     public $error_log_path = '';
 
     /**
      * Error log e-mail to send fatal errors
+     * @var string
      */
     public $error_log_email = "";
 
     /**
-     * @var current messages array
+     * @var array current messages array
      */
     public $messages = array();
 
     /**
-     * @var history array
+     * @var array history array
      */
     public $history = array();
 
     /**
-     * @var flag for history active
+     * @var boolean flag for history active
      */
     public $history_active = true;
 
     /**
-     * @var paths array
+     * @var array paths array
      */
     public $paths = array();
 
     /**
-     * @var flag if should connect to database
+     * @var boolean flag if should connect to database
      */
     public $db_conn_enabled = true;
 
     /**
-     * @var database connection
+     * @var DbManager database connection
      */
     public $db_conn;
 
     /**
-     * @var database connections array
+     * @var array database connections array
      */
     public $db_connections = array();
 
     /**
-     * @var objects array
+     * @var array objects array
      */
     public $objects = array();
 
     /**
-     * @var Objects Folder
+     * @var string Objects Folder
      */
     public $objects_folder = 'objects';
 
     /**
      * Check cookies flag
+     * @var boolean
      */
     public $check_cookies = false;
 
     /**
      * Cookies enabled flag
+     * @var boolean
      */
     public $cookies_enabled = false;
 
     /**
-     * @var session var
+     * @var mixed session var
      */
     public $session = '';
 
     /**
-     * @var session manager class
+     * @var SessionManager session manager class
      */
     public $session_manager = '';
 
     /**
-     * @var session cookie
+     * @var string session cookie
      */
     public $session_cookie = 'default_session_cookie';
 
     /**
-     * @var session default timeout
+     * @var int session default timeout in seconds
      */
     public $session_timeout = 1800;
 
     /**
-     * @var session cookie module
+     * @var string session cookie module
      */
     public $session_cookie_module = '';
 
     /**
-     * @var user data array
+     * @var mixed user data array
      */
     public $user = '';
 
     /**
-     * @var trace activation flag [true/false]
+     * @var boolean trace activation flag [true/false]
      */
     public $trace = false;
 
     /**
-     * @var trace string
+     * @var string trace string
      */
     public $trace_page = '';
 
     /**
-     * @var debug activation flag
+     * @var boolean debug activation flag
      */
     public $debug = true;
 
     /**
      * Database tables
-     * @var unknown_type
+     * @var array unknown_type
      */
     public $tables = array();
 
     /**
-     * @var database tables
+     * @var array database tables
      */
     public $user_types_tables = array();
 
     /**
-     * @var flag if pagination from db is enabled
+     * @var boolean flag if pagination from db is enabled
      */
     public $pagination_enabled = true;
 
     /**
-     * @var pagination array
+     * @var array pagination array
      */
     public $pagination = array(0 => 10);
 
     /**
-     * @var current page number
+     * @var int current page number
      */
     public $page_no = 1;
 
     /**
-     * @var current page skip number
+     * @var int current page skip number
      */
     public $page_skip = 0;
 
     /**
-     * @var current page offset number
+     * @var int current page offset number
      */
     public $page_offset = 10;
 
     /**
-     * @var current page total rows
+     * @var int current page total rows
      */
     public $no_total_rows = -1;
 
     /**
-     * @var current number of pages
+     * @var int current number of pages
      */
     public $no_pages = 0;
 
     /**
-     * @var page files manager
+     * @var FilesManager page files manager
      */
     public $files_manager;
 
     /**
-     * @var files manager folder
+     * @var string files manager folder
      */
     public $files_folder = 'files/';
 
     /**
-     * @var files manager allowed upload extensions
+     * @var array files manager allowed upload extensions
      */
     public $upload_allowed_extensions = array(
         'png',
@@ -374,23 +381,23 @@ class System
     );
 
     /**
-     * @var page restricted flag
+     * @var boolean page restricted flag
      */
     public $restricted = false;
 
     /**
-     * @var page state array
+     * @var array page state array
      */
     public $state;
 
     /**
-     * @var check login on page flag
+     * @var boolean check login on page flag
      */
     public $check_login = false;
 
     /**
      * Custom login messages
-     * @var unknown_type
+     * @var array
      */
     public $login_messages = array(
         'active' => 'User is not activated!',
@@ -402,104 +409,125 @@ class System
     );
 
     /**
-     * @var Show/Hide Log-in messages
+     * @var boolean Show/Hide Log-in messages
      */
     public $show_login_messages = true;
 
     /**
-     * @var user authenticated flag
+     * @var boolean user authenticated flag
      */
     public $logged = false;
 
     /**
-     * @var validation manager
+     * @var FormsManager validation manager
      */
     public $validate;
 
     /**
-     * @var form valid flag
+     * @var boolean form valid flag
      */
     public $valid = true;
 
     /**
-     * @var page crypt key
+     * @var string page crypt key
      */
     public $crypt_key = 'default';
 
     /**
-     * @var flag if settings are enabled
+     * @var boolean flag if settings are enabled
      */
     public $settings_enabled = false;
 
     /**
-     * @var page settings array
+     * @var array page settings array
      */
     public $settings = array();
 
     /**
-     * @var page settings table
+     * @var string page settings table
      */
     public $settings_table = 'settings';
 
     /**
-     * @var render entire page flag
+     * @var boolean render entire page flag
      */
     public $render_all = true;
 
     /**
-     * @var page multilanguage flag
+     * @var boolean page multilanguage flag
      */
     public $multi_language = false;
 
     /**
-     * @var index page object
+     * @var Page index page object
      */
     public $obj_index;
 
     /**
+     * @var TimeLogger
+     */
+    public $time;
+
+    /**
+     * @var CacheManager
+     */
+    public $cache;
+
+    /**
+     * @var AuthenticationManager
+     */
+    public $authenticate;
+
+    /**
+     * @var EmailManager
+     */
+    private $_mail = null;
+
+    /**
      * Mail sender type
-     * @var unknown_type
+     * @var string
      */
     public $mail_type = 'mail';
 
     /**
      * Mail queue table
-     * @var
+     * @var string
      */
     public $mail_queue_table = 'email_queue';
 
     /**
      * Mail host
-     * @var unknown_type
+     * @var string
      */
     public $mail_host = 'localhost';
 
     /**
-     * SMTP mail user
-     * @var unknown_type
+     * Mail user
+     * @var string
      */
     public $mail_user = '';
 
     /**
      * SMTP mail password
-     * @var unknown_type
+     * @var string
      */
     public $mail_password = '';
 
     /**
      * SMTP Host port
-     * @var unknown_type
+     * @var string
      */
     public $mail_port = 25;
 
     /**
      * SMTP ssl active
-     * @var
+     * @var boolean
      */
     public $mail_ssl = false;
 
     /**
      * E-mail default parameters
+     * @var array
      */
     public $mail_defaults = array(
         'subject' => 'system new e-mail',
@@ -514,22 +542,17 @@ class System
     );
 
     /**
-     * @var page scripts manager
-     */
-    public $script_manager = '';
-
-    /**
-     * @var New variable for scripts manager
+     * @var ScriptManager New variable for scripts manager
      */
     public $scripts = '';
 
     /**
-     * @var loaded libraries array
+     * @var array loaded libraries array
      */
     public $loaded_libraries = array();
 
     /**
-     * @var system libraries
+     * @var array system libraries
      */
     public $libraries = array();
 
@@ -553,53 +576,56 @@ class System
     );
 
     /**
-     * @var memory used
+     * @var MemoryLogger memory used
      */
     public $memory = '';
 
     /**
-     * @var Current page settings
+     * @var array Current page settings
      */
     public $page = array();
 
     /**
-     * @var search engine optimization per page activated
+     * @var boolean search engine optimization per page activated
      */
     public $seo_enabled = false;
 
     /**
-     * @var flag to secure request ( IDS )
+     * @var boolean flag to secure request ( IDS )
      */
     public $secure_request_enabled = false;
 
     /**
-     * @var Log-in Visits Logger ( for statistics )
+     * @var boolean Log-in Visits Logger ( for statistics )
      */
     public $logins_logs_enabled = false;
 
     /**
-     * @var Log-in Visits Logger Table
+     * @var string Log-in Visits Logger Table
      */
     public $logins_logs_table = 'logins';
 
     /**
      * System Logger
-     * @return
+     * @var SystemLogger
      */
     public $logger = '';
 
     /**
      * Page cache enabled
+     * @var boolean
      */
     public $page_cache_enabled = false;
 
     /**
      * Cache enabled
+     * @var boolean
      */
-    public $cache_enabled = true;
+    public $cache_enabled = false;
 
     /**
      * Cache options
+     * @var string
      */
     public $cache_options = '';
 
@@ -609,89 +635,95 @@ class System
     public $no_cache = false;
 
     /**
-     * @var Cache Folder ( default: 'cache/' )
+     * @var string Cache Folder ( default: 'cache/' )
      */
     public $cache_folder = 'cache';
 
     /**
      * Cache hash for current page caching
+     * @var string
      */
     public $cache_hash = '';
 
     /**
-     * @var New variable for files manager
+     * @var FilesManager New variable for files manager
      */
     public $uploads = '';
 
     /**
-     * @var /DownloadManager $downloads Download manager object
+     * @var DownloadManager $downloads Download manager object
      */
     public $downloads = '';
 
     /**
-     *
-     * @var array $download_allowed_extensions Download allowed extensions and
-     * filetypes
+     * @var array $download_allowed_extensions Download allowed extensions and filetypes
      */
     public $download_allowed_extensions = array();
 
     /**
      * Function used form downloading file (reaadfile, fpassthru, stream, xsendfile)
-     * @var unknown_type
+     * @var string
      */
     public $download_function = 'readfile';
 
     /**
      * Template engine
-     * @var unknown_type
+     * @var TemplateEngine
      */
     public $template = '';
 
     /**
      * Template engine (default: smarty)
+     * @var string
      */
     public $template_engine = 'smarty';
 
     /**
-     * DAL Models
-     * @var unknown_type
+     * Template file extension
+     * @var string
+     */
+    public $template_extension = '.tpl';
+
+    /**
+     * Models Manager
+     * @var ModelsManager
      */
     public $models = '';
 
     /**
-     * flag for enabling components builder
-     * @var unknown_type
+     * Flag for enabling components builder
+     * @var boolean
      */
     public $build_enabled = false;
 
     /**
-     * flag for enabling components builder auto-build non-existing components
-     * @var unknown_type
+     * Flag for enabling components builder auto-build non-existing components
+     * @var boolean
      */
     public $build_auto = false;
 
     /**
      * List of redirect links e.g. array('test'=>'site/?a=set:test') will redirect
      * website.com/test to website.com/site/?a=set:test
-     * @var unknown_type
+     * @var array
      */
     public $redirects = array();
 
     /**
      * Js files to be loaded
-     * @var unknown_type
+     * @var array
      */
     public $js_files = array();
 
     /**
      * CSS files to be loaded
-     * @var unknown_type
+     * @var array
      */
     public $css_files = array();
 
     /**
      * If SSL should be maintained
-     * @var bool $maintain_ssl
+     * @var boolean $maintain_ssl
      */
     public $maintain_ssl = false;
 
@@ -715,6 +747,7 @@ class System
 
     /**
      * Hocks Manager
+     * @var HocksManager
      */
     public $hocks = null;
 
@@ -739,17 +772,14 @@ class System
     public $console_cronjobs_db_table = 'cronjobs';
 
     /**
-     * The e-mail manager class
-     */
-    public $mail = null;
-
-    /**
      * System error message to display as 500 internal error
+     * @var string
      */
     public $system_error = '';
 
     /**
      * System error show flag
+     * @var boolean
      */
     public $system_error_enabled = true;
 
@@ -785,14 +815,33 @@ class System
      * System environments
      */
     protected $environments = array('development' => array(
-            'localhost',
-            '127.0.0.1'
-        ));
+        'localhost',
+        '127.0.0.1'
+    ));
 
     /**
      * Layout file
+     * @var string
      */
-    public $layout = 'index';
+    public $layout = 'layout';
+
+    /**
+     * Routes Manager
+     * @var RoutesManager
+     */
+    public $router = null;
+
+    /**
+     * If it should use browscap.ini or not
+     * @var bool
+     */
+    public $browser_enabled=false;
+
+    /**
+     * System predefined modules
+     * @var array
+     */
+    protected $system_modules=array('img_mod','min','_check','_system');
 
     /**
      * Constructor
@@ -805,20 +854,19 @@ class System
      * Call magic method
      *
      * @param string $name Name of the called method
-     * @param array  $args Arguments
+     * @param array $args Arguments
      *
      * @return mixed Value returned by the function call
      */
     function __call($name, $args)
     {
-        switch ($name) {
-        case 'get_meta_tags' :
-            return $$this->meta_tags;
-            break;
-
-        case 'call_404' :
-            $this->_404();
-            break;
+        switch (trim($name)) {
+            case 'get_meta_tags' :
+                return $this->meta_tags;
+                break;
+            case 'call_404':
+                return $this->_404();
+                break;
         }
         if ($name) {
             $name = str_replace('_', '', lcfirst(ucwords_d($name, '_')));
@@ -829,6 +877,8 @@ class System
                 ), $args);
             }
         }
+        $this->triggerError("Method " . $name . "(".implode(',',$args).") not defined on System class.");
+        return null;
     }
 
     /**
@@ -836,20 +886,18 @@ class System
      *
      * @param string $name Name of attribute
      * @param string $value Value of the attribute
-     *
-     * @return none
      */
     function __set($name, $value)
     {
-        switch($name) {
-        case 'metas_enabled' :
-            $this->seo_enabled = $value;
-            break;
-        case 'visits_logs_enabled' :
-            $this->visits_logs_enabled = $value;
-            break;
-        default :
-            $this->{$name} = $value;
+        switch ($name) {
+            case 'metas_enabled' :
+                $this->seo_enabled = $value;
+                break;
+            case 'visits_logs_enabled' :
+                $this->visits_logs_enabled = $value;
+                break;
+            default :
+                $this->{$name} = $value;
         }
     }
 
@@ -863,59 +911,70 @@ class System
     function __get($name)
     {
         switch ($name) {
-        case 'browser' :
-            return BrowserInfo::get(isset_or($_SERVER['HTTP_USER_AGENT']));
-            break;
+            case 'browser' :
+                if($this->browser_enabled)
+                    return BrowserInfo::get(isset_or($_SERVER['HTTP_USER_AGENT']));
+                else
+                    return array('user_agent'=>isset_or($_SERVER['HTTP_USER_AGENT']));
+                break;
 
-        case 'browser_ip' :
-            return BrowserInfo::get_user_ip();
-            break;
+            case 'browser_ip' :
+                return BrowserInfo::get_user_ip();
+                break;
 
-        case 'server' :
-            return ServerInfo::get();
-            break;
+            case 'server' :
+                return ServerInfo::get();
+                break;
 
-        case 'ispostback' :
-            return (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST');
-            break;
+            case 'ispostback' :
+                return (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST');
+                break;
 
-        case 'ajax' :
-            return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
-            break;
+            case 'ajax' :
+                return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
+                break;
 
-        case 'sys_version' :
-            return SYS_VERSION;
-            break;
+            case 'sys_version' :
+                return SYS_VERSION;
+                break;
 
-        case 'ssl' :
-            return isset($_SERVER['HTTPS']);
-            break;
-        case 'metas_enabled' :
-            return $this->seo_enabled;
-            break;
-        case 'visits_logs_enabled' :
-            return $this->logins_logs_enabled;
-            break;
+            case 'ssl' :
+                return isset($_SERVER['HTTPS']);
+                break;
+            case 'metas_enabled' :
+                return $this->seo_enabled;
+                break;
+            case 'visits_logs_enabled' :
+                return $this->logins_logs_enabled;
+                break;
+            case 'mail':
+                if (!$this->_mail)
+                    $this->_initMail();
+                return $this->_mail;
+                break;
 
-        case 'request_method' :
-            $methods = array(
-                'POST',
-                'DELETE',
-                'GET',
-                'PUT'
-            );
-            return in_array(isset_or($_SERVER['REQUEST_METHOD'], 'GET'), $methods) ? strtolower(isset_or($_SERVER['REQUEST_METHOD'], 'GET')) : 'get';
-            break;
+            case 'request_method' :
+                $methods = array(
+                    'POST',
+                    'DELETE',
+                    'GET',
+                    'PUT'
+                );
+                return in_array(isset_or($_SERVER['REQUEST_METHOD'], 'GET'), $methods) ? strtolower(isset_or($_SERVER['REQUEST_METHOD'], 'GET')) : 'get';
+                break;
+            default:
+                $this->triggerError('Attribute ' . $name . ' not found on class System.');
+                return null;
         }
     }
 
     /**
      * Import libraries
      *
-     * @param object $type ( 'dal', 'functions', 'classes')
-     * @param object $file File path
+     * @param string $type ( 'dal', 'functions', 'classes')
+     * @param string $file File path
      *
-     * @return bool
+     * @return boolean
      */
     function import($type, $file)
     {
@@ -926,13 +985,12 @@ class System
             'file',
             'model'
         );
+        if($type=='dal')$type='model';
         return in_array($type, $types) && $this->{"load" . ucfirst($type)}($file);
     }
 
     /**
      * Initialisation function
-     *
-     * @return none
      */
     function init()
     {
@@ -982,9 +1040,6 @@ class System
         // init module config
         $this->_initModuleConfig();
 
-        // init mailer
-        $this->_initMail();
-
         // init DAL
         $this->_initDal();
 
@@ -1006,7 +1061,7 @@ class System
         $this->_initSettings();
 
         // init session
-        $this->init_session();
+        $this->initSession();
 
         // check if script file request
         $this->_initJsScript();
@@ -1070,9 +1125,7 @@ class System
     }
 
     /**
-     * Init Router
-     *
-     * @return none
+     * Init Routes Manager
      */
     private function _initRouter()
     {
@@ -1082,11 +1135,9 @@ class System
     /**
      * Route page to another
      *
-     * @param string $pattern     Regexp pattern
+     * @param string $pattern Regexp pattern
      * @param string $replacement Replacement URL
-     * @param array  $params      Parameters
-     *
-     * @return none
+     * @param mixed $params Parameters
      */
     public function route($pattern, $replacement, $params = '')
     {
@@ -1094,58 +1145,52 @@ class System
     }
 
     /**
-     * Autoloader
+     * Auto loader
      *
      * @param string $name Name of the class
-     *
-     * @return none
      */
-    public function __autoload($name)
+    static public function generalAutoload($name)
     {
-        $results = array();
-        preg_match_all('/[A-Z][^A-Z]*/', $name, $results);
-        $file = __DIR__ . '/classes/objects/' . $name . '.php';
-        if (isset($results[0])) {
-            if (count($results[0])) {
-                $file = __DIR__ . '/classes/' . strtolower(array_pop($results[0])) . 's/' . $name . '.php';
+        if (!empty($name)) {
+            if (file_exists(__DIR__ . '/classes/objects/' . $name . '.php')) {
+                include_once __DIR__ . '/classes/objects/' . $name . '.php';
+            } else {
+                $results = array();
+                preg_match_all('/[A-Z][^A-Z]*/', $name, $results);
+                $file = __DIR__ . '/classes/objects/' . $name . '.php';
+                if (isset($results[0])) {
+                    if (count($results[0])) {
+                        $file = __DIR__ . '/classes/' . strtolower(array_pop($results[0])) . 's/' . $name . '.php';
+                    }
+                }
+                if (file_exists($file)) {
+                    include_once $file;
+                }
             }
-        }
-        if (file_exists($file)) {
-            include_once $file;
-        } elseif (file_exists(__DIR__ . '/classes/objects/' . $name . '.php')) {
-            include_once __DIR__ . '/classes/objects/' . $name . '.php';
         }
     }
 
     /**
-     * Init autoloader
-     *
-     * @return none
+     * Init auto loader
      */
     private function _initAutoload()
     {
-        $method = array(
-            $this,
-            '__autoload'
-        );
-        spl_autoload_register($method);
+        spl_autoload_register('System::generalAutoload');
     }
 
     /**
      * Init system error
      *
-     * @param string $code    Error code
+     * @param string $code Error code
      * @param string $message Message
-     *
-     * @return none
      */
     private function _initSystemError($code = '500', $message = '')
     {
         if ($this->system_error_enabled && ($this->system_error || $message)) {
             $this->system_error = $message ? $message : $this->system_error;
-            $err_file = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/' . $code . '.tpl';
+            $err_file = $this->paths['root_code'] . $this->module . 'views/' . $this->skin . '/' . $code . $this->template_extension;
             if (!is_file($err_file)) {
-                $err_file = $this->paths['root_code'] . $this->default_module . 'views/' . $this->skin . '/' . $code . '.tpl';
+                $err_file = $this->paths['root_code'] . $this->default_module . 'views/' . $this->skin . '/' . $code . $this->template_extension;
                 $this->assign('code', $code);
                 $this->assign('message', $this->system_error);
             }
@@ -1162,10 +1207,8 @@ class System
     /**
      * System error trigger
      *
-     * @param string $code    Eror code
+     * @param int $code Error code
      * @param string $message Message
-     *
-     * @return none
      */
     public function system_error($code = 505, $message = '')
     {
@@ -1174,19 +1217,15 @@ class System
 
     /**
      * Init mail attribute
-     *
-     * @return none
      */
     private function _initMail()
     {
         $this->import('library', 'mail');
-        $this->mail = new EmailManager();
+        $this->_mail = new EmailManager();
     }
 
     /**
      * Init console determination function
-     *
-     * @return none
      */
     private function _initConsole()
     {
@@ -1199,8 +1238,6 @@ class System
 
     /**
      * Init Trace function
-     *
-     * @return none
      */
     private function _initTrace()
     {
@@ -1209,8 +1246,6 @@ class System
 
     /**
      * Init hock function
-     *
-     * @return none
      */
     private function _initHocks()
     {
@@ -1220,7 +1255,7 @@ class System
     /**
      * Add hock function
      *
-     * @param string   $name     Hock name
+     * @param string $name Hock name
      * @param callable $function Function
      *
      * @return bool
@@ -1232,14 +1267,11 @@ class System
     }
 
     /**
-     * Init confguration function
-     *
-     * @return none
+     * Init configuration function
      */
     private function _initConfig()
     {
-        global $page;
-        $this->tables=new TablesManager();
+        $this->tables = new TablesManager();
         if (defined('SYSTEM_CONFIG_FILE')) {
             $this->config_file = SYSTEM_CONFIG_FILE;
         }
@@ -1274,8 +1306,6 @@ class System
 
     /**
      * Init functions
-     *
-     * @return none
      */
     private function _initFunctions()
     {
@@ -1286,8 +1316,6 @@ class System
 
     /**
      * Init loggers function
-     *
-     * @return none
      */
     private function _initLoggers()
     {
@@ -1303,8 +1331,6 @@ class System
 
     /**
      * Init template function
-     *
-     * @return none
      */
     private function _initTemplate()
     {
@@ -1312,7 +1338,7 @@ class System
         $this->import('library', 'Smarty');
         $smarty = TemplatesManager::get_engine($this->template_engine, $this->libraries_settings['smarty']['version'], $this->paths['root_code'], $this->paths['root_cache'], $this->trace, $this->debug, $this->page_cache_enabled);
         $this->template = &$smarty;
-        if ($this->template_engine == 'smarty') {
+        if ($this->template_engine == 'smarty' || $this->template_engine == 'generic') {
             $this->import('library', 'wbl_smarty');
         }
         $this->changeTemplateDir($this->paths['root_code']);
@@ -1328,8 +1354,6 @@ class System
 
     /**
      * Init DAL function
-     *
-     * @return none
      */
     private function _initDal()
     {
@@ -1347,8 +1371,6 @@ class System
 
     /**
      * Init module configuration file
-     *
-     * @return none
      */
     private function _initModuleConfig()
     {
@@ -1367,8 +1389,6 @@ class System
 
     /**
      * Init debug settings
-     *
-     * @return none
      */
     private function _initDebug()
     {
@@ -1378,21 +1398,17 @@ class System
 
     /**
      * Check the requirements of the system if called
-     *
-     * @return none
      */
     private function _initCheck()
     {
         if ($this->trace && $this->debug && $this->content == '_check') {
             InstallInfo::display();
-            die ;
+            die;
         }
     }
 
     /**
      * Init image modifier
-     *
-     * @return none
      */
     private function _initImageModifier()
     {
@@ -1405,7 +1421,7 @@ class System
             $img_cache = $this->paths['root_cache'] . 'img_mod/';
             if (!file_exists($img_cache)) {
                 if (!mkdir($img_cache, 0777, true)) {
-                    $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $dir . '" to cache folder!');
+                    $this->logger->log('Cache_Write_Error', 'Can not create dir "' . $img_cache . '" to cache folder!');
                     return false;
                 }
             }
@@ -1419,14 +1435,13 @@ class System
             }
             header('Content-Disposition: inline; filename="' . $_REQUEST['name'] . '"');
             ImageManager::output($cache_path);
-            die ;
+            die;
         }
+        return null;
     }
 
     /**
      * Init migrations
-     *
-     * @return none
      */
     private function _initMigrations()
     {
@@ -1436,28 +1451,24 @@ class System
             $manager = new MigrationsManager();
             $manager->system = &$this;
             $manager->run(isset_or($this->actions[1], 'up'));
-            die ;
+            die;
         }
     }
 
     /**
      * Init minify script
-     *
-     * @return none
      */
     private function _initMinify()
     {
         if ($this->content == 'min') {
             header('Expires: Thu, 4 Oct 2014 20:00:00 GMT');
             $this->import('library', 'min');
-            die ;
+            die;
         }
     }
 
     /**
      * Init redirects
-     *
-     * @return none
      */
     private function _initRedirects()
     {
@@ -1470,8 +1481,6 @@ class System
 
     /**
      * Init page title
-     *
-     * @return none
      */
     private function _initTitle()
     {
@@ -1482,8 +1491,6 @@ class System
 
     /**
      * Init uploads manager
-     *
-     * @return none
      */
     private function _initUploads()
     {
@@ -1493,8 +1500,6 @@ class System
 
     /**
      * Init downloads manager
-     *
-     * @return none
      */
     private function _initDownloads()
     {
@@ -1502,9 +1507,7 @@ class System
     }
 
     /**
-     * Init mesasges function
-     *
-     * @return none
+     * Init messages function
      */
     private function _initMessages()
     {
@@ -1513,8 +1516,6 @@ class System
 
     /**
      * Init system paths
-     *
-     * @return none
      */
     private function _initPaths()
     {
@@ -1553,7 +1554,7 @@ class System
             $this->actions['all'] = $action;
         }
 
-        // pages selector
+        // @var string
         $q = isset($_REQUEST['q']) ? $_REQUEST['q'] : $this->query;
         if (php_sapi_name() == 'cli-server') {
             $q = ltrim(str_replace($application_name, '', $_SERVER["REQUEST_URI"]), '/');
@@ -1564,7 +1565,7 @@ class System
             $url = parse_url($this->query);
             $q = $url['path'];
         }
-        // set reponse type
+        // set response type
         if (isset($_REQUEST['response']) && in_array(strtolower($_REQUEST['response']), $this->response_types)) {
             $this->response_type = strtolower($_REQUEST['response']);
         } elseif (in_array(strtolower(pathinfo($q, PATHINFO_EXTENSION)), $this->response_types)) {
@@ -1573,9 +1574,8 @@ class System
         }
         $this->set_query($q);
 
-        // inexistent file request
         if (is_dir($this->subquery[0])) {
-            die('Inexistent module requested!');
+            die('Module not found!');
         }
 
         // component
@@ -1583,7 +1583,7 @@ class System
             $this->component = $this->subquery[2];
         }
 
-        // subcomponent
+        // sub component
         if (isset($this->subquery[3])) {
             $this->subcomponent = $this->subquery[3];
         }
@@ -1602,7 +1602,7 @@ class System
         $this->subquery[0] = $this->module;
         $this->subquery[1] = $this->content;
 
-        // page subpaths
+        // page sub paths
         $spath = $this->paths['root'];
         foreach ($this->subquery as $k => $v) {
             if ($v) {
@@ -1645,8 +1645,6 @@ class System
 
     /**
      * Init system cache
-     *
-     * @return none
      */
     private function _initCache()
     {
@@ -1659,10 +1657,10 @@ class System
             $this->import('library', 'stash');
             if (!$this->cache_options) {
                 $this->cache_options = array('short' => array(
-                        'type' => 'file',
-                        'default' => true,
-                        'options' => array('path' => $this->paths['root_cache'] . '_system/')
-                    ));
+                    'type' => 'file',
+                    'default' => true,
+                    'options' => array('path' => $this->paths['root_cache'] . '_system/')
+                ));
             }
             $this->cache = new CacheManager($this->cache_options);
         }
@@ -1670,8 +1668,6 @@ class System
 
     /**
      * Init skin
-     *
-     * @return none
      */
     private function _initSkin()
     {
@@ -1680,48 +1676,49 @@ class System
         if ($this->module != '') {
             $skin_path = ($this->skin_server_path) ? $this->skin_server_path : $this->paths['root'] . $this->skins_folder;
             if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
-                $this->add_path('skin_images', $skin_path . $this->skin . '/' . $this->module . 'images/');
-                $this->add_path('skin_scripts', $skin_path . $this->skin . '/' . $this->module . 'scripts/');
-                $this->add_path('skin_styles', $skin_path . $this->skin . '/' . $this->module . 'styles/');
+                $this->addPath('skin_images', $skin_path . $this->skin . '/' . $this->module . 'images/');
+                $this->addPath('skin_scripts', $skin_path . $this->skin . '/' . $this->module . 'scripts/');
+                $this->addPath('skin_styles', $skin_path . $this->skin . '/' . $this->module . 'styles/');
             } else {
-                $this->add_path('skin_images', $skin_path . $this->default_skin . '/' . $this->module . 'images/');
-                $this->add_path('skin_scripts', $skin_path . $this->default_skin . '/' . $this->module . 'scripts/');
-                $this->add_path('skin_styles', $skin_path . $this->default_skin . '/' . $this->module . 'styles/');
+                $this->addPath('skin_images', $skin_path . $this->default_skin . '/' . $this->module . 'images/');
+                $this->addPath('skin_scripts', $skin_path . $this->default_skin . '/' . $this->module . 'scripts/');
+                $this->addPath('skin_styles', $skin_path . $this->default_skin . '/' . $this->module . 'styles/');
             }
         } else {
-            $this->add_path('skin_images', $this->paths['root_images']);
-            $this->add_path('skin_scripts', $this->paths['root_scripts']);
-            $this->add_path('skin_styles', $this->paths['root_styles']);
+            $this->addPath('skin_images', $this->paths['root_images']);
+            $this->addPath('skin_scripts', $this->paths['root_scripts']);
+            $this->addPath('skin_styles', $this->paths['root_styles']);
         }
     }
 
     /**
      * Get page settings from db
-     *
-     * @return none
      */
     private function _initPageSettings()
     {
         if ($this->seo_enabled && !$this->ajax && $this->db_conn) {
             $pagepath = $this->paths['current_full'];
             $model = $this->libraries_settings['wbl_seo']['links_table'];
-            $pg = $this->models->{$model}->get_cond('page="' . $pagepath . '"');
+            $query=new QueryBuilder($model);
+            $pg = $query->select()->where('page="' . $pagepath . '"')->first();
             if ($pg) {
                 $params = array();
                 $pg['views']++;
                 $params['views'] = $pg['views'];
 
-                $this->models->{$model}->update($params, 'id=' . $pg['id']);
+                $query=new QueryBuilder($model);
+                $query->update($params)->where('id=' . $pg['id'])->execute();
             } else {
                 $params = array();
                 $params['page'] = $pagepath;
                 $params['views'] = 1;
                 $params['active'] = 1;
                 $params['title'] = $this->title;
-                $params['keywords'] = $this->get_meta_tag('keywords') ? $this->get_meta_tag('keywords') : '';
-                $params['description'] = $this->get_meta_tag('description') ? $this->get_meta_tag('description') : '';
+                $params['keywords'] = $this->getMetaTag('keywords') ? $this->getMetaTag('keywords') : '';
+                $params['description'] = $this->getMetaTag('description') ? $this->getMetaTag('description') : '';
 
-                $id = $this->models->{$model}->insert($params);
+                $query=new QueryBuilder($model);
+                $id = $query->insert($params)->execute();
                 $pg = $params;
                 $pg['id'] = $id;
             }
@@ -1729,15 +1726,13 @@ class System
 
             // apply settings
             $this->title = str_replace('%title%', $this->title, $this->page['title']);
-            $this->setMetaTag('keywords', $this->get_meta_tag('keywords') ? str_replace('%main%', $this->get_meta_tag('keywords'), $this->page['keywords']) : $this->page['keywords']);
-            $this->setMetaTag('description', $this->get_meta_tag('description') ? str_replace('%main%', $this->get_meta_tag('description'), $this->page['description']) : $this->page['description']);
+            $this->setMetaTag('keywords', $this->getMetaTag('keywords') ? str_replace('%main%', $this->getMetaTag('keywords'), $this->page['keywords']) : $this->page['keywords']);
+            $this->setMetaTag('description', $this->getMetaTag('description') ? str_replace('%main%', $this->getMetaTag('description'), $this->page['description']) : $this->page['description']);
         }
     }
 
     /**
      * Save the page settings if not saved
-     *
-     * @return none
      */
     private function _savePageSettings()
     {
@@ -1756,10 +1751,10 @@ class System
                 $params['views'] = 1;
                 $params['active'] = 1;
                 $params['title'] = $this->title;
-                $params['keywords'] = $this->get_meta_tag('keywords') ? $this->get_meta_tag('keywords') : '';
-                $params['description'] = $this->get_meta_tag('description') ? $this->get_meta_tag('description') : '';
+                $params['keywords'] = $this->getMetaTag('keywords') ? $this->getMetaTag('keywords') : '';
+                $params['description'] = $this->getMetaTag('description') ? $this->getMetaTag('description') : '';
 
-                $id = $this->models->{$model}->insert($params);
+                $this->models->{$model}->insert($params);
             }
 
             if ($this->libraries_settings['wbl_seo']['trackings_enabled']) {
@@ -1782,8 +1777,6 @@ class System
 
     /**
      * Init validation PHP/Javascript
-     *
-     * @return none
      */
     private function _initValidation()
     {
@@ -1793,8 +1786,6 @@ class System
 
     /**
      * Display js generated script
-     *
-     * @return none
      */
     private function _initJsScript()
     {
@@ -1807,8 +1798,6 @@ class System
             echo @$this->session['script'];
             unset($this->session['script']);
             @$this->saveSession();
-
-            exit();
             die();
         }
 
@@ -1818,14 +1807,13 @@ class System
 
     /**
      * Get meta tags from db
-     *
-     * @return none
      */
     private function _initMetas()
     {
         if (!$this->ajax && $this->seo_enabled && $this->db_conn) {
-            $query = 'select `name`,`content` from `' . $this->libraries_settings['wbl_seo']['metas_table'] . '` where is_active=1';
-            $metas = $this->db_conn->getAll($query);
+            $query = new QueryBuilder($this->libraries_settings['wbl_seo']['metas_table']);
+            $query->select(array('name','content'))->where('is_active=1');
+            $metas = $query->execute();
             foreach ($metas as $v) {
                 $this->setMetaTag($v['name'], $v['content']);
             }
@@ -1834,14 +1822,12 @@ class System
 
     /**
      * Get settings from the database table 'settings'
-     *
-     * @return none
      */
     private function _initSettings()
     {
         if ($this->settings_enabled && isset($this->db_conn->tables[$this->settings_table])) {
-            $query = 'select * from ' . $this->db_conn->tables[$this->settings_table];
-            $arr = $this->db_conn->getAll($query);
+            $query = new QueryBuilder($this->db_conn->tables[$this->settings_table]);
+            $arr = $query->select()->execute();
             $return = array();
             foreach ($arr as $k => $v) {
                 if ($v['type'] == "id") {
@@ -1860,8 +1846,6 @@ class System
 
     /**
      * Generates a init_signature image
-     *
-     * @return none
      */
     private function _initSignature()
     {
@@ -1873,14 +1857,12 @@ class System
             $obj = new SignatureManager($this->session);
             $obj->display(5, dirname(__FILE__) . '/font.ttf');
             $this->saveSession();
-            die ;
+            die;
         }
     }
 
     /**
-     * Secures data tranfered from the client
-     *
-     * @return none
+     * Secures data transferred from the client
      */
     private function _initSecurity()
     {
@@ -1890,14 +1872,11 @@ class System
     }
 
     /**
-     * Inititalize history array
-     *
-     * @return none
+     * Init history array
      */
     private function _initHistoy()
     {
         if ($this->history_active) {
-            $history = '';
             $history = new HistoryManager($this->session, $this->ajax ? '' : $this->paths['current_full']);
             $this->history = $history->get_history();
         }
@@ -1905,8 +1884,6 @@ class System
 
     /**
      * Init current language
-     *
-     * @return none
      */
     private function _initLanguage()
     {
@@ -1935,8 +1912,9 @@ class System
 
             // set locale
 
-            $language = $this->db_conn->getRow('select * from `' . $this->libraries_settings['wbl_locale']['table'] . '` where id=' . $this->session['language_id']);
-            if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win'])) {
+            $query=new QueryBuilder($this->libraries_settings['wbl_locale']['table']);
+            $language = $query->select()->where('id=' . $this->session['language_id'])->first();
+            if (!isset($this->browser['os']) || (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))) {
                 setlocale(LC_ALL, $language['locale_win']);
             } elseif (isset_or($language['locale_linux'])) {
                 setlocale(LC_ALL, $language['locale_linux']);
@@ -1946,8 +1924,6 @@ class System
 
     /**
      * Init pagination information
-     *
-     * @return none
      */
     private function _initPagination()
     {
@@ -1979,10 +1955,8 @@ class System
     /**
      * Set meta tag by name and value
      *
-     * @param string $name    name of the meta
+     * @param string $name name of the meta
      * @param string $content content of the meta
-     *
-     * @return none
      */
     public function setMetaTag($name, $content)
     {
@@ -1999,11 +1973,11 @@ class System
     /**
      * Add js file to be loaded
      *
-     * @param string $file  File path
-     * @param bool   $local If it is local
-     * @param string $type  Type of the file
+     * @param string $file File path
+     * @param bool $local If it is local
+     * @param string $type Type of the file
      *
-     * @return none
+     *
      */
     public function addJsFile($file, $local = true, $type = 'text/javascript')
     {
@@ -2019,7 +1993,7 @@ class System
     /**
      * Save in session the current js files
      *
-     * @return none
+     *
      */
     public function saveJsFiles()
     {
@@ -2048,12 +2022,12 @@ class System
     /**
      * Add css file to be loaded
      *
-     * @param string $file         File path
-     * @param string $type         File type
-     * @param string $media        Media
+     * @param string $file File path
+     * @param string $type File type
+     * @param string $media Media
      * @param string $browser_cond Browser condition
      *
-     * @return none
+     *
      */
     public function addCssFile($file, $type = 'text/css', $media = 'screen, projection', $browser_cond = '')
     {
@@ -2068,20 +2042,20 @@ class System
     /**
      * System render
      *
-     * @return none
+     *
      */
     public function render()
     {
         $this->memory->save('system_before_render');
         $this->hocks->before_render();
 
-        // load variables
-        $this->_renderVariables();
-
         // load scripts
         $this->time->start('render_scripts');
         $this->_renderScripts();
         $this->time->end('render_scripts');
+
+        // load variables
+        $this->_renderVariables();
 
         // load templates
         $this->time->start('render_templates');
@@ -2120,7 +2094,7 @@ class System
      *
      * @param string $url Url
      *
-     * @return none
+     *
      */
     public function clearCache($url = '')
     {
@@ -2137,7 +2111,7 @@ class System
      *
      * @param string $dir Directory path
      *
-     * @return none
+     *
      */
     public function changeTemplateDir($dir)
     {
@@ -2150,38 +2124,41 @@ class System
     /**
      * Fetch template file into variable
      *
-     * @param string $name         Variable name
-     * @param string $file         File path
+     * @param string $name Variable name
+     * @param string $file File path
      * @param string $cache_folder Cache folder
-     * @param bool   $return       Return template
+     * @param bool $return Return template
      *
-     * @return string
+     * @return mixed
      */
     public function fetchTemplate($name, $file, $cache_folder, $return = false)
     {
         $this->changeCacheDir($cache_folder);
-        if (is_file($file)) {
+        if ($this->template->template_exists($file)) {
             try {
                 if ($return) {
                     return $this->template->fetch($file, $this->cache_hash);
                 } else {
                     $this->assign($name, $this->template->fetch($file, $this->cache_hash));
                 }
-            } catch(Exception $ex) {
+            } catch (Exception $ex) {
                 System::triggerError('Template Exception: ' . $ex->getMessage());
+                return false;
             }
         } else {
             $this->logger->log('Templates_Error', 'Can not fetch template "' . $name . '" from file "' . $file . '"!');
+            return false;
         }
+        return true;
     }
 
     /**
      * Assign variable to template
      *
-     * @param mixed $var   Variable name
+     * @param mixed $var Variable name
      * @param mixed $value Variable value
      *
-     * @return none
+     *
      */
     public function assign($var, $value = null)
     {
@@ -2199,7 +2176,7 @@ class System
     /**
      * Render skin
      *
-     * @return none;
+     *;
      */
     private function _renderSkin()
     {
@@ -2210,19 +2187,13 @@ class System
             $this->assign('skin_images', $this->paths['skin_images']);
             $this->assign('skin_scripts', $this->paths['skin_scripts']);
             $this->assign('skin_styles', $this->paths['skin_styles']);
-
-            // get skin
-            $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->default_skin . '/' . $this->module;
-            if (file_exists($this->paths['root_dir'] . $this->skins_folder . $this->skin . '/')) {
-                $skin_folder = $this->paths['root_dir'] . $this->skins_folder . $this->skin . '/' . $this->module;
-            }
         }
     }
 
     /**
      * Render all templates
      *
-     * @return none
+     *
      */
     private function _renderTemplate()
     {
@@ -2230,20 +2201,20 @@ class System
         $this->render_type = $this->_getRenderType();
 
         if ($this->live && $this->render_type == 'all') {
-            $this->save_js_files();
+            $this->saveJsFiles();
         }
-        if (!$this->no_cache && (TemplatesManager::is_cached($this->paths['root_dir'] . $this->layout . '.tpl', $this->cache_hash) || TemplatesManager::is_cached(__DIR__ . '/objects/system/' . $this->layout . '.tpl', $this->cache_hash))) {
+        if (!$this->no_cache && (TemplatesManager::is_cached($this->paths['root_dir'] . $this->layout.$this->template_extension , $this->cache_hash) || TemplatesManager::is_cached(__DIR__ . '/objects/system/' . $this->layout . $this->template_extension, $this->cache_hash))) {
             header('Content-Type: ' . $this->content_type);
             TemplatesManager::set_cache(true);
-            if (is_file($template_folder . $this->layout . '.tpl')) {
-                $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
+            if (is_file($template_folder . $this->layout . $this->template_extension)) {
+                $this->template->display($template_folder . $this->layout.$this->template_extension, $this->cache_hash);
             } else {
-                $this->template->display(__DIR__ . '/objects/system/' . $this->layout . '.tpl', $this->cache_hash);
+                $this->template->display(__DIR__ . '/objects/system/' . $this->layout.$this->template_extension, $this->cache_hash);
             }
-            die ;
+            die;
         }
         $cache_folder = $this->paths['root_cache'];
-        if (!TemplatesManager::is_cached($template_folder . $this->layout . '.tpl', $this->cache_hash)) {
+        if (!TemplatesManager::is_cached($template_folder . $this->layout.$this->template_extension, $this->cache_hash)) {
             $this->_renderSkin();
 
             // change smarty template dir for module
@@ -2257,7 +2228,7 @@ class System
             $cache_folder = $this->paths['root_cache'] . $this->module . 'views' . DS . $this->skin . DS;
 
             if (is_file($template_folder . 'noscript.tpl')) {
-                $this->fetch_template('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
+                $this->fetchTemplate('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
             }
             if ($this->ajax && $this->obj_index->view != 'index') {
                 $this->render_type = 'page';
@@ -2296,10 +2267,10 @@ class System
         }
         $this->changeCacheDir($cache_folder);
         try {
-            if (is_file($template_folder . $this->layout . '.tpl')) {
-                $this->template->display($template_folder . $this->layout . '.tpl', $this->cache_hash);
+            if (is_file($template_folder . $this->layout .  $this->template_extension)) {
+                $this->template->display($template_folder . $this->layout.$this->template_extension, $this->cache_hash);
             } else {
-                $this->template->display(__DIR__ . '/templates/system/' . $this->layout . '.tpl', $this->cache_hash);
+                $this->template->display(__DIR__ . '/templates/system/' . $this->layout.$this->template_extension, $this->cache_hash);
             }
             $this->time->end('system');
             $this->time->end('render_templates');
@@ -2307,7 +2278,7 @@ class System
             if ($this->trace) {
                 TraceManager::generate();
             }
-        } catch(Exception $ex) {
+        } catch (Exception $ex) {
             System::triggerError('Template Exception: ' . $ex->getMessage());
         }
     }
@@ -2340,7 +2311,7 @@ class System
     /**
      * 404 Error
      *
-     * @return none
+     *
      */
     private function _404()
     {
@@ -2352,7 +2323,7 @@ class System
     /**
      * Render scripts
      *
-     * @return none
+     *
      */
     private function _renderScripts()
     {
@@ -2388,7 +2359,7 @@ class System
             if (!$this->restricted && isset($this->obj_index)) {
                 $this->obj_index->_render();
             }
-        } catch(Exception $ex) {
+        } catch (Exception $ex) {
             System::triggerError('Exception: ' . $ex->getMessage());
         }
 
@@ -2408,7 +2379,7 @@ class System
         }
 
         if ($this->response_type != 'html') {
-            $this->get_response();
+            $this->getResponse();
         }
 
         // page object
@@ -2418,7 +2389,7 @@ class System
     /**
      * Render objects
      *
-     * @return none
+     *
      */
     private function _initObjects()
     {
@@ -2443,7 +2414,7 @@ class System
     /**
      * Get validation errors from session
      *
-     * @return none
+     *
      */
     private function _initErrors()
     {
@@ -2459,7 +2430,7 @@ class System
     /**
      * Initialize session
      *
-     * @return none
+     *
      */
     public function initSession()
     {
@@ -2476,8 +2447,8 @@ class System
         if (isset($this->session['state'])) {
             $this->state = $this->session['state'];
         }
-        $this->clear_messages();
-        $this->clear_errors();
+        $this->clearMessages();
+        $this->clearErrors();
         $this->messages = isset($this->session['messages']) ? $this->session['messages'] : array();
         $this->hocks->after_session_init();
     }
@@ -2485,7 +2456,7 @@ class System
     /**
      * Init check cookie if this is configured as enabled
      *
-     * @return none
+     *
      */
     private function _initCheckCookies()
     {
@@ -2509,21 +2480,21 @@ class System
     }
 
     /**
-     * Puplic function to check if cookies are enable, user will be redirected to a
+     * Public function to check if cookies are enable, user will be redirected to a
      * link to check if cookies are enabled
      *
-     * @return none
+     *
      */
     public function checkCookies()
     {
         $this->check_cookies = true;
-        $this->_initCheck_cookies();
+        $this->_initCheckCookies();
     }
 
     /**
      * Render template variables
      *
-     * @return none
+     *
      */
     private function _renderVariables()
     {
@@ -2570,7 +2541,7 @@ class System
             $this->assign('skin_scripts', $this->paths['skin_scripts']);
             $this->assign('skin_styles', $this->paths['skin_styles']);
 
-            $before_skin = '<link rel="icon" href="{$root_images}favicon.ico" type="image/x-icon"/>
+            $before_skin = '<link rel="icon" ' . 'href="{$root_images}favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="{$root_images}favicon.ico" type="image/x-icon"/>
 <script type="text/javascript">
     var root="{$root}";
@@ -2583,7 +2554,7 @@ class System
     /**
      * Get db tables
      *
-     * @return none
+     *
      */
     private function _dbConnect()
     {
@@ -2603,7 +2574,7 @@ class System
      *
      * @param string $type User type
      *
-     * @return none
+     *
      */
     public function setModuleUserType($type)
     {
@@ -2621,7 +2592,7 @@ class System
      * @param object $type Message type
      * @param object $text Message text
      *
-     * @return none
+     *
      */
     public function addMessage($type, $text)
     {
@@ -2640,10 +2611,10 @@ class System
     /**
      * Add a input validation error
      *
-     * @param object $field Name of the input
-     * @param object $text  Text
+     * @param string $field Name of the input
+     * @param string $text Text
      *
-     * @return none
+     *
      */
     public function addError($field, $text)
     {
@@ -2662,9 +2633,9 @@ class System
     /**
      * Parse query 'q' url rewrite
      *
-     * @param object $query Query string
+     * @param string $query Query string
      *
-     * @return none
+     *
      */
     public function set_query($query)
     {
@@ -2679,18 +2650,18 @@ class System
         } elseif ($module == '') {
             $module = $this->default_module;
         } elseif (($module != '' && is_dir($this->paths['root_code'] . $this->default_module . 'components/' . $module . '/'))) {
-            $module=$this->default_module;
-            array_unshift($pages,str_replace('/', '',$this->default_module));
+            $module = $this->default_module;
+            array_unshift($pages, str_replace('/', '', $this->default_module));
         } else {
-            if ($module == 'img_mod' || $module == 'min' || $module == '_check') {
+            if (in_array($module,$this->system_modules)) {
                 $pages[1] = $module;
                 if (isset($_REQUEST['module'])) {
                     $pages[0] = $_REQUEST['module'];
                     $module = $pages[0] . '/';
                 }
             } else {
-                $module=$this->default_module;
-                array_unshift($pages,str_replace('/', '',$this->default_module));
+                $module = $this->default_module;
+                array_unshift($pages, str_replace('/', '', $this->default_module));
             }
         }
         $this->module = $module;
@@ -2703,10 +2674,10 @@ class System
     /**
      * Add system meta tag
      *
-     * @param object $name    Tag name
-     * @param object $content Tag content
+     * @param string $name Tag name
+     * @param string $content Tag content
      *
-     * @return none
+     *
      */
     public function addMetaTag($name, $content)
     {
@@ -2719,10 +2690,10 @@ class System
     /**
      * Add system path
      *
-     * @param object $name  Name of the path
-     * @param object $value Value
+     * @param string $name Name of the path
+     * @param string $value Value
      *
-     * @return none
+     *
      */
     public function addPath($name, $value)
     {
@@ -2732,7 +2703,7 @@ class System
     /**
      * Save current session
      *
-     * @return none
+     *
      */
     public function saveSession()
     {
@@ -2742,7 +2713,7 @@ class System
     /**
      * Save current system state
      *
-     * @return none
+     *
      */
     public function saveState()
     {
@@ -2759,7 +2730,7 @@ class System
     /**
      * Init current system state
      *
-     * @return none
+     *
      */
     private function _initState()
     {
@@ -2773,29 +2744,29 @@ class System
     /**
      * Authenticate user if required
      *
-     * @return none
+     *
      */
     private function _initAuthentication()
     {
         if (isset($this->actions[0])) {
             switch ($this->actions[0]) {
-            case 'login' :
-                $this->login();
-                break;
+                case 'login' :
+                    $this->login();
+                    break;
 
-            case 'logout' :
-                $this->logout();
-                break;
+                case 'logout' :
+                    $this->logout();
+                    break;
             }
         } else {
-            $this->update_visit_log();
+            $this->updateVisitLog();
         }
     }
 
     /**
      * Get current logged user
      *
-     * @return none
+     *
      */
     private function _initUser()
     {
@@ -2808,7 +2779,7 @@ class System
     /**
      * Clear system messages
      *
-     * @return none
+     *
      */
     public function clearMessages()
     {
@@ -2826,7 +2797,7 @@ class System
     /**
      * Clear system errors
      *
-     * @return none
+     *
      */
     public function clearErrors()
     {
@@ -2847,20 +2818,20 @@ class System
      *
      * @param string $goto Url for redirect
      *
-     * @return none
+     *
      */
     function logout($goto = '')
     {
         $this->_initAuthenticate();
         $this->hocks->before_logout();
-        $this->authenticate->logout();
+        $this->authenticate->logout($goto);
         $this->hocks->after_logout();
     }
 
     /**
      * Update visit log in db
      *
-     * @return none
+     *
      */
     public function updateVisitLog()
     {
@@ -2871,7 +2842,7 @@ class System
     /**
      * Init authentication
      *
-     * @return none
+     *
      */
     private function _initAuthenticate()
     {
@@ -2889,7 +2860,7 @@ class System
     /**
      * Login request
      *
-     * @return none
+     *
      */
     public function login()
     {
@@ -2902,16 +2873,16 @@ class System
     /**
      * Validate a form
      *
-     * @param object $form_id Form ID
+     * @param string $form_id Form ID
      *
-     * @return none
+     *
      */
     public function validateForm($form_id)
     {
         if (isset($this->validate[$form_id]) && !$this->validate[$form_id]->validate()) {
             $errors = $this->validate[$form_id]->get_errors();
             foreach ($errors as $f => $e) {
-                $this->add_error($f, $e);
+                $this->addError($f, $e);
             }
             $this->saveSession();
         }
@@ -2921,13 +2892,13 @@ class System
      * Add form validator
      *
      * @param object $form_id Form ID
-     * @param object $field   Input name
-     * @param object $rule    Validation rule
-     * @param object $message [optional] Mesage
-     * @param bool   $client  Client execution
-     * @param bool   $server  Server execution
+     * @param object $field Input name
+     * @param object $rule Validation rule
+     * @param string $message [optional] Message
+     * @param bool $client Client execution
+     * @param bool $server Server execution
      *
-     * @return none
+     *
      */
     public function addValidator($form_id, $field, $rule, $message = '', $client = false, $server = true)
     {
@@ -2955,13 +2926,13 @@ class System
      * Add form filter
      *
      * @param object $form_id Form ID
-     * @param object $field   Input name
-     * @param object $filter  Filter
-     * @param object $params  Parameters
-     * @param bool   $client  Client execution
-     * @param bool   $server  Server execution
+     * @param object $field Input name
+     * @param object $filter Filter
+     * @param mixed $params Parameters
+     * @param bool $client Client execution
+     * @param bool $server Server execution
      *
-     * @return none
+     *
      */
     public function addFilter($form_id, $field, $filter, $params = '', $client = false, $server = true)
     {
@@ -2991,15 +2962,15 @@ class System
     /**
      * Redirect system to anothe url
      *
-     * @param object $url [optional] Url
+     * @param string $url [optional] Url
      *
-     * @return none
+     *
      */
     function redirect($url = '')
     {
-        $this->clear_cache($url);
+        $this->clearCache($url);
         if (!$this->ajax) {
-            $this->save_state();
+            $this->saveState();
         }
         if ($this->trace) {
             $this->time->end('render_scripts');
@@ -3018,7 +2989,7 @@ class System
         } else {
             $this->redirect($this->paths['current_full']);
         }
-        exit ;
+        exit;
     }
 
     /**
@@ -3026,12 +2997,12 @@ class System
      *
      * @param string $url [optional] Url
      *
-     * @return none
+     * @return mixed
      */
     public function redirectSsl($url = '')
     {
-        $this->clear_cache($url);
-        $this->save_state();
+        $this->clearCache($url);
+        $this->saveState();
 
         if (!$url) {
             if ($_SERVER['SERVER_PORT'] == 443) {
@@ -3048,7 +3019,7 @@ class System
                 header('Location: ' . $url);
             }
         }
-        exit ;
+        die;
     }
 
     /**
@@ -3056,7 +3027,7 @@ class System
      *
      * @param string $message Message
      *
-     * @return none
+     *
      */
     function restricted($message)
     {
@@ -3123,7 +3094,6 @@ class System
         $arr['user'] = $this->user;
         $arr['history'] = $this->history;
         $arr['server'] = $this->server;
-        $arr['browser'] = $this->browser;
         $arr['paths'] = $this->paths;
         $arr['objects'] = $this->objects;
         $arr['valid'] = $this->valid;
@@ -3219,10 +3189,9 @@ class System
     {
         if (file_exists($file)) {
             try {
-                global $page;
                 include $file;
                 return true;
-            } catch(Exception $ex) {
+            } catch (Exception $ex) {
                 System::triggerError('Error loading file "' . $file . '": ' . $ex->getMessage());
             }
         }
@@ -3233,7 +3202,7 @@ class System
     /**
      * Disconnect from database
      *
-     * @return none
+     *
      */
     function disconnect()
     {
@@ -3271,7 +3240,7 @@ class System
      *
      * @param string $statusCode Header code
      *
-     * @return none
+     * @return string
      */
     private function _headerStatus($statusCode)
     {
@@ -3343,10 +3312,9 @@ class System
     /**
      * Add new environment
      *
-     * @param string $name      Name of the enviroment
-     * @param mixed  $hostnames Hostnames to map to
+     * @param string $name Name of the enviroment
+     * @param mixed $hostnames Hostnames to map to
      *
-     * @return none
      */
     public function addConfig($name, $hostnames)
     {
@@ -3363,7 +3331,7 @@ class System
     }
 
     /**
-     * Get the current enviroments
+     * Get the current environments
      *
      * @return mixed
      */
@@ -3394,7 +3362,7 @@ class System
             $arr = $this->response_data;
             $arr['executed'] = 1;
             if ($this->messages) {
-                $this->clear_messages();
+                $this->clearMessages();
                 $arr['messages'] = $this->messages;
             }
             if (count($this->errors)) {
@@ -3405,30 +3373,31 @@ class System
                 TraceManager::generate();
             }
             echo json_encode($arr);
-            die ;
+            die;
         }
     }
-    
-    /** 
+
+    /**
      * Trigger Error
-     * 
+     *
      * @param string $message
      * @param int $type
      */
-    public static function triggerError($message,$type=E_USER_NOTICE){
-        trigger_error('[File] '.$trace[1]['file'].'['. $trace[1]['line'].']'. $message, E_USER_NOTICE);
+    public static function triggerError($message, $type = E_USER_NOTICE)
+    {
+        trigger_error('[File] ' . __FILE__ . ']' . $message, $type);
     }
 
     /**
      * Get db tables form the global
      *
-     * @return none
+     *
      */
     public function addTables()
     {
         if (is_array($this->tables)) {
             $tables = $this->tables;
-            $this->tables=new TablesManager();
+            $this->tables = new TablesManager();
             foreach ($tables as $k => $v) {
                 $this->tables[$k] = $v;
             }

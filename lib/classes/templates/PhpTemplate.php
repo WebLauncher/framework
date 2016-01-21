@@ -24,6 +24,7 @@ class PhpTemplate {
 	public function fetch(){		
 		extract($this->_engine->get_template_var());
 	    ob_start();
+
 	 	if(file_exists($this->_template))
 	    	include $this->_template;
 		else

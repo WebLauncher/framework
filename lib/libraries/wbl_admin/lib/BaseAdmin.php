@@ -59,11 +59,12 @@ class Base extends _Base {
     /**
      * Get admin ajax table
      * @param string $id
-     * @param bool $data
+     * @param int $data
      * @param string $cond
      * @param string $update_action
      * @param string $edit_link
      * @param int $sort_col_no
+     * @return string
      */
     function get_admin_table($id = 'ajax_table', $data = 0, $cond = '', $update_action = 'update', $edit_link = 'none', $sort_col_no = 0) {
         global $page;
@@ -114,7 +115,7 @@ class Base extends _Base {
      * @param string $icon
      * @param string $confirm
      */
-    function add_action($title = '', $text = '', $link = '', $onclick = '', $refresh = 1, $icon = '', $confirm = '') {
+    function add_action($title = '', $text = '', $link = '', $onclick = '', $refresh = true, $icon = '', $confirm = '') {
         $this -> admin_actions[] = array(
             'title' => $title,
             'text' => $text,
@@ -133,7 +134,8 @@ class Base extends _Base {
      * @param string $action_url
      * @param string $action
      * @param string $id
-     * @param string $values
+     * @param array $values
+     * @return string
      */
     function get_admin_form($title = '', $description = '', $action_url = '', $action = '', $id = '', $values = array()) {
         $row = '';
@@ -154,8 +156,9 @@ class Base extends _Base {
 
     /**
      * Get admin form layout
-     * @param /Form $form
-     * @param array $row
+     * @param Form $form
+     * @param mixed $row
+     * @return Form
      */
     function get_admin_form_layout($form, $row = '') {
         foreach ($this->admin_fields as $k => $v)
@@ -175,6 +178,7 @@ class Base extends _Base {
 
     /**
      * Insert data posted by admin form
+     * @return int
      */
     function insert_from_admin_form() {
         $this -> _init_admin();
@@ -189,6 +193,7 @@ class Base extends _Base {
     /**
      * Update data posted by admin form
      * @param string $id
+     * @return int
      */
     function update_from_admin_form($id) {
         $this -> _init_admin();
@@ -207,6 +212,7 @@ class Base extends _Base {
      * @param string $type
      * @param string $file_name
      * @param string $admin_init_function
+     * @return mixed
      */
     function export($type = 'none', $file_name = '', $admin_init_function = 'AdminInit') {
         if (method_exists($this, $admin_init_function)) {

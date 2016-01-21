@@ -156,6 +156,8 @@
                         {if $model.file}<br/><small class="text-muted"><span class="glyphicon glyphicon-file"></span> {$model.path}</small>{/if}
                         {if !$model.file}<a href="#" class="btn btn-primary badge btn-add-model" model="{$model.name}" title="Add class file"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-file"></span></a>{/if}
                     </li>
+					{foreachelse}
+						<li class="list-group-item">No models found.</li>
                     {/foreach}
                 </ul>
             </div>

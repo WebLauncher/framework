@@ -10,11 +10,17 @@
  * @property-read DbManager $db Current manager used by model
  * @package WebLauncher\Objects
  */
-class _Base implements ArrayAccess {
+class _Base implements ArrayAccess
+{
     /**
      * @var string $table DB table for model
      */
     public $table = '';
+
+    /**
+     * @var array $fields Fields that should be retrieved from database when getting row
+     */
+    public $fields = array('*');
     /**
      * @var string $id_field ID field of table
      */
@@ -48,7 +54,7 @@ class _Base implements ArrayAccess {
      */
     public $extends = array();
     /**
-     * @var object $Extensions Instanciated extensions of the current model
+     * @var object $Extensions Instantiated extensions of the current model
      */
     public $Extensions = null;
     /**
@@ -76,28 +82,29 @@ class _Base implements ArrayAccess {
      * @var array $_columns Columns cache for the table
      */
     protected $_columns = array();
-    
+
     /**
      * @var array $map_array Default map array for maping post/get to model
      */
-    public $map_array='';
+    public $map_array = '';
 
     /**
-     * COnstructor
-     * @return
+     * Constructor
      */
-    function __construct() {
-        $this -> init_extesions();
+    function __construct()
+    {
+        $this->init_extensions();
     }
 
     /**
      * Init extensions
      */
-    function init_extesions() {
-        if (count($this -> extends)) {
-            if (!$this -> Extensions)
-                $this -> Extensions = new BaseExtenderList($this);
-            $this -> extend($this -> extends);
+    function init_extensions()
+    {
+        if (count($this->extends)) {
+            if (!$this->Extensions)
+                $this->Extensions = new BaseExtenderList($this);
+            $this->extend($this->extends);
         }
     }
 
@@ -105,29 +112,32 @@ class _Base implements ArrayAccess {
      * Extend model with more functionality of other classes
      * @param object $class
      */
-    function extend($class) {
-        $this -> Extensions -> add($class);
+    function extend($class)
+    {
+        $this->Extensions->add($class);
     }
 
     /**
      * Get magic method
      * @param string $name
+     * @return null|string
      */
-    function __get($name) {
+    function __get($name)
+    {
         if ($name == 'total_rows') {
-            if ($this -> _total_rows < 0)
-                $this -> _total_rows = $this -> db -> countTotalRows();
-            return $this -> _total_rows;
+            if ($this->_total_rows < 0)
+                $this->_total_rows = $this->db->countTotalRows();
+            return $this->_total_rows;
         }
         if ($name == 'db') {
             global $dal;
-            return $dal -> db;
+            return $dal->db;
         }
-        if ($this -> uses && is_array($this -> uses) && in_array($name, $this -> uses)) {
-            return $this -> models -> $name;
-        } elseif (is_a($this -> db, 'DbManager')) {
-            if (isset($this -> db -> tables[$name]))
-                return $this -> db -> tables[$name];
+        if ($this->uses && is_array($this->uses) && in_array($name, $this->uses)) {
+            return $this->models->$name;
+        } elseif (is_a($this->db, 'DbManager')) {
+            if (isset($this->db->tables[$name]))
+                return $this->db->tables[$name];
             else
                 return $name;
         }
@@ -140,8 +150,10 @@ class _Base implements ArrayAccess {
      * Call magic method
      * @param string $name
      * @param array $arguments
+     * @return mixed
      */
-    function __call($name, $arguments) {
+    function __call($name, $arguments)
+    {
         // process old methods
         $results = array();
         preg_match_all('/[A-Z][^A-Z]*/', $name, $results);
@@ -153,32 +165,33 @@ class _Base implements ArrayAccess {
                     $method
                 ), $arguments);
         }
-        if ($this -> Extensions && $this -> Extensions -> method_exists($name))
+        if ($this->Extensions && $this->Extensions->method_exists($name))
             return call_user_func_array(array(
-                $this -> Extensions,
+                $this->Extensions,
                 $name
             ), $arguments);
-        System::triggerError('Model for ' . $this -> table . ' does not have method "' . $name . '" defined!');
+        System::triggerError('Model for ' . $this->table . ' does not have method "' . $name . '" defined!');
     }
 
     /**
-     * Deletes row from database table mantaining order field
+     * Deletes row from database table maintaining order field
      * @param object $id
-     * @param object $id_field [optional]
-     * @param object $order_field [optional]
-     * @return
+     * @param bool $callbacks
+     * @internal param string $id_field [optional]
+     * @internal param string $order_field [optional]
      */
-    public function delete($id, $callbacks = true) {
-        if ($this -> table && $id) {
+    public function delete($id, $callbacks = true)
+    {
+        if ($this->table && $id) {
             if (is_array($id)) {
                 foreach ($id as $sid)
-                    $this -> delete($sid);
+                    $this->delete($sid);
             } else {
                 if ($callbacks)
-                    $this -> _before_delete($id);
-                $this -> delete_cond('`' . $this -> id_field . '`="' . $id . '"');
+                    $this->_before_delete($id);
+                $this->delete_cond('`' . $this->id_field . '`="' . $id . '"');
                 if ($callbacks)
-                    $this -> _after_delete($id);
+                    $this->_after_delete($id);
             }
         }
     }
@@ -187,44 +200,49 @@ class _Base implements ArrayAccess {
      * Before delete method
      * @param object $id
      */
-    private function _before_delete(&$id) {
-        $obj = $this -> get($id);
+    private function _before_delete(&$id)
+    {
+        $obj = $this->get($id);
         // maintain order
-        if (isset($obj[$this -> order_field]) && $obj[$this -> order_field] >= 0)
-            $this -> builder('update ' . $this -> table . ' set `' . $this -> order_field . '`=`' . $this -> order_field . '`-1 where `order`>' . $obj[$this -> order_field]) -> execute();
-        $this -> before_delete($id);
+        if (isset($obj[$this->order_field]) && $obj[$this->order_field] >= 0)
+            $this->builder('update ' . $this->table . ' set `' . $this->order_field . '`=`' . $this->order_field . '`-1 where `order`>' . $obj[$this->order_field])->execute();
+        $this->before_delete($id);
     }
 
     /**
      * Before delete public method
      * @param string $id
      */
-    public function before_delete(&$id) {
+    public function before_delete(&$id)
+    {
     }
 
     /**
      * After delete method
      * @param object $id
      */
-    private function _after_delete($id) {
-        $this -> after_delete($id);
+    private function _after_delete($id)
+    {
+        $this->after_delete($id);
     }
 
     /**
      * After delete public method
      * @param string $id
      */
-    public function after_delete($id = '') {
+    public function after_delete($id = '')
+    {
     }
 
     /**
      * Delete from table on found condition
-     * @return
+     *
      * @param object $condition
      */
-    function delete_cond($condition) {
-        if ($this -> table && $condition)
-            $this -> builder() -> delete() -> where($this -> __process_cond($condition)) -> execute();
+    function delete_cond($condition)
+    {
+        if ($this->table && $condition)
+            $this->builder()->delete()->where($this->__process_cond($condition))->execute();
     }
 
     /**
@@ -233,25 +251,26 @@ class _Base implements ArrayAccess {
      * @param object $id
      * @example: In model use: $this->get(1); or $this->get('hash');
      */
-    public function get($id) {
+    public function get($id)
+    {
         if (is_array($id))
-            return $this -> get_all('', '', '', '', '`' . $this -> id_field . '` in (' . implode(',', $id) . ')');
-        if ($this -> table && $id)
-            return $this -> get_cond('`' . $this -> id_field . '`=' . sat($id));
+            return $this->get_all('', '', '', '', '`' . $this->id_field . '` in (' . implode(',', $id) . ')');
+        if ($this->table && $id)
+            return $this->get_cond('`' . $this->id_field . '`=' . sat($id));
         return '';
     }
 
     /**
      * Returns the first row found by condition
      * @return array|null Data found in the model database table looking by condition $condition
-     * @param string|array $condition
+     * @param mixed $condition
      * @example In model use: $this->get_cond('field="value"')
      */
-    public function get_cond($condition) {
-        $arr = $this -> builder() -> select() -> join($this -> joins) -> where($this -> __process_cond($condition)) -> first();
-        ;
+    public function get_cond($condition)
+    {
+        $arr = $this->builder()->select($this->fields)->join($this->joins)->where($this->__process_cond($condition))->first();;
         if (count($arr))
-            return $this -> _process_row($arr);
+            return $this->_process_row($arr);
         return '';
     }
 
@@ -270,78 +289,81 @@ class _Base implements ArrayAccess {
      * @param string $having [optional]
      * @example In model use: $this->get_all(0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
      */
-    public function get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
-        return $this -> get_colls('*', $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
+    public function get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '')
+    {
+        return $this->get_colls($this->fields, $skip, $nr_rows, $order_by, $order_dir, $cond, $calc_rows, $search_fields, $keyword, $group_by, $having);
     }
 
     /**
      * Returns the rows and required columns from the current table limited and
      * sorted using the parameters
-     * @return
+     * @return array
      * @param array $colls [optional]
-     * @param int $skip [optional]
-     * @param int $nr_rows [optional]
+     * @param mixed $skip [optional]
+     * @param mixed $nr_rows [optional]
      * @param string|array $order_by [optional]
      * @param string|array $order_dir [optional]
      * @param string|array $cond [optional]
      * @param bool $calc_rows [optional]
-     * @param array $search_fields [optional]
+     * @param mixed $search_fields [optional]
      * @param string $keyword [optional]
-     * @param array $group_by [optional]
+     * @param mixed $group_by [optional]
      * @param string $having [optional]
      * @example In model use: $this->get_cools(array('field1','field1'),0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
      */
-    public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '') {
+    public function get_colls($colls = array('*'), $skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '')
+    {
         $cond_text = '';
-        $order_text = '';
         $skip_text = '';
-        $builder = $this -> builder();
+        $builder = $this->builder();
         if ($calc_rows)
-            $builder -> calculate();
+            $builder->calculate();
         if (!is_array($colls))
             $colls = explode(',', $colls);
-        $builder -> select($colls) -> join($this -> joins);
+        $builder->select($colls)->join($this->joins);
 
         $cond_s = '';
         if ($search_fields && $keyword)
-            $cond_s = $this -> _searchLikeCond($search_fields, $keyword);
+            $cond_s = $this->_searchLikeCond($search_fields, $keyword);
 
         if ($cond != '')
             $cond_text = '(' . $cond . ')' . ($cond_s ? ' and (' . $cond_s . ')' : '');
         else
             $cond_text = ($cond_s ? '(' . $cond_s . ')' : '');
 
-        $builder -> where($cond_text);
+        $builder->where($cond_text);
 
         if ($group_by)
-            $builder -> group($group_by);
+            $builder->group($group_by);
 
         if ($having)
-            $builder -> having($having);
+            $builder->having($having);
 
         if ($order_by != '')
             if (is_array($order_by))
-                $builder -> order(explode(',', $order_by), $order_dir ? (is_array($order_dir) ? $order_dir : explode(',',$order_dir)) : array());
+                $builder->order(explode(',', $order_by), $order_dir ? (is_array($order_dir) ? $order_dir : explode(',', $order_dir)) : array());
             else
-                $builder -> order(array($order_by), array($order_dir));
+                $builder->order(array($order_by), array($order_dir));
         $arr = array();
         if ($skip >= 0 && $nr_rows > 0)
-            $builder -> limit($skip, $nr_rows);
-        if ($this -> table) {
-            $arr = $builder -> execute();
+            $builder->limit($skip, $nr_rows);
+        if ($this->table) {
+            $arr = $builder->execute();
         }
         if ($calc_rows)
-            $this -> _total_rows = $this -> db -> countTotalRows();
-        return $this -> _process_array($arr);
+            $this->_total_rows = $this->db->countTotalRows();
+        return $this->_process_array($arr);
     }
 
     /**
      * Processes returned array
-     * @return
+     *
      * @param object $arr
+     * @return array|object
      */
-    private function _process_array($arr) {
-        $arr=$this -> process ? array_map(array(
+    private function _process_array($arr)
+    {
+        $arr = $this->process ? array_map(array(
             $this,
             '_process_row'
         ), $arr) : $arr;
@@ -351,17 +373,19 @@ class _Base implements ArrayAccess {
     /**
      * Process row private
      * @param array $row
+     * @return array|mixed
      */
-    private function _process_row($row) {
-        if ($this -> process) {
-            if (is_callable($this -> process_row_func))
-                $row=call_user_func($this -> process_row_func, $row);
+    private function _process_row($row)
+    {
+        if ($this->process) {
+            if (is_callable($this->process_row_func))
+                $row = call_user_func($this->process_row_func, $row);
             else
-                $row=call_user_func(array(
+                $row = call_user_func(array(
                     $this,
-                    $this -> process_row_func
+                    $this->process_row_func
                 ), $row);
-        }        
+        }
         return $row;
     }
 
@@ -371,27 +395,30 @@ class _Base implements ArrayAccess {
      * @param string|array $cond [optional]
      * @example In model use: $this->count_all('field1="value"');
      */
-    public function count_all($cond = '') {
-        if ($this -> table) {
-            $count = $this -> builder() -> select(array('count(*)')) -> join($this -> joins) -> where($this -> __process_cond($cond)) -> value();
+    public function count_all($cond = '')
+    {
+        if ($this->table) {
+            $count = $this->builder()->select(array('count(*)'))->join($this->joins)->where($this->__process_cond($cond))->value();
             return $count ? $count : 0;
         }
         return 0;
     }
 
     /**
-     * Decreases or increase `order` field of the row indentified by id
-     * @return
+     * Decreases or increase `order` field of the row identified by id
+     *
      * @param string|int $id - id of the object to increase or descrease order
      * @param int $order - [-1,1] for decrease and increase
-     * @param object $field
+     * @param object|string $field
+     * @return int
      */
-    public function set_order($id, $order, $field = '') {
+    public function set_order($id, $order, $field = '')
+    {
         if ($field)
-            $this -> order_field = $field;
-        if ($id && $obj = $this -> get($id)) {
-            $this -> builder('update ' . $this -> table . ' set `' . $this -> order_field . '`=`' . $this -> order_field . '`-(' . $order . ') where `' . $this -> order_field . '`=' . ($obj[$this -> order_field] + $order)) -> execute('query');
-            $this -> builder('update ' . $this -> table . ' set `' . $this -> order_field . '`=`' . $this -> order_field . '`+(' . $order . ') where `' . $this -> id_field . '`=' . $id) -> execute('query');
+            $this->order_field = $field;
+        if ($id && $obj = $this->get($id)) {
+            $this->builder('update ' . $this->table . ' set `' . $this->order_field . '`=`' . $this->order_field . '`-(' . $order . ') where `' . $this->order_field . '`=' . ($obj[$this->order_field] + $order))->execute('query');
+            $this->builder('update ' . $this->table . ' set `' . $this->order_field . '`=`' . $this->order_field . '`+(' . $order . ') where `' . $this->id_field . '`=' . $id)->execute('query');
             return 1;
         }
         return 0;
@@ -399,15 +426,16 @@ class _Base implements ArrayAccess {
 
     /**
      * Sets the value of the field 'is_active' to the value given
-     * @return
+     *
      * @param object $id
      * @param object $value
-     * @param object $field
+     * @param object|string $field
      */
-    public function set_active($id, $value, $field = '') {
+    public function set_active($id, $value, $field = '')
+    {
         if ($field)
-            $this -> active_field = $field;
-        $this -> update_field($id, $this -> active_field, $value);
+            $this->active_field = $field;
+        $this->update_field($id, $this->active_field, $value);
     }
 
     /**
@@ -417,71 +445,79 @@ class _Base implements ArrayAccess {
      * @param boolean $callbacks flag if the callback function should be called
      * @example In model use:
      * $this->insert(array(
-     * 		'field1'=>'value1'
-     * 		'field2'=>'value2'
-     * 		...
+     *        'field1'=>'value1'
+     *        'field2'=>'value2'
+     *        ...
      * ))
      */
-    public function insert($params, $callbacks = true) {
+    public function insert($params, $callbacks = true)
+    {
+        echopre($params);
         if (is_array($params)) {
             if ($callbacks)
-                $this -> _before_insert($params);
-            $this -> _last_inserted_id = $this -> builder() -> insert(array_keys($params)) -> values($params) -> execute();
-            if ($this -> _last_inserted_id && isset($params[$this -> id_field]))
-                $this -> _last_inserted_id = $params[$this -> id_field];
+                $this->_before_insert($params);
+            $this->_last_inserted_id = $this->builder()->insert(array_keys($params))->values(array_values($params))->execute();
+            if ($this->_last_inserted_id && isset($params[$this->id_field]))
+                $this->_last_inserted_id = $params[$this->id_field];
 
             if ($callbacks)
-                $this -> _after_insert($params);
-            return $this -> last_id();
+                $this->_after_insert($params);
+            return $this->last_id();
         }
         return '';
     }
 
     /**
      * Before insert callback private method
-     * @param object $params
+     * @param array $params
      */
-    private function _before_insert(&$params) {
-        $this -> before_insert($params);
+    private function _before_insert(&$params)
+    {
+        $this->before_insert($params);
     }
 
     /**
      * Before insert callback public method
-     * @param object $params
+     * @param array $params
      */
-    public function before_insert(&$params) {
+    public function before_insert(&$params)
+    {
     }
 
     /**
      * After insert callback private method
-     * @param object $params
+     * @param array $params
      */
-    private function _after_insert($params) {
-        $this -> after_insert($params);
+    private function _after_insert($params)
+    {
+        $this->after_insert($params);
     }
 
     /**
      * After insert callback public method
-     * @param object $params
+     * @param array $params
      */
-    public function after_insert($params = '') {
+    public function after_insert($params)
+    {
     }
 
     /**
      * Inserts into the current table according to the parameter array multiple rows
-     * @return
-     * @param object $fields
+     *
+     * @param array $fields
      * @param array $params
+     * @return mixed|string
      */
-    public function insert_multiple($fields, $params) {
+    public function insert_multiple($fields, $params)
+    {
         if (is_array($params)) {
-            $builder = $this -> builder();
-            $builder -> insert($fields);
+            $builder = $this->builder();
+            $builder->insert($fields);
 
             foreach ($params as $k => $v)
-                $builder -> values($v);
-            $builder -> execute();
-            return $this -> db -> last_id();
+                $builder->values($v);
+            $builder->execute();
+            return $this->db->last_id();
         }
         return '';
     }
@@ -490,30 +526,31 @@ class _Base implements ArrayAccess {
      * Update in current table of model according to the parameter array
      * @return
      * @param array $params ex. array('name'=>'John','function'=>'operator');
-     * @param string|array $cond '`id`=1
+     * @param mixed $cond '`id`=1
      * @param boolean $callbacks flag if callback functions should be executed
      * @example In model use:
      * $this->update(array(
-     * 		'field1'=>'value1'
-     * 		'field2'=>'value2'
-     * 		...
+     *        'field1'=>'value1'
+     *        'field2'=>'value2'
+     *        ...
      * ),'field1="value1"');
      */
-    function update($params, $cond = '', $callbacks=true) {
+    function update($params, $cond = '', $callbacks = true)
+    {
         if (!$cond) {
-            if (isset_or($params[$this -> id_field]))
-                $cond = '`' . $this -> id_field . '`="' . $params[$this -> id_field] . '"';
+            if (isset_or($params[$this->id_field]))
+                $cond = '`' . $this->id_field . '`="' . $params[$this->id_field] . '"';
             else {
-                System::triggerError('Wrong call of function ' . get_class($this) . '->update() :' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+                System::triggerError('Wrong call of function ' . get_class($this) . '->update() :' . ' in ' . __FILE__);
                 return null;
             }
         }
         if (is_array($params) && $cond) {
-            if($callbacks)
-                $this -> _before_update($params, $cond);
-            $this -> builder() -> update($params) -> where($this -> __process_cond($cond)) -> execute();
-            if($callbacks)
-                $this -> _after_update($params, $cond);
+            if ($callbacks)
+                $this->_before_update($params, $cond);
+            $this->builder()->update($params)->where($this->__process_cond($cond))->execute();
+            if ($callbacks)
+                $this->_after_update($params, $cond);
         }
     }
 
@@ -522,8 +559,9 @@ class _Base implements ArrayAccess {
      * @param array $params
      * @param object $cond
      */
-    private function _before_update(&$params, &$cond) {
-        $this -> before_update($params, $cond);
+    private function _before_update(&$params, &$cond)
+    {
+        $this->before_update($params, $cond);
     }
 
     /**
@@ -531,7 +569,8 @@ class _Base implements ArrayAccess {
      * @param array $params
      * @param object $cond
      */
-    public function before_update(&$params, &$cond) {
+    public function before_update(&$params, &$cond)
+    {
     }
 
     /**
@@ -539,8 +578,9 @@ class _Base implements ArrayAccess {
      * @param array $params
      * @param object $cond
      */
-    private function _after_update($params, $cond) {
-        $this -> after_update($params, $cond);
+    private function _after_update($params, $cond)
+    {
+        $this->after_update($params, $cond);
     }
 
     /**
@@ -548,67 +588,70 @@ class _Base implements ArrayAccess {
      * @param array $params
      * @param object $cond
      */
-    public function after_update($params, $cond) {
+    public function after_update($params, $cond)
+    {
     }
 
     /**
      * Updates the field from the table at the given id
-     * @return
      * @param object $id
      * @param object $field
      * @param object $value
      * @example In model use: $this->update_field(1,'fiel1','value1');
      */
-    public function update_field($id, $field, $value) {
+    public function update_field($id, $field, $value)
+    {
         if ($id && $field) {
             if (is_array($id))
-                $cond = '`' . $this -> id_field . '` in (' . implode(',', $id) . ')';
+                $cond = '`' . $this->id_field . '` in (' . implode(',', $id) . ')';
             else
-                $cond = '`' . $this -> id_field . '`="' . $id . '"';
-            $this -> update_field_cond($field, $value, $cond);
+                $cond = '`' . $this->id_field . '`="' . $id . '"';
+            $this->update_field_cond($field, $value, $cond);
         }
     }
 
     /**
      * Updates the field from the table at the given cond
-     * @return
-     *
      * @param object $field
      * @param object $value
      * @param object $cond
      * @example In model use: $this->update_field_cond('fiel1','value1','field1="value1"');
      */
-    public function update_field_cond($field, $value, $cond) {
+    public function update_field_cond($field, $value, $cond)
+    {
         if ($field)
-            $this -> builder() -> update(array($field => $value)) -> where($this -> __process_cond($cond)) -> execute();
+            $this->builder()->update(array($field => $value))->where($this->__process_cond($cond))->execute();
     }
 
     /**
      * Checks if it exist in the current table a row with the field equal to a value
-     * @return [true/false]
+     *
      * @param string|array $field
-     * @param string|int $value
-     * @example In model use: $this->exists('field1','value1');
+     * @param mixed $value
+     * @return bool [true/false]@example In model use: $this->exists('field1','value1');
      * @example Look in multiple fields $this->exists(array('field1'=>'value1','field2'=>'value2'));
      */
-    function exists($field, $value = null) {
+    function exists($field, $value = null)
+    {
         if (is_null($value))
-            return $this -> exists_cond('`' . $this -> id_field . '`="' . $field . '"');
+            return $this->exists_cond('`' . $this->id_field . '`="' . $field . '"');
         if ($field && $value)
             if (is_array($field) && is_array($value) && count($field) == count($value))
-                return $this -> exists_cond(array_combine($field, $value));
+                return $this->exists_cond(array_combine($field, $value));
             else
-                return $this -> exists_cond('`' . $field . '`="' . $value . '"');
+                return $this->exists_cond('`' . $field . '`="' . $value . '"');
         return false;
     }
 
     /**
      * Processes array to cond
-     * @param object $cond
+     * @param mixed $cond
+     * @return mixed|string
      */
-    private function __process_cond($cond) {
+    private function __process_cond($cond)
+    {
         if (is_array($cond))
-            $cond = implode(' AND ', array_map(function($v, $k) {
+            $cond = implode(' AND ', array_map(function ($v, $k) {
                 return '`' . $k . '`=' . sat($v);
             }, $cond, array_keys($cond)));
         return $cond;
@@ -616,13 +659,16 @@ class _Base implements ArrayAccess {
 
     /**
      * Checks if there exista a row with the given condition in this table
-     * @return [true/false]
+     *
      * @param string|array $cond
+     * @return bool [true/false]
+     *
      * @example In model use: $this->exists_cond('field1="value1"');
      */
-    function exists_cond($cond) {
+    function exists_cond($cond)
+    {
         if ($cond)
-            if ($this -> builder() -> select() -> join($this -> joins) -> where($this -> __process_cond($cond)) -> first())
+            if ($this->builder()->select()->join($this->joins)->where($this->__process_cond($cond))->first())
                 return true;
         return false;
     }
@@ -634,32 +680,35 @@ class _Base implements ArrayAccess {
      * @param string $field
      * @example In model use: $this->get_field(1,'field1');
      */
-    function get_field($id, $field) {
+    function get_field($id, $field)
+    {
         if ($id)
-            return $this -> get_field_cond($field, '`' . $this -> id_field . '`="' . $id . '"');
+            return $this->get_field_cond($field, '`' . $this->id_field . '`="' . $id . '"');
         return '';
     }
 
     /**
      * Gets field from the first found row from table on condition
-     * @return field value
+     * @return mixed
      * @param string $field
      * @param string|array $cond
      * @example In model use: $this->get_field_cond('field1','field2="value2"');
      */
-    function get_field_cond($field, $cond) {
+    function get_field_cond($field, $cond)
+    {
         if ($cond && $field)
-            return $this -> builder() -> select(array('`' . $field . '`')) -> join($this -> joins) -> where($this -> __process_cond($cond)) -> limit(0, 1) -> value();
+            return $this->builder()->select(array('`' . $field . '`'))->join($this->joins)->where($this->__process_cond($cond))->limit(0, 1)->value();
         return '';
     }
 
     /**
      * Generates search condition using Like
-     * @return condition string
+     * @return string
      * @param object $fields
      * @param object $kwd
      */
-    function _searchLikeCond($fields, $kwd) {
+    function _searchLikeCond($fields, $kwd)
+    {
         $cond_s = '1=0 ';
 
         $kwd = stripslashes($kwd);
@@ -683,42 +732,53 @@ class _Base implements ArrayAccess {
     /**
      * Process row returned
      * @param array $row
+     * @return mixed
      */
-    function process_row($row) {
+    function process_row($row)
+    {
         return $row;
     }
 
     /**
      * Process array of rows
      * @param array $arr
+     * @return array|object
      */
-    function process_array($arr) {
-        return $this -> _process_array($arr);
+    function process_array($arr)
+    {
+        return $this->_process_array($arr);
     }
 
     /**
      * Process object
      * @param object $obj
+     * @return DbRowObject
      */
-    function process_obj($obj) {
+    function process_obj($obj)
+    {
         return $obj;
     }
 
     /**
      * ArrayAccess exists
      * @param string $id
+     * @return boolean
      */
-    function offsetExists($id) {
-        return $this -> exists($id);
+    function offsetExists($id)
+    {
+        return $this->exists($id);
     }
 
     /**
      * ArrayAccess get
+     *
      * @param string $id
+     * @return mixed
      */
-    function offsetGet($id) {
-        $obj = new DbRowObject($this -> get($id), $this);
-        return $this -> process_obj($obj);
+    function offsetGet($id)
+    {
+        $obj = new DbRowObject($this->get($id), $this);
+        return $this->process_obj($obj);
     }
 
     /**
@@ -726,29 +786,33 @@ class _Base implements ArrayAccess {
      * @param string $id
      * @param array $value
      */
-    function offsetSet($id, $value) {
+    function offsetSet($id, $value)
+    {
         if (is_array($value)) {
             if ($id)
-                $this -> update($value, '`' . $this -> id_field . '`="' . $id . '"');
+                $this->update($value, '`' . $this->id_field . '`="' . $id . '"');
             else
-                $this -> _last_inserted_id = $this -> insert($value);
+                $this->_last_inserted_id = $this->insert($value);
         }
     }
 
     /**
      * ArrayAccess unset
+     *
      * @param string $id
      */
-    function offsetUnset($id) {
-        $this -> delete($id);
+    function offsetUnset($id)
+    {
+        $this->delete($id);
     }
 
     /**
      * Last inserted id
      * @return int|string Last inserted id
      */
-    function last_id() {
-        return $this -> _last_inserted_id;
+    function last_id()
+    {
+        return $this->_last_inserted_id;
     }
 
     /**
@@ -756,45 +820,55 @@ class _Base implements ArrayAccess {
      * @param string $query
      * @return QueryBuilder
      */
-    function builder($query = '') {
+    function builder($query = '')
+    {
         return new QueryBuilder($this, $query);
     }
 
     /**
      * Executes a query on this models db connection
-     * @param string $query  query string to execute
-     * @param array $args  arguments to insert in prepared query
+     *
+     * @param string $query query string to execute
+     * @param array $args arguments to insert in prepared query
      * @example In model use: $this->query('select * from table1 where field1=?',array('value1'));
+     *
+     * @return bool
      */
-    function query($query, $args = array()) {
-        return $this -> db -> query($query, $args);
+    function query($query, $args = array())
+    {
+        return $this->db->query($query, $args);
     }
 
     /**
      * To string method
      */
-    function __toString() {
-        return $this -> table;
+    function __toString()
+    {
+        return $this->table;
     }
 
     /**
      * Clone method
      */
-    function __clone() {
+    function __clone()
+    {
 
     }
 
     /**
      * Create a temporary join with another table
-     * @return Base clone of the current model with added join
+     *
+     * @return Base
+     *
      * @param string $table table to make the join to
      * @param string|array $condition [optional] condition to use for join
      * @param string $type [optional] type of join to use [LEFT, INNER, RIGHT, OUTER] default: ''
      * @example In model use: $this->join('table2','table1.field1=table2.field2','LEFT')->get(1)
      */
-    function join($table, $condition = '', $type = '') {
+    function join($table, $condition = '', $type = '')
+    {
         $obj = clone $this;
-        $obj -> joins[$table] = array(
+        $obj->joins[$table] = array(
             'table' => $table,
             'on' => $condition,
             'type' => $type
@@ -805,81 +879,86 @@ class _Base implements ArrayAccess {
     /**
      * Get columns of the current table
      */
-    function columns() {
-        if(!count($this->_columns))
-            $this->_columns=$this -> db -> getAll('SHOW COLUMNS FROM `' . $this -> table . '`');
+    function columns()
+    {
+        if (!count($this->_columns))
+            $this->_columns = $this->db->getAll('SHOW COLUMNS FROM `' . $this->table . '`');
         return $this->_columns;
     }
-    
+
     /**
      * Get the column type for a given column
      * @return string column type
      * @param string $name column name
      */
-    function column_type($name){
-        $cols=$this->columns();
-        foreach($cols as $v)
-            if($v['Field']==$name)
+    function column_type($name)
+    {
+        $cols = $this->columns();
+        foreach ($cols as $v)
+            if ($v['Field'] == $name)
                 return $v['Type'];
         return '';
     }
 
     /**
      * Save data into DB. This will call insert or update if the $this->id_field is set or not
-     * @return the id of the row inserted/updated
-     * @param array $data the array of data to be saved
+     *
+     * @param array|string $data the array of data to be saved
+     * @return string
      */
-    function save($data = '') {
-        if(!$data)
+    function save($data = '')
+    {
+        if (!$data)
             $data = $this->map();
-        if (isset_or($data[$this -> id_field]))
-            $this -> update($data);
+        if (isset($data[$this->id_field]))
+            $this->update($data);
         else
-            $data[$this -> id_field] = $this -> insert($data);
-        return $data[$this -> id_field];
+            $data[$this->id_field] = $this->insert($data);
+        return $data[$this->id_field];
     }
-    
+
     /**
      * Escape string using db driver function
-     * @return escaped string
+     * @return string
      * @param string $string unescaped string
      */
-    function escape($string){
+    function escape($string)
+    {
         return $this->db->escape(stripslashes(addslashes(trim($string))));
     }
-    
+
     /**
      * Get number of affected rows by the last query
      */
-    function affected(){
+    function affected()
+    {
         return $this->db->affectedRows();
     }
-    
+
     /**
-     * Map request/post data to collumns and return the array of data mapped to this model db table
-     * @return array data mapped to the collumns
-     * @param array $map_array custom mapping array in the structure of array('column'=>'form_field_name')
+     * Map request/post data to columns and return the array of data mapped to this model db table
+     *
+     * @param array|string $map_array custom mapping array in the structure of array('column'=>'form_field_name')
+     * @return array data mapped to the columns
      */
-    function map($map_array=''){
-        if(!$map_array)
-        {
-            if(!$this->map_array){
-                $map_array=array();
-                $cols=$this->columns();
-                foreach($cols as $col)
-                    $map_array[$col['Field']]=$col['Field'];
-            }
-            else
-                $map_array=$this->map_array;
+    function map($map_array = '')
+    {
+        if (!$map_array) {
+            if (!$this->map_array) {
+                $map_array = array();
+                $cols = $this->columns();
+                foreach ($cols as $col)
+                    $map_array[$col['Field']] = $col['Field'];
+            } else
+                $map_array = $this->map_array;
         }
-        $data=$this->system->ispostback?$_POST:$_GET;
-        if(isset($data[get_class($this)]) && is_array($data[get_class($this)]))
-            $data=$data[get_class($this)];
-        $map_data=array();
-        foreach($map_array as $k=>$v)
-            if(isset($data[$v]))
-                $map_data[$k]=$data[$v];
+        $data = ($this->system->ispostback ? $_POST : $_GET);
+        if (isset($data[get_class($this)]) && is_array($data[get_class($this)]))
+            $data = $data[get_class($this)];
+        $map_data = array();
+        foreach ($map_array as $k => $v)
+            if (isset($data[$v]))
+                $map_data[$k] = $data[$v];
         return $map_data;
     }
 }
-?>

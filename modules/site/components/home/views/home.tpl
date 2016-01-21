@@ -20,8 +20,8 @@
             </p>
 		</div>
 		<div class="col-md-3">
-			<a href="{$root}?a=__sys_trace#build" class="btn btn-primary btn-block">Build using System Tools</a>
-			<a href="{$root}?a=__sys_trace#phpinfo" class="btn btn-primary btn-block">PHPInfo in System Tools</a>
+			<a href="{$root}_system#build" class="btn btn-primary btn-block">Build using System Tools</a>
+			<a href="{$root}_system#phpinfo" class="btn btn-primary btn-block">PHPInfo in System Tools</a>
 		</div>
 	</div>
 </div>

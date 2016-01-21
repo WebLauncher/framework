@@ -24,8 +24,10 @@ class SmartyTemplateEngine implements TemplateEngine{
 		return $this->_smarty->assign($var,$value);
 	}
 	
-	public function fetch($template_path,$cache_hash=''){
-		return $this->_smarty->fetch($template_path,$cache_hash);
+	public function fetch($template,$cache_hash=''){
+		if(!pathinfo($template, PATHINFO_EXTENSION))
+			$template.='.tpl';
+		return $this->_smarty->fetch($template,$cache_hash);
 	}
 	
 	public function set_template_dir($dir='')
@@ -137,6 +139,8 @@ class SmartyTemplateEngine implements TemplateEngine{
 	}
 	
 	public function is_cached($template,$cache_id='',$compile_id=null){
+		if(pathinfo($template, PATHINFO_EXTENSION)=='')
+			$template.='.tpl';
 		switch($this->_version)
 		{
 			case 'v2':
@@ -153,7 +157,16 @@ class SmartyTemplateEngine implements TemplateEngine{
 	}
 	
 	public function display($template,$cache_hash=''){
+		if(!pathinfo($template, PATHINFO_EXTENSION))
+			$template.='.tpl';
 		$this->_smarty->display($template,$cache_hash);
+	}
+
+	public function register_plugin($plugin, $method, $type){
+		if($this->_version=='v2')
+			$this->_smarty->{'register_'.$type}($plugin, $method);
+		elseif($this->_version=='v3')
+			$this->_smarty->registerPlugin($type, $plugin, $method);
 	}
 	
 	protected function _get_engine(){
@@ -200,6 +213,17 @@ class SmartyTemplateEngine implements TemplateEngine{
 					$this->_smarty->loadFilter('output', 'trimwhitespace');			
 			break;		
 		}
+	}
+
+	/**
+	 * @param $template
+	 * @return bool
+	 */
+	public function template_exists($template)
+	{
+		if(!pathinfo($template, PATHINFO_EXTENSION))
+			$template.='.tpl';
+		return file_exists($template);
 	}
 }
 

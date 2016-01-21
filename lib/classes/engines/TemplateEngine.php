@@ -14,5 +14,6 @@ interface TemplateEngine {
 	public function set_compile_dir($dir);
 	public function set_template_dir($dir='');
 	public function display($template,$cache_hash='');
-} 
-?>
+	public function register_plugin($plugin, $method, $type);
+	public function template_exists($template);
+}
