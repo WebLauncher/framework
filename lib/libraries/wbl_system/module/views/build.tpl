@@ -53,7 +53,9 @@
 		color: #f00;
 		font-weight: normal;
 	}
-
+    .modal-backdrop {
+        z-index: 0;
+    }
 </style>
 <script>
 	$(function() {
@@ -74,12 +76,12 @@
 			$('[name="parent"]').val($(this).attr('path'));
 			$('.tree li>a.active').removeClass('active');
 			$(this).addClass('active');
-			return false;
 		});
 		$('#add_component').submit(function() {
 			if ($('#add_component').valid()) {
 				$.get($('#add_component [name="path"]').val() + '/' + $('#add_component [name="name"]').val(), {
-					a : 'build'
+					a : 'build',
+					title : $('#add_component [name="title"]').val() 
 				}, function() {
 					load_build();
 					status('Component <strong>' + $('#add_component [name="name"]').val() + '</strong> was created!');
@@ -101,12 +103,12 @@
 			return false;
 		});
 		$('.btn-add-model').click(function() {
-		    var model=$(this).attr('model');
-		    $(this).hide();
+			var model = $(this).attr('model');
+			$(this).hide();
 			$.get(root, {
 				a : 'build-model:' + model
 			}, function() {
-                status('Model <strong>' + model + '</strong> was created!');
+				status('Model <strong>' + model + '</strong> was created!');
 				load_build();
 			});
 		});
@@ -114,89 +116,113 @@
 </script>
 {/literal}
 <div class="clearfix col-md-12">
-    <div class="alert alert-default" role="alert">
-        Select a component to add sub-components or models. We recommend adding models in the root of the module so they can be accessed from any component.
+    <br/>
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Components
+            </div>
+            <div class="panel-body">
+                <div class="tree">
+                    <ul style="margin:0;padding:0;">
+                        {include file="component.tpl" obj=$components}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div class="col-md-6">
-        <h3>Components</h3>
-        <div class="tree">
-            <ul style="margin:0;padding:0;">
-                {include file="component.tpl" obj=$components}
-            </ul>
+        <div class="panel panel-primary">
+            <div class="panel-heading clearfix">
+                <div class="pull-left">Models ({$models|@count})</div>
+                <div class="pull-right">
+                    <a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modal_model"><i class="glyphicon glyphicon glyphicon-plus"></i> Add model class</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="clearfix">
+                    <div class="col-md-3">
+                        <span class="text-primary"><span class="glyphicon glyphicon-hdd"></span> DB Table</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-muted"><span class="glyphicon glyphicon-file"></span> Class File</span>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    {foreach item="model" from=$models}
+                    <li class="list-group-item">
+                        {if $model.db}<span class="text-primary"><span class="glyphicon glyphicon-hdd"></span> {$model.name}</span>{/if}
+                        {if $model.file}<br/><small class="text-muted"><span class="glyphicon glyphicon-file"></span> {$model.path}</small>{/if}
+                        {if !$model.file}<a href="#" class="btn btn-primary badge btn-add-model" model="{$model.name}" title="Add class file"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-file"></span></a>{/if}
+                    </li>
+					{foreachelse}
+						<li class="list-group-item">No models found.</li>
+                    {/foreach}
+                </ul>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <h3>Models</h3>
-        <div class="clearfix">
-            <div class="col-md-6">
-                <span class="glyphicon glyphicon-hdd"></span> DB Table
+</div>
+<div class="modal fade" id="modal_component" tabindex="-1" role="dialog" aria-labelledby="modal_component">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Add new component</h4>
             </div>
-            <div class="col-md-6">
-                <span class="glyphicon glyphicon-file"></span> Class File
+            <div class="modal-body">
+                <form id="add_component">
+                    <input type="hidden" name="path" value="{$components.path}"/>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Parent Component</label>
+                        <input type="text" class="form-control" readonly="readonly" name="parent" value="{$main_module|default:'site'}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+                        {validator form="add_component" field="name" rule="pattern|^[a-z_][a-z0-9]+$" message="Please user only [a-z] and _ (underscore)." }
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Title</label>
+                        <input type="text" class="form-control" name="title" placeholder="Title">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Add
+                    </button>
+                </form>
             </div>
         </div>
-        <ul class="list-group">
-            {foreach item="model" from=$models}
-            <li class="list-group-item">
-                {if $model.db}<span class="glyphicon glyphicon-hdd"></span>{/if}
-                {if $model.file}<span class="glyphicon glyphicon-file"></span>{/if}
-                {$model.name}
-                {if !$model.file}<a href="#" class="btn btn-primary badge btn-add-model" model="{$model.name}" title="Add class file"><span class="glyphicon glyphicon-plus"></span></a>{/if}
-            </li>
-            {/foreach}
-        </ul>
     </div>
-    <div class="col-md-3">
-        <div class="col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    Add new component
-                </div>
-                <div class="panel-body">
-                    <form id="add_component">
-                        <input type="hidden" name="path" value="{$components.path}"/>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Parent Component</label>
-                            <input type="text" class="form-control" readonly="readonly" name="parent" value="{$main_module|default:'site'}">
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Name</label>
-                            <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
-                            {validator form="add_component" field="name" rule="pattern|^[a-z_][a-z0-9]+$" message="Please user only [a-z] and _ (underscore)." }
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Title</label>
-                            <input type="text" class="form-control" name="title" placeholder="Title">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            Add
-                        </button>
-                    </form>
-                </div>
+</div>
+
+<div class="modal fade" id="modal_model" tabindex="-1" role="dialog" aria-labelledby="modal_model">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Add new model class</h4>
             </div>
-        </div>
-        <div class="col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    Add new model class
-                </div>
-                <div class="panel-body">
-                    <form id="add_model">
-                        <input type="hidden" name="path" value="{$components.path}"/>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Parent Component</label>
-                            <input type="text" class="form-control" name="parent" readonly="readonly" value="{$main_module|default:'site'}">
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Name</label>
-                            <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
-                            {validator form="add_model" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            Add
-                        </button>
-                    </form>
-                </div>
+            <div class="modal-body">
+                <form id="add_model">
+                    <input type="hidden" name="path" value="{$components.path}"/>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Parent Component</label>
+                        <input type="text" class="form-control" name="parent" readonly="readonly" value="{$main_module|default:'site'}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+                        {validator form="add_model" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Add
+                    </button>
+                </form>
             </div>
         </div>
     </div>
