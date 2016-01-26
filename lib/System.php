@@ -32,6 +32,10 @@ define('SYS_VERSION', '2.7.8');
  * @property string visits_logs_enabled
  * @property mixed ajax
  * @property mixed browser
+ * @property mixed ssl
+ * @property mixed browser_ip
+ * @property mixed sys_version
+ * @property mixed server
  * @category Class
  * @package  WebLauncher\System
  * @author   WebLauncher <contact@weblauncher.ro>
@@ -2310,14 +2314,13 @@ class System
 
     /**
      * 404 Error
-     *
-     *
      */
     private function _404()
     {
         if ($this->enable_404) {
             $this->_initSystemError('404', 'The page that you have requested could not be found.');
         }
+        return '';
     }
 
     /**

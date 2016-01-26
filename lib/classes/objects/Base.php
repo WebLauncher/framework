@@ -10,7 +10,5 @@
  */
 class Base extends _Base
 {
-	
-}
 
-?>
+}

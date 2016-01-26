@@ -50,7 +50,7 @@ class _Base implements ArrayAccess
      */
     public $system = null;
     /**
-     * @var array $extends Extensions of the current model
+     * @var array|BaseExtender[] $extends Extensions of the current model
      */
     public $extends = array();
     /**
@@ -177,8 +177,6 @@ class _Base implements ArrayAccess
      * Deletes row from database table maintaining order field
      * @param object $id
      * @param bool $callbacks
-     * @internal param string $id_field [optional]
-     * @internal param string $order_field [optional]
      */
     public function delete($id, $callbacks = true)
     {
@@ -248,7 +246,7 @@ class _Base implements ArrayAccess
     /**
      * Return the row from the current table at the given id
      * @return array|null Data found in the model database table looking by $this->id_field equal to $id
-     * @param object $id
+     * @param mixed $id
      * @example: In model use: $this->get(1); or $this->get('hash');
      */
     public function get($id)
@@ -276,18 +274,19 @@ class _Base implements ArrayAccess
 
     /**
      * Returns the rows from the current table limited and sorted using the parameters
-     * @return array|null
-     * @param int $skip [optional]
-     * @param int $nr_rows [optional]
+     *
+     * @param int|string $skip [optional]
+     * @param int|string $nr_rows [optional]
      * @param string|array $order_by [optional]
      * @param string|array $order_dir [optional]
      * @param string|array $cond [optional]
      * @param bool $calc_rows [optional]
-     * @param array $search_fields [optional]
+     * @param array|string $search_fields [optional]
      * @param string $keyword [optional]
-     * @param array $group_by [optional]
+     * @param array|string $group_by [optional]
      * @param string $having [optional]
-     * @example In model use: $this->get_all(0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
+     * @return array|null
+    @example In model use: $this->get_all(0,10,'field','desc','field1="value"',true,array('field1','field2',...),'keyword')
      */
     public function get_all($skip = '', $nr_rows = '', $order_by = '', $order_dir = '', $cond = '', $calc_rows = false, $search_fields = '', $keyword = '', $group_by = '', $having = '')
     {
@@ -358,7 +357,7 @@ class _Base implements ArrayAccess
     /**
      * Processes returned array
      *
-     * @param object $arr
+     * @param array $arr
      * @return array|object
      */
     private function _process_array($arr)
@@ -612,9 +611,9 @@ class _Base implements ArrayAccess
 
     /**
      * Updates the field from the table at the given cond
-     * @param object $field
-     * @param object $value
-     * @param object $cond
+     * @param string $field
+     * @param mixed $value
+     * @param mixed $cond
      * @example In model use: $this->update_field_cond('fiel1','value1','field1="value1"');
      */
     public function update_field_cond($field, $value, $cond)

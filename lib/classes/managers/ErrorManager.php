@@ -14,5 +14,4 @@ class ErrorManager{
 	function __construct(){
 		
 	}
-} 
-?>
+}

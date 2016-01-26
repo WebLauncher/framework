@@ -26,12 +26,14 @@ class BuildManager
 	{
 		$this->files=&$files_manager;
 	}
-	
+
 	/**
 	 * Add component to site
 	 * @param string $path
 	 * @param string $component
-	 * @param string $skin 
+	 * @param string $skin
+	 * @param string $title
+	 * @return int
 	 */
 	function add($path,$component,$skin='default',$title='')
 	{
@@ -61,7 +63,8 @@ class BuildManager
     /**
      * Add model to site
      * @param string $path
-     * @param string $component
+     * @param string $name
+	 * @return int
      */
     function add_model($path,$name)
     {
@@ -79,8 +82,8 @@ class BuildManager
 	/**
 	 * Add component to site
 	 * @param string $path
-	 * @param string $component
-	 * @param string $skin 
+	 * @param string $skin
+	 * @return int
 	 */
 	function add_module($path,$skin='default')
 	{
@@ -99,7 +102,7 @@ class BuildManager
 		}
 		if(!$this->files->save_file($path.'views/'.$skin.'/index.tpl',$this->get_component_view($module)))
 		{
-			$this->errors[]=('Could not write file:"'.$path.'views/'.$skin.'/'.$component.'.tpl"!');
+			$this->errors[]=('Could not write file:"'.$path.'views/'.$skin.'/index.tpl"!');
 		}
 		if(!$this->files->save_file($path.'index.php',$this->get_module_class($module)))
 		{
@@ -116,6 +119,8 @@ class BuildManager
 	/**
 	 * Get generated code for component class
 	 * @param string $component
+	 * @param string $title
+	 * @return string
 	 */
 	function get_component_class($component,$title='')
 	{
@@ -133,15 +138,15 @@ class BuildManager
 		$class.="    function index()\n";
 		$class.="    {\n";
 		$class.="    }\n";
-		$class.="}\n";
-		$class.="?>";
+		$class.="}";
 		return $class;
 	}
-    
-    /**
-     * Get generated code for model class
-     * @param string $name
-     */
+
+	/**
+	 * Get generated code for model class
+	 * @param string $name
+	 * @return string
+	 */
     function get_model_class($name)
     {
         $class="<?php\n";
@@ -152,14 +157,14 @@ class BuildManager
         $class.="*/\n";
         $class.="class ".$name." extends Base\n";
         $class.="{\n";
-        $class.="}\n";
-        $class.="?>";
+        $class.="}";
         return $class;
     }
-	
+
 	/**
 	 * Get generated code for module class
 	 * @param string $module
+	 * @return string
 	 */
 	function get_module_class($module)
 	{
@@ -173,14 +178,14 @@ class BuildManager
 		$class.="	function index()\n";
 		$class.="	{\n";
 		$class.="	}\n";
-		$class.="}\n";
-		$class.="?>";
+		$class.="}";
 		return $class;
 	}
-	
+
 	/**
 	 * Get generated code for module config file
-	 * @param string $component
+	 * @param string $module
+	 * @return string
 	 */
 	function get_module_config($module)
 	{
@@ -191,13 +196,13 @@ class BuildManager
  		$class.="*/\n";
 		$class.='global $page;'."\n";
 		$class.='$page->title="page title for module '.$module.'";'."\n";
-		$class.="?>";
 		return $class;
 	}
-	
+
 	/**
 	 * Get generated component view
-	 * @param string $component 
+	 * @param string $component
+	 * @return string
 	 */
 	function get_component_view($component)
 	{
@@ -210,5 +215,3 @@ class BuildManager
 		return $view;
 	}
 }
-
-?>

@@ -2,11 +2,13 @@
 /**
  * Session manager class
  */
+
 /**
  * Session Manager Class
  * @package WebLauncher\Managers
  */
-class SessionManager {
+class SessionManager
+{
     /**
      * @var array $array Data array
      */
@@ -47,7 +49,8 @@ class SessionManager {
     /**
      * Save session
      */
-    public static function save() {
+    public static function save()
+    {
         $func = 'save_' . self::$method;
         self::$func();
     }
@@ -57,7 +60,8 @@ class SessionManager {
      * @param string $_cookie
      * @param int $default_offset
      */
-    public static function init($_cookie = 'default', $default_offset = 1800) {
+    public static function init($_cookie = 'default', $default_offset = 1800)
+    {
         self::$default_offset = $default_offset;
         self::$cookie_name = $_cookie;
         $func = 'init_' . self::$method;
@@ -67,29 +71,33 @@ class SessionManager {
     /**
      * Check if session is new
      */
-    public static function is_new() {
+    public static function is_new()
+    {
         return self::$create;
     }
 
     /**
      * Save to database
      */
-    private static function save_db() {
+    private static function save_db()
+    {
 
     }
-    
+
     /**
      * Save to database
      */
-    private static function save_php() {
+    private static function save_php()
+    {
 
     }
 
     /**
      * Regenerate session
      */
-    public static function regenerate() {
-        session_regenerate_id(true); 
+    public static function regenerate()
+    {
+        session_regenerate_id(true);
         $func = 'init_' . self::$method;
         self::$func(self::$cookie_name);
     }
@@ -98,14 +106,15 @@ class SessionManager {
      * Init to database
      * @param string $_cookie
      */
-    private static function init_db($_cookie = 'default') {
+    private static function init_db($_cookie = 'default')
+    {
         session_set_cookie_params(self::$default_offset);
         if ($_cookie) {
             if (!isset($_COOKIE[$_cookie]))
                 self::$create = true;
             self::$cookie_name = $_cookie;
             self::$handler = new SessionHandlerDb();
-            self::$handler -> set_remmember_time(self::$remmember_offset);
+            self::$handler->set_remmember_time(self::$remmember_offset);
             session_name(self::$cookie_name);
             session_set_save_handler(array(
                 self::$handler,
@@ -148,7 +157,8 @@ class SessionManager {
      * Init to database
      * @param string $_cookie
      */
-    private static function init_php($_cookie = 'default') {
+    private static function init_php($_cookie = 'default')
+    {
         session_set_cookie_params(self::$default_offset);
         if ($_cookie) {
             if (!isset($_COOKIE[$_cookie]))
@@ -177,7 +187,8 @@ class SessionManager {
  * Session Db Handler
  * @package WebLauncher\Managers
  */
-class SessionHandlerDb {
+class SessionHandlerDb
+{
     /**
      * @var bool $create Create new session
      */
@@ -190,14 +201,16 @@ class SessionHandlerDb {
     /**
      * Open session
      */
-    public function open() {
+    public function open()
+    {
         return true;
     }
 
     /**
      * Close session
      */
-    public function close() {
+    public function close()
+    {
         return true;
     }
 
@@ -205,8 +218,9 @@ class SessionHandlerDb {
      * Set the remmember timeout
      * @param int $remmember_offset
      */
-    public function set_remmember_time($remmember_offset) {
-        $this -> remmember_offset = $remmember_offset;
+    public function set_remmember_time($remmember_offset)
+    {
+        $this->remmember_offset = $remmember_offset;
     }
 
     /**
@@ -214,28 +228,31 @@ class SessionHandlerDb {
      * @param string $id
      * @param string $data
      */
-    public function write($id, $data) {
+    public function write($id, $data)
+    {
         global $dal;
         $sql = '';
         $data = base64_encode(urlencode($data));
-        if (!$this -> create)
+        if (!$this->create)
             $sql = 'UPDATE sessions	SET array = "' . $data . '" WHERE hash = ' . sat($id) . '';
         else {
             $sql = 'INSERT INTO sessions (hash, array) VALUES (' . sat($id) . ', "' . $data . '")';
-            $this -> create = false;
+            $this->create = false;
         }
-        $dal -> db -> query($sql);
+        $dal->db->query($sql);
     }
 
     /**
      * Read session
      * @param string $id
+     * @return string
      */
-    public function read($id) {
+    public function read($id)
+    {
         global $dal;
-        $row = $dal -> db -> getRow('SELECT * FROM sessions	WHERE hash = ' . sat($id) . '');
+        $row = $dal->db->getRow('SELECT * FROM sessions	WHERE hash = ' . sat($id) . '');
         if (!isset($row['array'])) {
-            $this -> create = true;
+            $this->create = true;
             return '';
         } else {
             return urldecode(base64_decode($row['array']));
@@ -245,31 +262,35 @@ class SessionHandlerDb {
     /**
      * Garbage collector
      * @param object $max
+     * @return bool
      */
-    public function gc($max) {
+    public function gc($max)
+    {
         global $dal;
-        $sql = 'DELETE FROM sessions WHERE TIMESTAMPADD(SECOND,' . $this -> remmember_offset . ',`timestamp`)<NOW()';
-        $dal -> db -> query($sql);
+        $sql = 'DELETE FROM sessions WHERE TIMESTAMPADD(SECOND,' . $this->remmember_offset . ',`timestamp`)<NOW()';
+        $dal->db->query($sql);
         return true;
     }
 
     /**
      * Destroy session
      * @param string $id
+     * @return bool
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         global $dal;
         $sql = 'DELETE FROM sessions WHERE hash=' . sat($id);
-        $dal -> db -> query($sql);
+        $dal->db->query($sql);
         return TRUE;
     }
 
     /**
      * Destruct session
      */
-    function __destruct() {
+    function __destruct()
+    {
         @session_write_close();
     }
 
 }
-?>

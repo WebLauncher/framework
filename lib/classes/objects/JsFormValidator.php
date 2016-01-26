@@ -37,6 +37,7 @@ class JsFormValidator {
 	/**
 	 * Clean message
 	 * @param string $message
+	 * @return string
 	 */
 	function clean_message($message) {
 		return nl2br(str_replace("\\n", '', str_replace("\\r\\n", '', $message)));
@@ -56,7 +57,6 @@ class JsFormValidator {
 				$content .= '\'' . $field . '\'' . ':{';
 
 				foreach ($arr['rules'] as $r => $m) {
-					$params = array();
 					$params = explode('|', $r);
 
 					if (count($params) > 1) {
@@ -87,7 +87,6 @@ class JsFormValidator {
 				$content .= '\'' . $field . '\':{';
 
 				foreach ($arr['rules'] as $r => $m) {
-					$params = array();
 					$params = explode('|', $r);
 
 					if (count($params) > 1) {
@@ -108,4 +107,3 @@ class JsFormValidator {
 	}
 
 }
-?>

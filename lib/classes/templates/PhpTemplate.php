@@ -1,6 +1,12 @@
 <?php
 class PhpTemplate {
+	/**
+	 * @var string
+	 */
 	protected $_template='';
+	/**
+	 * @var PhpTemplateEngine
+	 */
 	protected $_engine='';
 	
 	public function __construct($template,&$engine){
@@ -33,4 +39,3 @@ class PhpTemplate {
 	    return ob_get_clean();
 	}
 }
-?>

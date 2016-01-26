@@ -18,7 +18,7 @@ class ScriptManager
 	 */
 	var $after_load='';
 	/**
-	 * @var mixed $forms forms used
+	 * @var JsFormValidator[] $forms forms used
 	 */
 	var $forms=array();
 	

@@ -10,7 +10,7 @@
 class EmailManager
 {
     /**
-     * @var /PHPMailer $mailer PHPMailer object
+     * @var PHPMailer $mailer PHPMailer object
      */
     public $mailer = null;
 
@@ -35,6 +35,7 @@ class EmailManager
      * @param string $mail_in
      * @param string $sender
      * @param array $others
+     * @return $this
      */
     function compose($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
@@ -117,7 +118,8 @@ class EmailManager
 
     /**
      * Clean recievers
-     * @param array $to
+     * @param string[] $to
+     * @return array
      */
     function clean_receivers($to)
     {
@@ -125,7 +127,7 @@ class EmailManager
             $arr = array();
             foreach ($to as $value)
                 if (!isset($arr[is_array($value) ? $value['email'] : $value]))
-                    $arr[is_array($value) ? $value['email'] : $value] = $value;
+                    $arr[(is_array($value) ? $value['email'] : $value)] = $value;
             return $arr;
         }
         return $to;
@@ -144,6 +146,7 @@ class EmailManager
      * @param string $mail_in
      * @param string $sender
      * @param array $others
+     * @return $this
      */
     function queue($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
@@ -192,7 +195,7 @@ class EmailManager
         if (!is_null($this->mailer)) {
             try {                
                 if(!$send = $this->mailer->Send()) {
-                    System::triggerError('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+                    System::triggerError('Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
                 }
             } catch (phpmailerException $e) {
                 System::triggerError('Mail Error: ' . $e->errorMessage());
@@ -207,6 +210,7 @@ class EmailManager
      * Process object from queue
      * @param array $obj
      * @param array $hosts
+     * @return bool
      */
     function process_queue_obj($obj, $hosts)
     {
@@ -238,4 +242,3 @@ class EmailManager
     }
 
 }
-?>

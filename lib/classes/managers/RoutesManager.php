@@ -51,6 +51,7 @@ class RoutesManager
     /**
      * Match the given route
      * @param array $route
+     * @param $url
      * @return bool
      */
     function _match_route($route, $url)

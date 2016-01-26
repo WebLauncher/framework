@@ -41,7 +41,7 @@ class DownloadManager {
 	 * Download file
 	 * @param string $file
 	 * @param string $newname
-	 * @param strng $dir
+	 * @param string $dir
 	 */
 	function download($file,$newname='',$dir='')
 	{
@@ -250,5 +250,3 @@ class DownloadManager {
 
 	} // find_file
 }
-
-?>

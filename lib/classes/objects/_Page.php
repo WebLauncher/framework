@@ -55,7 +55,7 @@ class _Page
      */
     var $_cache = '';
     /**
-     * @var /Page Controller subpage object
+     * @var _Page Controller subpage object
      */
     var $subpage = '';
     /**
@@ -115,7 +115,7 @@ class _Page
      */
     var $paths = '';
     /**
-     * @var \FormManager Access to FormsManager Object
+     * @var FormsManager Access to FormsManager Object
      */
     var $forms = '';
     /**
@@ -229,7 +229,7 @@ class _Page
                 echo json_encode($result);
             elseif (is_string($result) || is_numeric($result) || is_object($result))
                 echo $result;
-            die ;
+            die;
         }
     }
 
@@ -238,8 +238,8 @@ class _Page
      */
     function _on_init()
     {
-        if($this->title)
-            $this->system->title=$this->title;
+        if ($this->title)
+            $this->system->title = $this->title;
         $this->assign('p', $this->system->getPage());
         if (method_exists($this, 'on_init'))
             $this->_execute_result($this->on_init());
@@ -252,7 +252,7 @@ class _Page
     function _check_ssl()
     {
         if ($this->system->live && $this->system->maintain_ssl && !$this->system->ssl)
-            $this->system->redirect_ssl();
+            $this->system->redirectSsl();
     }
 
     /**
@@ -286,7 +286,7 @@ class _Page
      */
     function add_validator($form_id, $field, $rule, $message = '', $client = true)
     {
-        $this->system->add_validator($form_id, $field, $rule, $message, $client);
+        $this->system->addValidator($form_id, $field, $rule, $message, $client);
     }
 
     /**
@@ -296,7 +296,7 @@ class _Page
      */
     function validate($form_id)
     {
-        $this->system->validate_form($form_id);
+        $this->system->validateForm($form_id);
         return $this->system->valid;
     }
 
@@ -307,7 +307,7 @@ class _Page
      */
     function add_message($type, $message)
     {
-        $this->system->add_message($type, $message);
+        $this->system->addMessage($type, $message);
     }
 
     /**
@@ -355,7 +355,7 @@ class _Page
                 $this->system->actions = $this->subquery;
             } elseif (!$this->system->live && $this->system->build_enabled && isset($this->system->actions[0]) && $this->system->actions[0] == 'build') {
                 $build = new BuildManager($this->system->uploads);
-                if (!$build->add($this->_folder . 'components' . DS . $c_name . '/', $c_name,$this->skin,isset_or($_REQUEST['title']))) {
+                if (!$build->add($this->_folder . 'components' . DS . $c_name . '/', $c_name, $this->skin, isset_or($_REQUEST['title']))) {
                     foreach ($build->errors as $e)
                         $this->system->logger->log('builder_error', $e);
                 }
@@ -391,17 +391,17 @@ class _Page
             TemplatesManager::set_cache($this->cache_enabled);
         if ($this->system->trace)
             $this->render_start = microtime(true);
-        switch($this->_template_var) {
-        case 'page' :
-            if ($this->system->restricted)
-                $this->view = 'restricted';
-            break;
-        case 'page_component_0' :
-            if ($this->system->check_login && !$this->system->logged) {
-                $this->_folder = $this->system->paths['root_code'] . $this->system->module;
-                $this->view = 'signin';
-            }
-            break;
+        switch ($this->_template_var) {
+            case 'page' :
+                if ($this->system->restricted)
+                    $this->view = 'restricted';
+                break;
+            case 'page_component_0' :
+                if ($this->system->check_login && !$this->system->logged) {
+                    $this->_folder = $this->system->paths['root_code'] . $this->system->module;
+                    $this->view = 'signin';
+                }
+                break;
         }
         if ($this->subpage && $render_type != $this->_template_var)
             $this->subpage->_render_template($render_type);
@@ -418,8 +418,8 @@ class _Page
                 $this->template->assign('subpage', TemplatesManager::get_template_var($this->subpage->_template_var));
             $template_dir = $path;
             $cache_dir = $this->_cache . 'views' . DS . $this->skin . DS;
-            $this->system->change_template_dir($template_dir);
-            $this->system->fetch_template($this->_template_var, $template_dir . $this->template_file, $cache_dir);
+            $this->system->changeTemplateDir($template_dir);
+            $this->system->fetchTemplate($this->_template_var, $template_dir . $this->template_file, $cache_dir);
         }
 
         if ($this->_template_var == 'page_component_2')
@@ -437,7 +437,7 @@ class _Page
 
     /**
      * Block actions
-     * @param array $actions
+     * @param mixed $actions
      */
     public function block_actions($actions = '')
     {
@@ -473,16 +473,16 @@ class _Page
             $template_path = $this->paths['root_code'] . $this->system->module . 'objects' . DS . 'mail_' . $template . '.tpl';
 
         if (file_exists($template_path)) {
-            $s_t_dir = $this->system->template->template_dir;
-            $s_c_dir = $this->system->template->compile_dir;
+            $s_t_dir = $this->system->template->get_template_dir();
+            $s_c_dir = $this->system->template->get_compile_dir();
 
             $base_path = isset($params['base_path']) ? $params['base_path'] : $this->paths['root_code'] . $this->system->module . 'objects' . DS . $this->skin . DS;
 
             if (!file_exists($base_path))
                 $base_path = isset($params['base_path']) ? $params['base_path'] : $this->paths['root_code'] . $this->system->module . 'objects' . DS;
 
-            $this->system->change_template_dir($base_path);
-            $this->system->change_cache_dir($this->paths['root_cache'] . $this->system->module . DS . "email" . DS);
+            $this->system->changeTemplateDir($base_path);
+            $this->system->changeCacheDir($this->paths['root_cache'] . $this->system->module . DS . "email" . DS);
 
             $this->assign($params);
             $this->assign("params", $params);
@@ -491,13 +491,13 @@ class _Page
             $message = $this->system->template->fetch($template_path);
 
             //reset smarty dirs
-            $this->system->change_template_dir($s_t_dir);
-            $this->system->change_cache_dir($s_c_dir);
+            $this->system->changeTemplateDir($s_t_dir);
+            $this->system->changeCacheDir($s_c_dir);
         }
         if ($message)
             return $this->system->mail->compose($params['email'], $params['subject'], $message, $params['from'], $params['fromname'], isset_or($params['reply_to']), isset_or($params['reply_name']), isset_or($params['attachments']), isset_or($params['mail_in']), isset_or($params['sender']), isset_or($params['others']))->send();
         else
-            System::triggerError('No mail content was found at path: '.$template_path);
+            System::triggerError('No mail content was found at path: ' . $template_path);
         return false;
     }
 
@@ -525,4 +525,3 @@ class _Page
     }
 
 }
-?>

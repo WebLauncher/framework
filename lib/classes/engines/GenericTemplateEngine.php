@@ -12,7 +12,7 @@ class GenericTemplateEngine implements TemplateEngine
     protected $_params = array();
 
     /**
-     * @var array
+     * @var array[]|TemplateEngine[]
      */
     protected $_engines = array(
         '.tpl' => 'SmartyTemplateEngine',
@@ -262,6 +262,7 @@ class GenericTemplateEngine implements TemplateEngine
     /**
      * @param $plugin
      * @param $method
+     * @param $type
      */
     public function register_plugin($plugin, $method, $type)
     {
