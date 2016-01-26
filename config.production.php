@@ -9,4 +9,3 @@ $this -> db_connections = array(0 => array(
         'dbname' => 'base'
     ));
  */
-?>

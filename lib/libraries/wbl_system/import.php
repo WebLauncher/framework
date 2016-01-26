@@ -8,4 +8,4 @@ $page->paths['root_dir'] = __DIR__ . '/';
 $page->paths['root_code'] = __DIR__ . '/';
 $page->template_engine = 'smarty';
 $page->module = 'module/';
-?>
+$page->subquery=array('module','home');

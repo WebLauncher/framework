@@ -45,7 +45,6 @@ class PageApi extends Page {
      * Api get method
      */
     function api_get() {
-        $return = '';
         $return = $this -> models -> {$this -> model} -> api_get($this -> params);
         die(json_encode($return, JSON_NUMERIC_CHECK));
     }
@@ -54,7 +53,6 @@ class PageApi extends Page {
      * Api delete method
      */
     function api_delete() {
-        $return = '';
         $return = $this -> models -> {$this -> model} -> api_delete($this -> params);
         die(json_encode($return, JSON_NUMERIC_CHECK));
     }
@@ -63,7 +61,6 @@ class PageApi extends Page {
      * Api put method
      */
     function api_put() {
-        $return = '';
         $return = $this -> models -> {$this -> model} -> api_put($this -> get_json(), $this -> params);
         die(json_encode($return, JSON_NUMERIC_CHECK));
     }
@@ -72,7 +69,6 @@ class PageApi extends Page {
      * Api post method
      */
     function api_post() {
-        $return = '';
         $return = $this -> models -> {$this -> model} -> api_post($this -> get_json(), $this -> params);
         die(json_encode($return, JSON_NUMERIC_CHECK));
     }
@@ -85,4 +81,3 @@ class PageApi extends Page {
     }
 
 }
-?>

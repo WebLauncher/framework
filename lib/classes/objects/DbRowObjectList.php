@@ -5,7 +5,7 @@
  */
 class DbRowObjectList implements ArrayAccess,IteratorAggregate,Countable {
     /**
-     * @var array $_data List data array
+     * @var array|DbRowObject[] $_data List data array
      */
     protected $_data = array();
     /**
@@ -31,6 +31,7 @@ class DbRowObjectList implements ArrayAccess,IteratorAggregate,Countable {
     /**
      * ArrayAccess exists
      * @param string $key
+     * @return bool
      */
     function offsetExists($key) {
         return isset($this -> _data[$key]);
@@ -39,6 +40,7 @@ class DbRowObjectList implements ArrayAccess,IteratorAggregate,Countable {
     /**
      * ArrayAccess get
      * @param string $key
+     * @return mixed|string
      */
     function offsetGet($key) {
         return (isset($this[$key]) ? $this -> _data[$key] : '');

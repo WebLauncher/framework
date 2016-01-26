@@ -61,27 +61,12 @@ class FilesManager
 		$this->folder=$folder;
 		$this->http_root=$http_root;
 		$this->local_root=$local_root;
-		/*
-		if(count($_FILES))
-			foreach($_FILES as $key=>$file)
-			{
-				try{
-					$path=$this->upload($key,'',base64_encode(microtime(true)).'_'.$file['name']);
-					$path=$this->upload($key,'',base64_encode(microtime(true)).'_1_'.$file['name']);
-				}
-				catch(Exception $ex){
-					$_FILES[$key]['error']=$ex->getMessage();
-					$this->delete($_FILES[$key]['tmp_name']);
-					unset($_FILES[$key]['tmp_name']);
-				}
-				echopre($_FILES);				
-				die;
-			}*/	
 	}
-	
+
 	/**
 	 * get magic method
 	 * @param string $name
+	 * @return bool|string
 	 */
 	function __get($name){
 		switch($name){
@@ -155,13 +140,15 @@ class FilesManager
 			$http_path=$this->http_root.$this->folder.$folder;	
 		return $http_path;				
 	}
-	
+
 	/**
 	 * Uplaod files to the local set storage folder
 	 * @param string $name Name parameter from $_FILES[$name] to look for the file details
 	 * @param string $folder [optional] Folder where to save file (relative to $this->folder)
 	 * @param string $newname [optional] New name for the file
-	 * @param bool $append_main_folder [optional][default=true] Flag if the $this->folder path should be appended 
+	 * @param bool $append_main_folder [optional][default=true] Flag if the $this->folder path should be appended
+	 * @return bool|string
+	 * @throws Exception
 	 */
 	function upload($name,$folder='',$newname='',$append_main_folder=true)
 	{		
@@ -286,7 +273,6 @@ class FilesManager
 	 * @param string $path 
 	 * @param string $content
 	 * @return True if file was written
-	 * @deprecated Please use file_put_contents
 	 */
 	function save_file($path,$content='')
 	{
@@ -294,12 +280,13 @@ class FilesManager
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Deletes files and folders from a given path
 	 * @param string $dir File path or folder path to be removed
 	 * @param bool $files_only [optional][default=false] Flag if only files should be removed
 	 *
+	 * @return bool
 	 */
 	function delete($dir,$files_only=false) {
 		if(is_file($dir))
@@ -308,7 +295,8 @@ class FilesManager
 	    $files = glob( $dir . '*', GLOB_MARK );			   
 	    foreach( $files as $file )
 	       	$this->delete($file,$files_only);  
-	    if (!$files_only && is_dir($dir)) rmdir( $dir );  
+	    if (!$files_only && is_dir($dir)) rmdir( $dir );
+		return true;
 	}
 	
 	/**
@@ -385,4 +373,3 @@ class FilesManager
         return $result;
     }
 }
-?>

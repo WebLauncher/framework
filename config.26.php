@@ -26,4 +26,3 @@ $this->settings_enabled=true;
 
 if(!file_exists(__DIR__.'/config.development.php'))
     file_put_contents(__DIR__.'/config.development.php', '<?php ?>');
-?>

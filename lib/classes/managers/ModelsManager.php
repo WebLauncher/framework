@@ -9,17 +9,16 @@
 class ModelsManager
 {
 	/**
-	 * @var Database Connection
+	 * @var DbManager Connection
 	 */
-	var $db;
+	public $db;
 	/**
-	 * @var Loaded Libraries
+	 * @var array Loaded Libraries
 	 */
-	var $models=array();	
+	public $models=array();
 
 	/**
 	 * Constructor
-	 * @return
 	 */
 	function __construct()
 	{
@@ -27,7 +26,8 @@ class ModelsManager
 	/**
 	 * Get magic method
 	 * @param string $name
-	 * @example $this->model Inits model named model
+	 * @return mixed
+	 * @example $this->model Init model named model
 	 */
 	function __get($name)
 	{
@@ -44,10 +44,12 @@ class ModelsManager
 	        return null;
 		}
 	}
+
 	/**
 	 * Magic method call inits new model
 	 * @param string $name
 	 * @param array $arguments
+	 * @return mixed|null
 	 */
 	function __call($name,$arguments){
 		if($this->import($name)){
@@ -67,8 +69,8 @@ class ModelsManager
 
 	/**
 	 * Import particular libraries from the lib folder
-	 * @param object $model
-	 * @return
+	 * @param mixed $model
+	 * @return boolean
 	 */
 	function import($model)
 	{
@@ -94,11 +96,12 @@ class ModelsManager
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Import model from file
 	 * @param string $model
 	 * @param string $file
+	 * @return bool
 	 */
 	function import_from_file($model,$file)
 	{
@@ -121,6 +124,7 @@ class ModelsManager
 	/**
 	 * Import from component
 	 * @param string $model
+	 * @return bool
 	 */
 	function import_from_page($model)
 	{
@@ -149,5 +153,3 @@ class ModelsManager
 		return false;
 	}
 }
-
-?>

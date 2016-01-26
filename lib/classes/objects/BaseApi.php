@@ -11,8 +11,9 @@
 class BaseApi extends Base {
     /**
      * Error method
-     * @param string $message 
+     * @param string $message
      * @param int $code
+     * @return array
      */
     public function error($message, $code = 1) {
         return array(
@@ -22,9 +23,10 @@ class BaseApi extends Base {
     }
 
     /**
-     * Api GET method 
+     * Api GET method
      * Returns one element if id provided or all elements from db
      * @param array $url_params Pass data from url like REST
+     * @return array|null
      */
     public function api_get($url_params) {
         if (isset_or($url_params[0]))
@@ -36,6 +38,7 @@ class BaseApi extends Base {
      * Api DELETE method
      * Deletes the row identified by the provided ID
      * @param array $url_params Pass data from url like REST
+     * @return int
      */
     public function api_delete($url_params) {
         $this -> delete($url_params[0]);
@@ -74,4 +77,3 @@ class BaseApi extends Base {
         return $this -> get($id);
     }
 }
-?>

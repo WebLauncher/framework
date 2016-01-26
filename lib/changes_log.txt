@@ -1,6 +1,19 @@
-2.8.0
-- 
-
+2.7.8
+- added GenericTemplateEngine:
+    - this handles both PhpTemplate or SmartyTemplate based on the extension of the file (.tpl or .php)
+    - extra configurations available:
+        - $this->template_engine='generic'
+        - $this->template_extension='.tpl' // this will be in case you want to specify default template extension
+- switched BrowserInfo to browscap.ini approach (use only if necessary uses a lot of resources)
+- added $page->browser_enabled=false to check the browser when needed
+- some bug fixes
+2.7.7
+- some documentation cleanup
+- added Base->fields (this defines the default columns that should be retrieved from the table when using get methods)
+- speed enhancements
+2.7.6
+- update Smarty 3
+- build manager enhancements
 2.7.5
 - removed Kint library because it was slowing down debugging
 - added System::triggerError($message) to trigger system error that can be managed (for now same as trigger_error())

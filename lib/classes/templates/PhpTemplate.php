@@ -1,6 +1,12 @@
 <?php
 class PhpTemplate {
+	/**
+	 * @var string
+	 */
 	protected $_template='';
+	/**
+	 * @var PhpTemplateEngine
+	 */
 	protected $_engine='';
 	
 	public function __construct($template,&$engine){
@@ -24,6 +30,7 @@ class PhpTemplate {
 	public function fetch(){		
 		extract($this->_engine->get_template_var());
 	    ob_start();
+
 	 	if(file_exists($this->_template))
 	    	include $this->_template;
 		else
@@ -32,4 +39,3 @@ class PhpTemplate {
 	    return ob_get_clean();
 	}
 }
-?>
