@@ -121,4 +121,3 @@ class ImageManager
 		$img->saveToFile($file);
 	}
 }
-?>

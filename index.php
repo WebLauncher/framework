@@ -17,5 +17,3 @@ switch ($host)
 	break;
 }
 */
-
-?>

@@ -135,7 +135,6 @@ class TraceManager
      */
     public static function clean_dir()
     {
-        global $page;
         $trace_dir = self::check_dir();
         if ($handle = opendir($trace_dir)) {
 
@@ -202,13 +201,11 @@ class TraceManager
      */
     public static function get_template($name)
     {
-        global $page;
         ob_start();
+        global $page;
         include __DIR__ . '/../../templates/trace/' . $name . '.php';
         $html = ob_get_clean();
         $html = preg_replace('!\s+!', ' ', $html);
         return $html;
     }
 }
-
-?>

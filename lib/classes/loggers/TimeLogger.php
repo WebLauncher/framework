@@ -2,6 +2,7 @@
 /**
  * Time Logger Class
  */
+
 /**
  * Time Logger Class
  * @package WebLauncher\Loggers
@@ -85,4 +86,3 @@ class TimeLogger
     }
 
 }
-?>

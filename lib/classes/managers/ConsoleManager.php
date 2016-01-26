@@ -9,7 +9,7 @@
  */
 class ConsoleManager {
 	/**
-	 * @var /System $system System object
+	 * @var System $system System object
 	 */
 	public static $system = null;
 	/**
@@ -99,7 +99,7 @@ class ConsoleManager {
 			self::line("Starting cronjob: " . isset_or($cron['description']));
 			self::line("Executing: " . $cron['path']);
 			if (isset_or($cron['external'])) {
-				self::$system -> load_file((isset($cron['root'])?$cron['root']:'').$cron['path']);
+				self::$system -> loadFile((isset($cron['root'])?$cron['root']:'').$cron['path']);
 			} else {
 				self::line('Processing: ' . 'php ' . self::$root_dir . 'index.php ' . $cron['path']);
 				self::line(exec('php ' . self::$root_dir . 'index.php ' . $cron['path']));
@@ -118,6 +118,7 @@ class ConsoleManager {
 	/**
 	 * Check if cronjob is defined well
 	 * @param array $cron
+	 * @return bool
 	 */
 	private static function check_cronjob($cron) {
 		$ok = true;
@@ -182,4 +183,3 @@ class ConsoleManager {
 		return $ok;
 	}
 }
-?>

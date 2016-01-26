@@ -1,6 +1,9 @@
 <?php
 
 class SmartyTemplateEngine implements TemplateEngine{
+	/**
+	 * @var Smarty
+	 */
 	protected $_smarty;
 	protected $_version='v2';
 	protected $_params=array();
@@ -41,7 +44,10 @@ class SmartyTemplateEngine implements TemplateEngine{
 			break;
 		}
 	}
-	
+
+	/**
+	 * @return array|string
+     */
 	public function get_template_dir()
 	{
 		switch($this->_version){
@@ -52,9 +58,14 @@ class SmartyTemplateEngine implements TemplateEngine{
 				$dirs=$this->_smarty->getTemplateDir();
 				return $dirs[0];
 			break;
+            default:
+                return '';
 		}
 	}
-	
+
+	/**
+	 * @param $dir
+     */
 	public function set_compile_dir($dir)
 	{
 		switch($this->_version){
@@ -66,7 +77,10 @@ class SmartyTemplateEngine implements TemplateEngine{
 			break;
 		}
 	}
-	
+
+	/**
+	 * @return string
+     */
 	public function get_compile_dir()
 	{
 		switch($this->_version){
@@ -74,11 +88,17 @@ class SmartyTemplateEngine implements TemplateEngine{
 				return $this->_smarty->compile_dir;
 			break;
 			case 'v3':
-				$this->_smarty->getCompileDir();
+				return $this->_smarty->getCompileDir();
 			break;
+            default:
+                return '';
 		}
 	}
-	
+
+	/**
+	 * @param string $var
+	 * @return array|mixed|null
+     */
 	public function get_template_var($var='')
 	{
 		switch($this->_version)
@@ -92,9 +112,14 @@ class SmartyTemplateEngine implements TemplateEngine{
                 else
                     return $this->_smarty->getTemplateVars();
 			break;
+            default:
+                return null;
 		}
 	}
-	
+
+	/**
+	 *
+     */
 	public function enable_cache(){
 		switch($this->_version)
 		{
@@ -137,8 +162,14 @@ class SmartyTemplateEngine implements TemplateEngine{
 			break;
 		}
 	}
-	
-	public function is_cached($template,$cache_id='',$compile_id=null){
+
+	/**
+	 * @param $template
+	 * @param string $cache_id
+	 * @param null $compile_id
+	 * @return bool|false|string
+     */
+	public function is_cached($template, $cache_id='', $compile_id=null){
 		if(pathinfo($template, PATHINFO_EXTENSION)=='')
 			$template.='.tpl';
 		switch($this->_version)
@@ -153,23 +184,37 @@ class SmartyTemplateEngine implements TemplateEngine{
 			case 'v3':				
 				return $this->_smarty->isCached($template,$cache_id,$compile_id);
 			break;
+            default:
+                return false;
 		}
 	}
-	
-	public function display($template,$cache_hash=''){
+
+	/**
+	 * @param $template
+	 * @param string $cache_hash
+     */
+	public function display($template, $cache_hash=''){
 		if(!pathinfo($template, PATHINFO_EXTENSION))
 			$template.='.tpl';
 		$this->_smarty->display($template,$cache_hash);
 	}
 
+	/**
+	 * @param $plugin
+	 * @param $method
+	 * @param $type
+     */
 	public function register_plugin($plugin, $method, $type){
 		if($this->_version=='v2')
 			$this->_smarty->{'register_'.$type}($plugin, $method);
 		elseif($this->_version=='v3')
 			$this->_smarty->registerPlugin($type, $plugin, $method);
 	}
-	
-	protected function _get_engine(){
+
+    /**
+     *
+     */
+    protected function _get_engine(){
 		if(!file_exists($this->_params['cache_dir'].'smarty_cache/'))
 			mkdir($this->_params['cache_dir'].'smarty_cache/');
 		switch($this->_version)
@@ -226,5 +271,3 @@ class SmartyTemplateEngine implements TemplateEngine{
 		return file_exists($template);
 	}
 }
-
-?>

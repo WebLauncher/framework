@@ -44,7 +44,6 @@ class PageIndex extends Page
 
             $arr=array('component'=>$dir,'path'=>$http_path);
             if(file_exists($path.$dir.'/components/')){
-                $kids=array();
                 $kids=$this->components($path.$dir.'/components/');
                 if(count($kids))
                     $arr['kids']=$kids;
@@ -79,4 +78,3 @@ class PageIndex extends Page
         return $models;
     }
 }
-?>

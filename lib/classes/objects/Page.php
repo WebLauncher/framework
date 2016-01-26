@@ -11,5 +11,3 @@ class Page extends _Page
 {
 	
 }
-
-?>

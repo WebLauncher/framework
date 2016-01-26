@@ -73,6 +73,7 @@ class InstallInfo
     /**
      * Get success message
      * @param string $str
+     * @return string
      */
     private static function get_success($str)
     {
@@ -82,6 +83,7 @@ class InstallInfo
     /**
      * Get error message
      * @param string $str
+     * @return string
      */
     private static function get_error($str)
     {
@@ -92,6 +94,7 @@ class InstallInfo
      * Check method
      * @param string $pretext
      * @param string $condition
+     * @return string
      */
     private static function check($pretext, $condition)
     {
@@ -99,4 +102,3 @@ class InstallInfo
     }
 
 }
-?>

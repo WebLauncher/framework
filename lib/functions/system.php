@@ -6,8 +6,9 @@
 /**
  * Display array formated
  * @param $arr
- * @param $return if true return value instead of writing it
+ * @param bool $return if true return value instead of writing it
  * @package WebLauncher\Functions
+ * @return string
  */
 function echopre($arr, $return = false) {
 	$text = '<pre class="debug">';
@@ -16,12 +17,14 @@ function echopre($arr, $return = false) {
 	if ($return)
 		return $text;
 	echo $text;
+	return '';
 }
 
 /**
  * Return formated display for array
  * @param $arr
  * @package WebLauncher\Functions
+ * @return string
  */
 function echopre_r($arr) {
 	return echopre($arr, true);
@@ -31,6 +34,7 @@ function echopre_r($arr) {
  * Echo and return value
  * @param $str
  * @package WebLauncher\Functions
+ * @return string
  */
 function echo_r($str) {
 	ob_start();
@@ -175,7 +179,7 @@ register_shutdown_function('the_register_shutdown');
 /**
  * The system exception handler
  * @package WebLauncher\Functions
- * @param $exception
+ * @param Exception $exception
  */
 function the_exception_handler($exception) {
 	echo "Uncaught exception: ", $exception -> getMessage(), "\n";
@@ -188,6 +192,7 @@ set_exception_handler('the_register_shutdown');
  * @package WebLauncher\Functions
  * @param $check
  * @param $alternate
+ * @return null
  */
 function isset_or(&$check, $alternate = NULL) {
 	return (isset($check)) ? $check : $alternate;
@@ -207,6 +212,7 @@ function sat($string) {
  * Serialize array
  * @package WebLauncher\Functions
  * @param $array
+ * @return string
  */
 function ser($array) {
 	if (is_array($array))
@@ -218,6 +224,7 @@ function ser($array) {
  * Unserialize array
  * @package WebLauncher\Functions
  * @param $string
+ * @return mixed
  */
 function unser($string) {
 	if (is_string($string)) {
@@ -247,9 +254,9 @@ function checkNumericString($value) {
 /**
  * transform the date to the age of the user
  * @package WebLauncher\Functions 
- * @return the number of years or unknown
+ * @return string the number of years or unknown
  *
- * @param $birthday the data used to calculate the age
+ * @param string $birthday the data used to calculate the age
  *
  * @author alex
  */
@@ -272,6 +279,7 @@ function date2birthday($birthday) {
  * Encrypt data
  * @package WebLauncher\Functions
  * @param string $plain_text
+ * @return string
  */
 function encrypt($plain_text) {
 	global $page;
@@ -291,6 +299,7 @@ function encrypt($plain_text) {
  * Decrypt data
  * @package WebLauncher\Functions
  * @param string $crypted_text
+ * @return string
  */
 function decrypt($crypted_text) {
 	global $page;
@@ -312,6 +321,7 @@ function decrypt($crypted_text) {
  * @param string $content
  * @param int $language_id
  * @param string $tags
+ * @return string
  */
 function tr($content, $language_id = 0, $tags = 'site') {
     global $page;
@@ -414,13 +424,14 @@ function now() {
  * @package WebLauncher\Functions
  * @param string $start
  * @param string $end
+ * @return int
  */
 function getNoDays($start, $end) {
 	// Vars
 	$day = 86400;
 	// Day in seconds
 	$format = 'Y-m-d';
-	// Output format (see PHP date funciton)
+	// Output format (see PHP date function)
 	$sTime = strtotime($start);
 	// Start as time
 	$eTime = strtotime($end);
@@ -435,6 +446,7 @@ function getNoDays($start, $end) {
  * @param string $str
  * @param string $format
  * @param string $target_format
+ * @return bool|string
  */
 function parse_date($str, $format = 'Y-m-d', $target_format = 'Y-m-d') {
 	$date = date_parse_from_format($format, $str);
@@ -477,9 +489,10 @@ function get_hostname() {
  * Generate seo link
  * @package WebLauncher\Functions
  * @param string $input
- * @param string $replace 
+ * @param string $replace
  * @param bool $remove_words
  * @param array $words_array
+ * @return mixed
  */
 function generate_seo_link($input, $replace = '-', $remove_words = true, $words_array = array()) {
 	//make it lowercase, remove punctuation, remove multiple/leading/ending spaces
@@ -503,6 +516,7 @@ function generate_seo_link($input, $replace = '-', $remove_words = true, $words_
  * @param string $replace
  * @param array $words_array
  * @param bool $unique_words
+ * @return string
  */
 function remove_words($input, $replace, $words_array = array(), $unique_words = true) {
 	//separate all words based on spaces
@@ -531,6 +545,7 @@ if (!function_exists('array_column')) {
 	 * @param array $input
 	 * @param string $column_key
 	 * @param string $index_key
+	 * @return array
 	 */
 	function array_column($input, $column_key, $index_key = null) {
 		if ($index_key !== null) {
@@ -593,4 +608,3 @@ function ucwords_d($string,$delimiter=''){
 		return ucwords($string);
 	}
 }
-?>
