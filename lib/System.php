@@ -566,6 +566,8 @@ class System
     public $libraries_settings = array(
         'smarty' => array('version' => 'v2'),
         'wbl_locale' => array(
+            'type'=>'db',
+            'default'=>'en_US',
             'table' => 'locales',
             'texts_table' => 'locales_texts',
             'translations_table' => 'locales_translations'
@@ -1918,11 +1920,22 @@ class System
 
             $query=new QueryBuilder($this->libraries_settings['wbl_locale']['table']);
             $language = $query->select()->where('id=' . $this->session['language_id'])->first();
-            if (!isset($this->browser['os']) || (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))) {
-                setlocale(LC_ALL, $language['locale_win']);
-            } elseif (isset_or($language['locale_linux'])) {
-                setlocale(LC_ALL, $language['locale_linux']);
+            if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))
+                $locale = $language['locale_win'];
+            elseif (isset_or($language['locale_linux']))
+                $locale = $language['locale_linux'];
+            else
+                $locale = $this->libraries_settings['wbl_locale']['default'];
+            $domain = 'messages';
+            putenv('LANG=' . $locale);
+            setlocale(LC_ALL, $locale);
+            if (!function_exists("gettext")){
+                $this->import('library','gettext');
+                T_setlocale(LC_ALL, $locale);
             }
+            textdomain($domain);
+            bindtextdomain($domain, $this->paths['root_dir'] . 'Locale');
+            bind_textdomain_codeset($domain, 'UTF-8');
         }
     }
 
@@ -2333,8 +2346,6 @@ class System
 
         if ($this->admin) {
             $this->import('library', 'wbl_admin');
-        } else {
-            $this->import('class', 'objects.Page');
         }
         if ($this->import('file', $this->paths['root_code'] . $this->module . 'index.php') && class_exists('PageIndex')) {
             $this->obj_index = new PageIndex('page', $this->paths['root_cache'] . $this->module, $this->paths['root_code'] . $this->module, 'index.php', 'index', $this->skin);
