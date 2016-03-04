@@ -1,3 +1,6 @@
+2.7.9
+- added gettext translations type
+    - using $page->libraries_settings['wbl_locale']['type'] = 'gettext'; to switch to gettext (db is default)
 2.7.8
 - added GenericTemplateEngine:
     - this handles both PhpTemplate or SmartyTemplate based on the extension of the file (.tpl or .php)
