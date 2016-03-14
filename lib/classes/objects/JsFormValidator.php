@@ -90,9 +90,9 @@ class JsFormValidator {
 					$params = explode('|', $r);
 
 					if (count($params) > 1) {
-						$content .= $params[0] . ':\'' . $m . '\',';
+						$content .= $params[0] . ':\'' . htmlspecialchars(addslashes($m)) . '\',';
 					} else
-						$content .= $r . ':\'' . $m . '\',';
+						$content .= $r . ':\'' . htmlspecialchars(addslashes($m)) . '\',';
 				}
 				$content = rtrim($content, ',');
 
