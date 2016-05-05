@@ -10,14 +10,27 @@
 class TablesManager implements ArrayAccess
 {
     /**
+     * @var array System Tables
+     */
+    private $tables = array();
+
+    /**
+     * TablesManager constructor.
+     */
+    public function __construct($tables = array())
+    {
+        $this->tables = $tables;
+    }
+
+    /**
      * ArrayAccess set
      * @param string $offset
      * @param string $value
      */
     public function offsetSet($offset, $value)
     {
-        global $page;
-        $page->tables->{$offset} = $this->_cleanValue($value);
+
+        $this->tables[$offset] = $this->_cleanValue($value);
     }
 
     /**
@@ -27,11 +40,11 @@ class TablesManager implements ArrayAccess
      */
     public function offsetExists($offset)
     {
-        global $page;
+
         $offset = $this->_cleanValue($offset);
-        if (!isset($page->tables->{$offset}))
-            $page->tables->{$offset} = $offset;
-        return isset($page->tables->{$offset});
+        if (!isset($this->tables[$offset]))
+            $this->tables[$offset] = $offset;
+        return isset($this->tables[$offset]);
     }
 
     /**
@@ -40,9 +53,9 @@ class TablesManager implements ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        global $page;
+
         $offset = $this->_cleanValue($offset);
-        unset($page->tables->{$offset});
+        unset($this->tables[$offset]);
     }
 
     /**
@@ -52,9 +65,9 @@ class TablesManager implements ArrayAccess
      */
     public function offsetGet($offset)
     {
-        global $page;
+
         $offset = $this->_cleanValue($offset);
-        return isset($page->tables->{$offset}) ? $page->tables->{$offset} : $offset;
+        return isset($this->tables[$offset]) ? $this->tables[$offset] : $offset;
     }
 
     /**

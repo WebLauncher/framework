@@ -34,12 +34,12 @@ class AjaxTable
         /**
          * @var System
          */
-        global $page;
+        
         if (isset($_GET['startIndex']) && $_GET['startIndex']) {
-            $page->page_skip = $_GET['startIndex'];
+            System::getInstance()->page_skip = $_GET['startIndex'];
         }
         if (isset($_GET['numberOfRows']) && $_GET['numberOfRows']) {
-            $page->page_offset = $_GET['numberOfRows'];
+            System::getInstance()->page_offset = $_GET['numberOfRows'];
         }
         if (isset($_GET['sortBy'])) {
             if (isset($_GET['sortAscending'])) {
@@ -55,8 +55,8 @@ class AjaxTable
         if (isset($_GET['kwd']) && $_GET['kwd']) {
             $this->search_keyword = $_GET['kwd'];
         }
-        $page->session['pages'][$this->id] = $page->page_skip / $page->page_offset;
-        $page->saveSession();
+        System::getInstance()->session['pages'][$this->id] = System::getInstance()->page_skip / System::getInstance()->page_offset;
+        System::getInstance()->saveSession();
     }
 
     /**
@@ -154,7 +154,7 @@ class AjaxTable
         /**
          * @var System
          */
-        global $page;
+        
 
         $table = $this->get_array(1);
 
@@ -162,8 +162,8 @@ class AjaxTable
             echo json_encode($table, JSON_NUMERIC_CHECK);
             die;
         } else {
-            $page->assign('table', $table);
-            echo $page->template->fetch($page->objects['templates']['ajax_table']);
+            System::getInstance()->assign('table', $table);
+            echo System::getInstance()->template->fetch(System::getInstance()->objects['templates']['ajax_table']);
             die;
         }
     }

@@ -1,7 +1,8 @@
 <?php
-	class PageIndex extends Page
-	{
-		function index(){
-		}
-	}	
-?>
+
+class PageIndex extends Page
+{
+    function index()
+    {
+    }
+}	

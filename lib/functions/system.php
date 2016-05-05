@@ -116,26 +116,26 @@ function the_error_handler($errno = '', $errstr = '', $errfile = '', $errline = 
             $output = trim($output);
             $output = str_replace("\n", "", $output);
             $output = str_replace("\r", "", $output);
-            global $page;
-            if (isset_or($page->debug))
+            
+            if (isset_or(System::getInstance()->debug))
                 echo $output;
 
-            if (!is_writable(isset_or($page->error_log_path) . 'errs.log.csv')) {
-                $handle = @fopen(isset_or($page->error_log_path) . 'errs.log.csv', 'w');
+            if (!is_writable(isset_or(System::getInstance()->error_log_path) . 'errs.log.csv')) {
+                $handle = @fopen(isset_or(System::getInstance()->error_log_path) . 'errs.log.csv', 'w');
                 @fclose($handle);
             }
-            if (is_writable(isset_or($page->error_log_path) . 'errs.log.csv')) {
-                $handle = fopen(isset_or($page->error_log_path) . 'errs.log.csv', 'a');
+            if (is_writable(isset_or(System::getInstance()->error_log_path) . 'errs.log.csv')) {
+                $handle = fopen(isset_or(System::getInstance()->error_log_path) . 'errs.log.csv', 'a');
                 fwrite($handle, '\'' . print_r($errortype[$errno], true) . "','$errfile','$errline','$errstr','" . date('Y-m-d\',\'H:i:s') . "'\n");
                 fclose($handle);
             }
 
-            if (!is_writable(isset_or($page->error_log_path) . 'errs.log.json')) {
-                $handle = @fopen(isset_or($page->error_log_path) . 'errs.log.json', 'w');
+            if (!is_writable(isset_or(System::getInstance()->error_log_path) . 'errs.log.json')) {
+                $handle = @fopen(isset_or(System::getInstance()->error_log_path) . 'errs.log.json', 'w');
                 @fclose($handle);
             }
-            if (is_writable(isset_or($page->error_log_path) . 'errs.log.json')) {
-                $handle = fopen(isset_or($page->error_log_path) . 'errs.log.json', 'a');
+            if (is_writable(isset_or(System::getInstance()->error_log_path) . 'errs.log.json')) {
+                $handle = fopen(isset_or(System::getInstance()->error_log_path) . 'errs.log.json', 'a');
                 $array = array(
                     'error' => $errortype[$errno],
                     'file' => $errfile,
@@ -160,20 +160,20 @@ set_error_handler('the_error_handler');
  */
 function the_register_shutdown()
 {
-    global $page;
+    
     session_write_close();
     # Getting last error
     $error = error_get_last();
-    if ($page->debug) {
+    if (System::getInstance()->debug) {
         the_error_handler($error['type'], $error['message'], $error['file'], $error['line']);
         # Checking if last error is a fatal error
         if (($error['type'] === E_ERROR) || ($error['type'] === E_USER_ERROR)) {
 
-            if ($page->error_log_email) {
-                $page->import('library', 'mail');
+            if (System::getInstance()->error_log_email) {
+                System::getInstance()->import('library', 'mail');
                 $mail = new Mail();
                 $message = 'Found error: <br/>' . echopre_r($error);
-                $mail->send_mail($page->error_log_email, 'Fatal error on server ' . $page::$hostname, $message, $page->error_log_email, 'Fatal Errors Sender');
+                $mail->send_mail(System::getInstance()->error_log_email, 'Fatal error on server ' . $page::$hostname, $message, System::getInstance()->error_log_email, 'Fatal Errors Sender');
             }
         }
     }
@@ -295,8 +295,8 @@ function date2birthday($birthday)
  */
 function encrypt($plain_text)
 {
-    global $page;
-    $salt = $page->crypt_key;
+    
+    $salt = System::getInstance()->crypt_key;
 
     $mcrypt_iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
     $mcrypt_iv = mcrypt_create_iv($mcrypt_iv_size, MCRYPT_RAND);
@@ -316,8 +316,8 @@ function encrypt($plain_text)
  */
 function decrypt($crypted_text)
 {
-    global $page;
-    $salt = $page->crypt_key;
+    
+    $salt = System::getInstance()->crypt_key;
 
     $mcrypt_iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
     $mcrypt_iv = mcrypt_create_iv($mcrypt_iv_size, MCRYPT_RAND);
@@ -339,41 +339,41 @@ function decrypt($crypted_text)
  */
 function tr($content, $language_id = 0, $tags = 'site')
 {
-    global $page;
-    if ($content != "" && $page->multi_language) {
-        $language = $language_id ? $language_id : isset($page->session['language_id']) ? $page->session['language_id'] : 0;
+    
+    if ($content != "" && System::getInstance()->multi_language) {
+        $language = $language_id ? $language_id : isset(System::getInstance()->session['language_id']) ? System::getInstance()->session['language_id'] : 0;
         $quer = $content;
 
-        if ($page && $page->db_conn_enabled && $page->libraries_settings['wbl_locale']['type'] == 'db') {
+        if ($page && System::getInstance()->db_conn_enabled && System::getInstance()->libraries_settings['wbl_locale']['type'] == 'db') {
             $hostname = '';
-            if ($page->admin)
+            if (System::getInstance()->admin)
                 $key = sha1($content);
             else {
                 $hostname = System::get_hostname();
                 $key = sha1($content . '_' . $hostname);
             }
-            if (!isset($page->translations))
-                $page->translations = array();
-            if (isset($page->translations[$key])) {
-                $content = $page->translations[$key];
+            if (!isset(System::getInstance()->translations))
+                System::getInstance()->translations = array();
+            if (isset(System::getInstance()->translations[$key])) {
+                $content = System::getInstance()->translations[$key];
             } else {
-                $query = "select " . $page->libraries_settings['wbl_locale']['texts_table'] . ".id," . $page->libraries_settings['wbl_locale']['texts_table'] . ".tags," . $page->libraries_settings['wbl_locale']['texts_table'] . ".query," . $page->libraries_settings['wbl_locale']['texts_table'] . ".value," . $page->libraries_settings['wbl_locale']['translations_table'] . ".value as translation from " . $page->libraries_settings['wbl_locale']['texts_table'] . " left join " . $page->libraries_settings['wbl_locale']['translations_table'] . " on " . $page->libraries_settings['wbl_locale']['translations_table'] . ".text_id=" . $page->libraries_settings['wbl_locale']['texts_table'] . ".id where " . $page->libraries_settings['wbl_locale']['texts_table'] . ".key=" . sat($key) . "";
+                $query = "select " . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".id," . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".tags," . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".query," . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".value," . System::getInstance()->libraries_settings['wbl_locale']['translations_table'] . ".value as translation from " . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . " left join " . System::getInstance()->libraries_settings['wbl_locale']['translations_table'] . " on " . System::getInstance()->libraries_settings['wbl_locale']['translations_table'] . ".text_id=" . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".id where " . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . ".key=" . sat($key) . "";
 
-                $text = $page->db_conn->getRow($query);
+                $text = System::getInstance()->db_conn->getRow($query);
                 if ($text) {
                     $text['tags'] = explode(" ", $text['tags']);
                     if (sat($text['query']) != sat($quer))
-                        $page->db_conn->query("update " . $page->libraries_settings['wbl_locale']['texts_table'] . " set query=" . sat($quer) . " where id=" . $text['id']);
+                        System::getInstance()->db_conn->query("update " . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . " set query=" . sat($quer) . " where id=" . $text['id']);
                     if (count(array_diff($text['tags'], explode(" ", $tags)))) {
                         $tags = implode(" ", array_merge(array_diff(explode(" ", $tags), $text['tags']), $text['tags']));
 
-                        $page->db_conn->query("update " . $page->libraries_settings['wbl_locale']['texts_table'] . " set tags=" . sat($tags) . " where id=" . $text['id']);
+                        System::getInstance()->db_conn->query("update " . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . " set tags=" . sat($tags) . " where id=" . $text['id']);
                     }
                     if ($language > 0 && isset_or($text['translation']))
                         $text['value'] = $text['translation'];
                     $content = $text['value'];
                 } else {
-                    $query = "INSERT INTO `" . $page->libraries_settings['wbl_locale']['texts_table'] . "` (
+                    $query = "INSERT INTO `" . System::getInstance()->libraries_settings['wbl_locale']['texts_table'] . "` (
 				`id` ,
 				`key` ,
 				`value`,
@@ -383,11 +383,11 @@ function tr($content, $language_id = 0, $tags = 'site')
 				`admin`
 				)
 				VALUES (
-				NULL , " . sat($key) . ", " . sat($content) . "," . sat($quer) . "," . sat($tags) . "," . sat($hostname) . "," . $page->admin . "
+				NULL , " . sat($key) . ", " . sat($content) . "," . sat($quer) . "," . sat($tags) . "," . sat($hostname) . "," . System::getInstance()->admin . "
 				);";
-                    $text = $page->db_conn->query($query);
+                    $text = System::getInstance()->db_conn->query($query);
                 }
-                $page->translations[$key] = $content;
+                System::getInstance()->translations[$key] = $content;
             }
         } else {
             // set plural parameters 'plural' and 'count'.

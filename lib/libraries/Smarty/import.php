@@ -1,4 +1,4 @@
 <?php
-	global $page;	
-	require_once dirname(__FILE__).'/'.$page->libraries_settings['smarty']['version'].'/libs/Smarty.class.php';
+		
+	require_once dirname(__FILE__).'/'.System::getInstance()->libraries_settings['smarty']['version'].'/libs/Smarty.class.php';
 ?>

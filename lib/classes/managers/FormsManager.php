@@ -464,8 +464,8 @@ class FormRules
      */
     public static function signature($value)
     {
-        global $page;
-        return isset_or($page->session['signature']) == $value;
+        
+        return isset_or(System::getInstance()->session['signature']) == $value;
     }
 }
 
@@ -987,25 +987,25 @@ class FormsManager implements ArrayAccess
         /**
          * @var System
          */
-        global $page;
-        if ($page->ispostback && !$page->ajax) {
-            if (isset($page->session['validation']) && isset($_POST['__hash']) && isset($page->session['validation'][$_POST['__hash']])) {
-                foreach ($page->session['validation'][$_POST['__hash']]['fields'] as $field => $obj_field) {
+        
+        if (System::getInstance()->ispostback && !System::getInstance()->ajax) {
+            if (isset(System::getInstance()->session['validation']) && isset($_POST['__hash']) && isset(System::getInstance()->session['validation'][$_POST['__hash']])) {
+                foreach (System::getInstance()->session['validation'][$_POST['__hash']]['fields'] as $field => $obj_field) {
                     if (isset($obj_field['rules']))
                         foreach ($obj_field['rules'] as $rule => $message)
-                            $page->validate->add_rule($page->session['validation'][$_POST['__hash']]['form_id'], $field, $rule, $message);
+                            System::getInstance()->validate->add_rule(System::getInstance()->session['validation'][$_POST['__hash']]['form_id'], $field, $rule, $message);
                     if (isset($obj_field['filters']))
                         foreach ($obj_field['filters'] as $filter => $params)
-                            $page->validate->add_filter($page->session['validation'][$_POST['__hash']]['form_id'], $field, $filter, $params);
+                            System::getInstance()->validate->add_filter(System::getInstance()->session['validation'][$_POST['__hash']]['form_id'], $field, $filter, $params);
                 }
-                $page->validateForm($page->session['validation'][$_POST['__hash']]['form_id']);
-                if (!$page->valid)
-                    $page->redirect($_SERVER['HTTP_REFERER']);
+                System::getInstance()->validateForm(System::getInstance()->session['validation'][$_POST['__hash']]['form_id']);
+                if (!System::getInstance()->valid)
+                    System::getInstance()->redirect($_SERVER['HTTP_REFERER']);
             } else {
-                if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], $page->paths['root']) != 0)
-                    $page->redirect($_SERVER['HTTP_REFERER']);
+                if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], System::getInstance()->paths['root']) != 0)
+                    System::getInstance()->redirect($_SERVER['HTTP_REFERER']);
             }
         }
-        unset($page->session['validation']);
+        unset(System::getInstance()->session['validation']);
     }
 }

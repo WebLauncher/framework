@@ -77,7 +77,7 @@ class ScriptManager
 	 */
 	function save()
 	{
-		global $page;
-		$page->session['script']=$this->get_script();
+		
+		System::getInstance()->session['script']=$this->get_script();
 	}
 }

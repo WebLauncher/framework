@@ -14,7 +14,7 @@ class InstallInfo
      */
     public static function display()
     {
-        global $page;
+        
         echo 'Checking if server is compatible<br/>';
 
         $is_apache = function_exists('apache_get_version');
@@ -53,13 +53,13 @@ class InstallInfo
         echo self::check('MBregex : ', extension_loaded('mbregex'));
 
         echo '<br/>';
-        if (isset($page->db_connections[0])) {
+        if (isset(System::getInstance()->db_connections[0])) {
             echo 'Checking MySQL Database connection and tables<br/>';
             flush();
-            global $page;
+            
             $connect = 1;
             try {
-                $dbh = new PDO('mysql:host=' . isset_or($page->db_connections[0]['host']) . ';dbname=' . isset_or($page->db_connections[0]['dbname']), isset_or($page->db_connections[0]['user']), isset_or($page->db_connections[0]['password']));
+                $dbh = new PDO('mysql:host=' . isset_or(System::getInstance()->db_connections[0]['host']) . ';dbname=' . isset_or(System::getInstance()->db_connections[0]['dbname']), isset_or(System::getInstance()->db_connections[0]['user']), isset_or(System::getInstance()->db_connections[0]['password']));
                 $dbh->query('SELECT 1;');
                 $dbh = null;
             } catch (PDOException $e) {

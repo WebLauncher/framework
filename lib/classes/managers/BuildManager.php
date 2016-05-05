@@ -194,8 +194,8 @@ class BuildManager
  		$class.="* global page access \n";
  		$class.="*\n";
  		$class.="*/\n";
-		$class.='global $page;'."\n";
-		$class.='$page->title="page title for module '.$module.'";'."\n";
+		$class.=''."\n";
+		$class.='System::getInstance()->title="page title for module '.$module.'";'."\n";
 		return $class;
 	}
 

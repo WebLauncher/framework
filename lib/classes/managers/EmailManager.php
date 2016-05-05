@@ -39,15 +39,15 @@ class EmailManager
      */
     function compose($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        global $page;
+        
         try {
             $to = $this->clean_receivers($to);
-            if (strtolower(isset($page->mail_type) ? $page->mail_type : '') == 'queue')
+            if (strtolower(isset(System::getInstance()->mail_type) ? System::getInstance()->mail_type : '') == 'queue')
                 return $this->queue($to, $subject, $message, $from, $fromname, $reply_to, $reply_name, $attachments, $mail_in, $sender, $others);
 
             $this->mailer = new PHPMailer();
             $this->mailer->CharSet = 'UTF-8';
-            switch(strtolower(isset($page->mail_type)?$page->mail_type:'')) {
+            switch(strtolower(isset(System::getInstance()->mail_type)?System::getInstance()->mail_type:'')) {
             case "qmail" :
                 $this->mailer->IsQmail();
                 break;
@@ -91,10 +91,10 @@ class EmailManager
             }
             $this->mailer->FromName = $fromname;
 
-            if (isset($page)) {
-                $this->mailer->Host = $page->mail_host;
-                $this->mailer->Username = $page->mail_user;
-                $this->mailer->Password = $page->mail_password;
+            if (System::getInstance()) {
+                $this->mailer->Host = System::getInstance()->mail_host;
+                $this->mailer->Username = System::getInstance()->mail_user;
+                $this->mailer->Password = System::getInstance()->mail_password;
             }
             // add attachments
             if (count($attachments) > 0)
@@ -150,10 +150,10 @@ class EmailManager
      */
     function queue($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        global $page;
+        
         if (!is_array($to))
             $to = ser(array($to => array('email' => $to)));
-        $query = 'insert into `' . $page->mail_queue_table . '` (
+        $query = 'insert into `' . System::getInstance()->mail_queue_table . '` (
 						`hostname`,
 						`to`,
 						`from`,
@@ -168,21 +168,21 @@ class EmailManager
 						`attachments`,
 						`add_datetime`				
 					) values (';
-        $query .= $page->db_conn->stringEscape(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . ',';
-        $query .= $page->db_conn->stringEscape(ser($to)) . ',';
-        $query .= $page->db_conn->stringEscape($from) . ',';
-        $query .= $page->db_conn->stringEscape($fromname) . ',';
-        $query .= $page->db_conn->stringEscape($mail_in) . ',';
-        $query .= $page->db_conn->stringEscape($subject) . ',';
-        $query .= $page->db_conn->stringEscape($message) . ',';
-        $query .= $page->db_conn->stringEscape($reply_to) . ',';
-        $query .= $page->db_conn->stringEscape($reply_name) . ',';
-        $query .= $page->db_conn->stringEscape($sender) . ',';
-        $query .= $page->db_conn->stringEscape(ser($others)) . ',';
-        $query .= $page->db_conn->stringEscape(ser($attachments)) . ',';
-        $query .= $page->db_conn->stringEscape(nowfull()) . '';
+        $query .= System::getInstance()->db_conn->stringEscape(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($to)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($from) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($fromname) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($mail_in) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($subject) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($message) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($reply_to) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($reply_name) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($sender) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($others)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($attachments)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(nowfull()) . '';
         $query .= ')';
-        $page->db_conn->query($query);
+        System::getInstance()->db_conn->query($query);
         return $this;
     }
 

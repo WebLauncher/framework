@@ -67,7 +67,7 @@ class AuthenticationManager
      */
     function login($user_id = '', $type = '')
     {
-        global $page;
+        
 
         $username = isset_or($_REQUEST[$this->username_field]);
         $password = isset_or($_REQUEST[$this->password_field]);
@@ -80,17 +80,17 @@ class AuthenticationManager
             // get user
             if ($user_id != '') {
                 $query = 'SELECT * FROM ' . $this->settings[$type]['table'] . ' WHERE id=' . $user_id . ' LIMIT 1';
-                $row = $page->db_conn->getRow($query);
+                $row = System::getInstance()->db_conn->getRow($query);
             } else {
                 if (is_array($this->settings[$type]['username'])) {
                     foreach ($this->settings[$type]['username'] as $user_field)
                         if (!$row) {
                             $query = 'SELECT * FROM ' . $this->settings[$type]['table'] . ' WHERE (lower(' . $user_field . ')=lower("' . $username . '")) LIMIT 1';
-                            $row = $page->db_conn->getRow($query);
+                            $row = System::getInstance()->db_conn->getRow($query);
                         }
                 } else {
                     $query = 'SELECT * FROM ' . $this->settings[$type]['table'] . ' WHERE (lower(' . $this->settings[$type]['username'] . ')=lower("' . $username . '")) LIMIT 1';
-                    $row = $page->db_conn->getRow($query);
+                    $row = System::getInstance()->db_conn->getRow($query);
                 }
             }
             if ($row) {
@@ -99,7 +99,7 @@ class AuthenticationManager
                 if ($row[$this->settings[$type]['password']] != (isset($this->settings[$type]['crypting']) ? $this->settings[$type]['crypting'](trim($password)) : trim($password))) {
                     $this->logged = 0;
                     if ($this->show_messages)
-                        $page->add_message('error', $this->messages['no_pass']);
+                        System::getInstance()->add_message('error', $this->messages['no_pass']);
                 }
 
                 // valid field if required
@@ -107,7 +107,7 @@ class AuthenticationManager
                     if (!$row[$this->settings[$type]['valid']]) {
                         $this->logged = 0;
                         if ($this->show_messages)
-                            $page->add_message('error', $this->messages['valid']);
+                            System::getInstance()->add_message('error', $this->messages['valid']);
                     }
                 }
 
@@ -116,42 +116,42 @@ class AuthenticationManager
                     if (!$row[$this->settings[$type]['active']]) {
                         $this->logged = 0;
                         if ($this->show_messages)
-                            $page->add_message('error', $this->messages['active']);
+                            System::getInstance()->add_message('error', $this->messages['active']);
                     }
 
                 // deleted field if required
                 if (isset($this->settings[$type]['deleted']) && $this->settings[$type]['deleted'] != '') {
                     if ($row[$this->settings[$type]['deleted']]) {
                         $this->logged = 0;
-                        $page->add_message('error', $this->messages['deleted']);
+                        System::getInstance()->add_message('error', $this->messages['deleted']);
                     }
                 }
 
                 if ($this->logged) {
                     $this->login_user($row['id'], $type, isset($_POST[$this->remmember_field]));
                     if ($this->messages['success'])
-                        $page->add_message('success', $this->messages['success']);
+                        System::getInstance()->add_message('success', $this->messages['success']);
                 }
             } else {
-                unset($page->session['user_id']);
-                unset($page->session['user_type']);
-                unset($page->session['remmember']);
-                $page->add_message('error', $this->messages['no_user']);
+                unset(System::getInstance()->session['user_id']);
+                unset(System::getInstance()->session['user_type']);
+                unset(System::getInstance()->session['remmember']);
+                System::getInstance()->add_message('error', $this->messages['no_user']);
             }
         }
-        if ($page->ajax) {
-            $page->response_data['logged'] = $this->logged;
-            $page->response_type = 'json';
-            $page->get_response();
+        if (System::getInstance()->ajax) {
+            System::getInstance()->response_data['logged'] = $this->logged;
+            System::getInstance()->response_type = 'json';
+            System::getInstance()->get_response();
         } else {
             $goto = isset($_POST[$this->redirect_field]) ? $_POST[$this->redirect_field] : '';
             if ($this->logged == 1) {
                 if ($goto != '')
-                    $page->redirect($goto);
+                    System::getInstance()->redirect($goto);
                 else
-                    $page->redirect($page->paths['current']);
+                    System::getInstance()->redirect(System::getInstance()->paths['current']);
             } else {
-                $page->redirect($page->paths['current'] . '?e=login');
+                System::getInstance()->redirect(System::getInstance()->paths['current'] . '?e=login');
             }
         }
     }
@@ -164,25 +164,25 @@ class AuthenticationManager
      */
     function login_user($user_id = '', $type = '', $remmember = 0)
     {
-        global $page;
+        
         if (!$type)
-            $type = $page->module_user_type;
+            $type = System::getInstance()->module_user_type;
         if ($this->settings[$type]['lastlogin']) {
             $query = 'update ' . $this->settings[$type]['table'] . ' set `' . $this->settings[$type]['lastlogin'] . '`=NOW() where id=' . $user_id;
-            $page->db_conn->query($query);
+            System::getInstance()->db_conn->query($query);
         }
-        $page->session['user_id'] = $user_id;
-        $page->session['user_type'] = $type;
+        System::getInstance()->session['user_id'] = $user_id;
+        System::getInstance()->session['user_type'] = $type;
 
-        if (isset($page->session['user_logout']))
-            unset($page->session['user_logout']);
+        if (isset(System::getInstance()->session['user_logout']))
+            unset(System::getInstance()->session['user_logout']);
         if ($this->logins_logs_enabled)
             $this->start_visit_log($user_id);
 
         if ($remmember)
-            $page->session['remmember'] = 1;
+            System::getInstance()->session['remmember'] = 1;
         else
-            unset($page->session['remmember']);
+            unset(System::getInstance()->session['remmember']);
 
         $this->init_user();
     }
@@ -192,13 +192,13 @@ class AuthenticationManager
      */
     function logout_user()
     {
-        global $page;
-        unset($page->session['user_id']);
-        unset($page->session['user_type']);
-        unset($page->session['remmember']);
-        unset($page->session['temp']);
+        
+        unset(System::getInstance()->session['user_id']);
+        unset(System::getInstance()->session['user_type']);
+        unset(System::getInstance()->session['remmember']);
+        unset(System::getInstance()->session['temp']);
         SessionManager::regenerate();
-        $page->session['user_logout'] = 1;
+        System::getInstance()->session['user_logout'] = 1;
     }
 
     /**
@@ -208,20 +208,20 @@ class AuthenticationManager
      */
     function start_visit_log($user_id)
     {
-        global $page;
+        
         if ($this->logins_logs_enabled) {
 
             $params = array();
-            $params['user_id'] = $page->session['user_id'];
-            $params['user_type'] = $page->session['user_type'];
+            $params['user_id'] = System::getInstance()->session['user_id'];
+            $params['user_type'] = System::getInstance()->session['user_type'];
             $params['login_datetime'] = date('Y-m-d H:i:s');
             $params['refresh_datetime'] = date('Y-m-d H:i:s');
             $params['duration'] = 0;
 
-            $page->session['visit_log_id'] = $page->models->{$this->logins_logs_model}->insert($params);
+            System::getInstance()->session['visit_log_id'] = System::getInstance()->models->{$this->logins_logs_model}->insert($params);
             if (class_exists('LoginLoggerExtension'))
-                LoginLoggerExtension::start_visit_log($page->session['user_id'], $page->session['visit_log_id']);
-            return $page->session['visit_log_id'];
+                LoginLoggerExtension::start_visit_log(System::getInstance()->session['user_id'], System::getInstance()->session['visit_log_id']);
+            return System::getInstance()->session['visit_log_id'];
         }
         return '';
     }
@@ -231,20 +231,20 @@ class AuthenticationManager
      */
     function update_visit_log()
     {
-        global $page;
-        if ($this->logins_logs_enabled && $page->logged && isset($page->session['visit_log_id'])) {
+        
+        if ($this->logins_logs_enabled && System::getInstance()->logged && isset(System::getInstance()->session['visit_log_id'])) {
             $query = new QueryBuilder($this->logins_logs_model);
-            $obj = $query->select()->where('id=' . sat($page->session['visit_log_id']))->first();
+            $obj = $query->select()->where('id=' . sat(System::getInstance()->session['visit_log_id']))->first();
             $params = array();
 
             $params['refresh_datetime'] = @date('Y-m-d H:i:s');
             $params['duration'] = @strtotime($params['refresh_datetime']) - @strtotime($obj['login_datetime']);
 
             $query = new QueryBuilder($this->logins_logs_model);
-            $query->update($params)->where('id=' . $page->session['visit_log_id'])->execute();
+            $query->update($params)->where('id=' . System::getInstance()->session['visit_log_id'])->execute();
             if (class_exists('LoginLoggerExtension'))
-                LoginLoggerExtension::update_visit_log($page->session['user_id'], $page->session['visit_log_id']);
-            return $page->session['visit_log_id'];
+                LoginLoggerExtension::update_visit_log(System::getInstance()->session['user_id'], System::getInstance()->session['visit_log_id']);
+            return System::getInstance()->session['visit_log_id'];
         }
         return '';
     }
@@ -255,14 +255,14 @@ class AuthenticationManager
      */
     function logout($goto = '')
     {
-        global $page;
+        
         $this->logout_user();
-        if ($page->ajax) {
-            $page->response_data['logged'] = $this->logged;
-            $page->response_type = 'json';
-            $page->get_response();
+        if (System::getInstance()->ajax) {
+            System::getInstance()->response_data['logged'] = $this->logged;
+            System::getInstance()->response_type = 'json';
+            System::getInstance()->get_response();
         } else {
-            $page->redirect($goto ? $goto : $page->paths['current']);
+            System::getInstance()->redirect($goto ? $goto : System::getInstance()->paths['current']);
         }
     }
 
@@ -271,14 +271,14 @@ class AuthenticationManager
      */
     function init_user()
     {
-        global $page;
-        if (isset($page->session['user_id']) && $page->session['user_id'] != '') {
-            $page->logged = true;
-            $query = 'SELECT * FROM ' . $page->user_types_tables[$page->session['user_type']]['table'] . ' WHERE (id=' . $page->session['user_id'] . ') LIMIT 1';
-            $row = $page->db_conn->getRow($query);
-            $page->user = $row;
+        
+        if (isset(System::getInstance()->session['user_id']) && System::getInstance()->session['user_id'] != '') {
+            System::getInstance()->logged = true;
+            $query = 'SELECT * FROM ' . System::getInstance()->user_types_tables[System::getInstance()->session['user_type']]['table'] . ' WHERE (id=' . System::getInstance()->session['user_id'] . ') LIMIT 1';
+            $row = System::getInstance()->db_conn->getRow($query);
+            System::getInstance()->user = $row;
         } else
-            $page->user = '';
+            System::getInstance()->user = '';
     }
 
     /**
@@ -291,14 +291,14 @@ class AuthenticationManager
      */
     function new_password($user_id = '', $length = 6, $password = '', $algorithm = 'md5')
     {
-        global $page;
+        
         if (!$password)
             $password = substr($algorithm(encrypt(microtime())), 0, $length);
         if (!$user_id)
-            $user_id = isset($page->session['user_id']) ? $page->session['user_id'] : '';
+            $user_id = isset(System::getInstance()->session['user_id']) ? System::getInstance()->session['user_id'] : '';
         if ($user_id) {
-            $query = 'UPDATE ' . $page->user_types_tables[$page->session['user_type']]['table'] . ' SET `' . $this->settings[$page->session['user_type']]['password'] . '`=(' . sat($this->settings[$page->session['user_type']]['crypting'] ? $this->settings[$page->session['user_type']]['crypting']($password) : $password) . ') WHERE (`id`=' . $page->session['user_id'] . ') LIMIT 1';
-            $page->db_conn->query($query);
+            $query = 'UPDATE ' . System::getInstance()->user_types_tables[System::getInstance()->session['user_type']]['table'] . ' SET `' . $this->settings[System::getInstance()->session['user_type']]['password'] . '`=(' . sat($this->settings[System::getInstance()->session['user_type']]['crypting'] ? $this->settings[System::getInstance()->session['user_type']]['crypting']($password) : $password) . ') WHERE (`id`=' . System::getInstance()->session['user_id'] . ') LIMIT 1';
+            System::getInstance()->db_conn->query($query);
         }
         return $password;
     }

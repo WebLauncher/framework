@@ -44,6 +44,10 @@ define('SYS_VERSION', '2.7.8');
  */
 class System
 {
+    /**
+     * @var This class instance
+     */
+    public static $instance;
 
     /**
      * @var string $title Page Title
@@ -854,6 +858,17 @@ class System
      */
     function __construct()
     {
+    }
+
+    /**
+     * @return System
+     */
+    public static function getInstance(){
+        if (null === static::$instance) {
+            static::$instance = new System();
+        }
+
+        return static::$instance;
     }
 
     /**

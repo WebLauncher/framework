@@ -7,7 +7,7 @@
  */
 
 
-global $page;
+
 /**
  * Allow use of the Minify URI Builder app. Only set this to true while you need it.
  **/
@@ -44,7 +44,7 @@ $min_allowDebugFlag = false;
  * For best performance, specify your temp directory here. Otherwise Minify
  * will have to load extra code to guess. Some examples below:
  */
-$min_cachePath = $page->paths['root_cache'];
+$min_cachePath = System::getInstance()->paths['root_cache'];
 //$min_cachePath = '/tmp';
 //$min_cachePath = preg_replace('/^\\d+;/', '', session_save_path());
 /**
@@ -65,7 +65,7 @@ $min_cachePath = $page->paths['root_cache'];
  * If /min/ is directly inside your document root, just uncomment the 
  * second line. The third line might work on some Apache servers.
  */
-$min_documentRoot = $page->paths['root_dir'];
+$min_documentRoot = System::getInstance()->paths['root_dir'];
 //$min_documentRoot = substr(__FILE__, 0, -15);
 //$min_documentRoot = $_SERVER['SUBDOMAIN_DOCUMENT_ROOT'];
 

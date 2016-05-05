@@ -33,8 +33,8 @@ class DownloadManager {
 	 * Constructor
 	 */
 	function __construct(){
-		global $page;
-		$page->download_allowed_extensions=array_merge($page->download_allowed_extensions,$this->download_allowed_extensions);
+		
+		System::getInstance()->download_allowed_extensions=array_merge(System::getInstance()->download_allowed_extensions,$this->download_allowed_extensions);
 	}
 	
 	/**
@@ -91,7 +91,7 @@ class DownloadManager {
 		// If myme type is set to empty string then script will try to detect mime type
 		// itself, which would only work if you have Mimetype or Fileinfo extensions
 		// installed on server.
-		global $page;
+		
 		####################################################################
 		###  DO NOT CHANGE BELOW
 		####################################################################
@@ -132,12 +132,12 @@ class DownloadManager {
 		$fext = strtolower(substr(strrchr($fname,'.'),1));
 
 		// check if allowed extension
-		if (!array_key_exists($fext, $page->download_allowed_extensions)) {
+		if (!array_key_exists($fext, System::getInstance()->download_allowed_extensions)) {
 			die('Not allowed file type.');
 		}
 
 		// get mime type
-		if ($page->download_allowed_extensions[$fext] == '') {
+		if (System::getInstance()->download_allowed_extensions[$fext] == '') {
 			$mtype = '';
 			// mime type is not set, get from server settings
 			if (function_exists('mime_content_type')) {
@@ -154,7 +154,7 @@ class DownloadManager {
 		}
 		else {
 			// get mime type defined by admin
-			$mtype = $page->download_allowed_extensions[$fext];
+			$mtype = System::getInstance()->download_allowed_extensions[$fext];
 		}
 
 		// Browser will try to save file with this filename, regardless original filename.
@@ -181,9 +181,10 @@ class DownloadManager {
 		header('Content-Length: ' . $fsize);
 
 		$file_path=str_replace('//','/',$file_path);
+		@ob_end_flush();
 
 		// download
-		switch($page->download_function)
+		switch(System::getInstance()->download_function)
 		{
 			case 'readfile':
 				readfile($file_path);

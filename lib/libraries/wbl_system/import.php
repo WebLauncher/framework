@@ -1,11 +1,11 @@
 <?php
-global $page;
-$page->paths['main_root_dir'] = $page->paths['root_dir'];
-$page->paths['main_root_code'] = $page->paths['root_code'];
-$page->main_module = $page->module;
 
-$page->paths['root_dir'] = __DIR__ . '/';
-$page->paths['root_code'] = __DIR__ . '/';
-$page->template_engine = 'smarty';
-$page->module = 'module/';
-$page->subquery=array('module','home');
+System::getInstance()->paths['main_root_dir'] = System::getInstance()->paths['root_dir'];
+System::getInstance()->paths['main_root_code'] = System::getInstance()->paths['root_code'];
+System::getInstance()->main_module = System::getInstance()->module;
+
+System::getInstance()->paths['root_dir'] = __DIR__ . '/';
+System::getInstance()->paths['root_code'] = __DIR__ . '/';
+System::getInstance()->template_engine = 'smarty';
+System::getInstance()->module = 'module/';
+System::getInstance()->subquery=array('module','home');

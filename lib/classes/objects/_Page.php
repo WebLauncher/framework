@@ -154,8 +154,8 @@ class _Page
         $this->view = $view;
         $this->skin = $skin;
 
-        global $page;
-        $this->system = &$page;
+        
+        $this->system = System::getInstance();
         $this->cache = &$this->system->cache;
         $this->models = &$this->system->models;
         $this->template = &$this->system->template;
