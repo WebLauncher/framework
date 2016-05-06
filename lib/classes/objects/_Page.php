@@ -373,6 +373,14 @@ class _Page
                 }
                 $this->redirect($this->paths['current']);
             }
+            if (!$this->system->live && $this->system->build_enabled && isset($this->system->actions[0]) && $this->system->actions[0] == 'build-migration') {
+                $build = new BuildManager($this->system->uploads);
+                if (!$build->add_migration($this->paths['root_dir'], $this->system->actions[1])) {
+                    foreach ($build->errors as $e)
+                        $this->system->logger->log('builder_error', $e);
+                }
+                $this->redirect($this->paths['current']);
+            }
         }
         if ($this->subpage) {
             $this->subpage->skin = $this->skin;

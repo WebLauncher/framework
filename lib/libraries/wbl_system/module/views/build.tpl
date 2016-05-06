@@ -102,6 +102,18 @@
 				alert('Please fill in the form properly!');
 			return false;
 		});
+		$('#add_migration').submit(function() {
+			if ($('#add_migration').valid()) {
+				$.get(root, {
+					a : 'build-migration:' + $('#add_migration [name="name"]').val()
+				}, function() {
+					load_build();
+					status('Migration <strong>' + $('#add_migration [name="name"]').val() + '</strong> was created!');
+				});
+			} else
+				alert('Please fill in the form properly!');
+			return false;
+		});
 		$('.btn-add-model').click(function() {
 			var model = $(this).attr('model');
 			$(this).hide();
@@ -117,7 +129,7 @@
 {/literal}
 <div class="clearfix col-md-12">
     <br/>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 Components
@@ -132,7 +144,7 @@
         </div>
 
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading clearfix">
                 <div class="pull-left">Models ({$models|@count})</div>
@@ -163,6 +175,20 @@
             </div>
         </div>
     </div>
+	<div class="col-md-4">
+		<div class="panel panel-primary">
+			<div class="panel-heading clearfix">
+				<div class="pull-left">Migrations ({$migrations|@count})</div>
+				<div class="pull-right">
+					<a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modal_migration"><i class="glyphicon glyphicon glyphicon-plus"></i> Add migration</a>
+				</div>
+			</div>
+			<div class="panel-body">
+				{include file="migrations.tpl"}
+			</div>
+		</div>
+
+	</div>
 </div>
 <div class="modal fade" id="modal_component" tabindex="-1" role="dialog" aria-labelledby="modal_component">
     <div class="modal-dialog" role="document">
@@ -226,4 +252,29 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="modal_migration" tabindex="-1" role="dialog" aria-labelledby="modal_migration">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Add new migration class</h4>
+			</div>
+			<div class="modal-body">
+				<form id="add_migration">
+					<div class="form-group">
+						<label for="exampleInputEmail1">Name</label>
+						<input type="text" class="form-control" name="name" required="required" placeholder="Enter name">
+						{validator form="add_migration" field="name" rule="pattern|^[a-z_]+$" message="Please user only [a-z] and _ (underscore)." }
+					</div>
+					<button type="submit" class="btn btn-primary">
+						Add
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
