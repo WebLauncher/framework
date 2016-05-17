@@ -1250,7 +1250,7 @@ class System
      */
     private function _initConsole()
     {
-        $this->console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (PHP_SAPI == 'cgi-fcgi' && isset($_SERVER['PWD'])));
+        $this->console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (php_sapi_name() === 'cli'));
         if ($this->console) {
             ConsoleManager::$system = &$this;
             ConsoleManager::init();
