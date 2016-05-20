@@ -12,9 +12,10 @@
  */
 function echopre($arr, $return = false)
 {
-    $text = '<pre class="debug">';
+    $console=defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (php_sapi_name() === 'cli'));
+    $text = $console?'':'<pre class="debug">';
     $text .= print_r($arr, true);
-    $text .= '</pre>';
+    $text .= $console?"\n":'</pre>';
     if ($return)
         return $text;
     echo $text;

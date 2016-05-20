@@ -93,7 +93,12 @@ class MigrationsManager {
         file_put_contents($this -> system -> paths['root_dir'] . $this -> system -> files_folder . 'migrations_versions.json', json_encode($migrations));
     }
 
-    function run_migration($name, $version, $direction = 'up') {
+    function run_migration($name="", $version=0, $direction = 'up') {
+        if(!$name){
+            $RD = $this -> system -> paths['root_dir'];
+            $this -> _migrations = require_once $RD . 'db/migrations.php';
+            $name=$this->_migrations[$version];
+        }
         echopre('[Version: '.$version.'] Running: '.$direction.' => ' . $name);
         if (file_exists($this -> system -> paths['root_dir'] . 'db/migrations/' . $name . '.sql')) {
             if($direction=='up'){
