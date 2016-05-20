@@ -1471,7 +1471,12 @@ class System
 
             $manager = new MigrationsManager();
             $manager->system = &$this;
-            $manager->run(isset_or($this->actions[1], 'up'));
+            if(!isset($this->actions[2])) {
+                $manager->run(isset_or($this->actions[1], 'up'));
+            }
+            else{
+                $manager->run_migration($this->actions[3],$this->actions[2],$this->actions[1]);
+            }
             die;
         }
     }

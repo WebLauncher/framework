@@ -91,7 +91,7 @@ class BuildManager
 		{
 			$this->errors[]='Could not add dir:"'.$path.'db/"!';
 		}
-		if(!$this->files->save_file($path.'db/'.$name.'.php',$this->get_migration_class($name)))
+		if(!$this->files->save_file($path.'db/migrations/'.$name.'.php',$this->get_migration_class($name)))
 		{
 			$this->errors[]=('Could not write file:"'.$path.'db/'.$name.'.php"!');
 		}

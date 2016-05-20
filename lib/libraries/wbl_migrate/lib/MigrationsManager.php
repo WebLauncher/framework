@@ -8,6 +8,9 @@
  * @package WebLauncher\Managers
  */
 class MigrationsManager {
+    /**
+     * @var System null
+     */
     public $system = null;
     private $_migrations = array();
     private $_old_migrations = array();
@@ -83,7 +86,8 @@ class MigrationsManager {
 
     /**
      * Save state into version file
-     * @param string $migration Migration file
+     * @param $migrations
+     * @internal param string $migration Migration file
      */
     function save_state($migrations) {
         file_put_contents($this -> system -> paths['root_dir'] . $this -> system -> files_folder . 'migrations_versions.json', json_encode($migrations));

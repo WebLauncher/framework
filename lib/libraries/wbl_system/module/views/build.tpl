@@ -124,6 +124,11 @@
 				load_build();
 			});
 		});
+		$('.btn-run-migration').click(function(){
+			var migration = $(this).attr('migration');
+			$('#modal_migrate').modal('show');
+			$('#migrate_url').attr('src',root+'?a=migrate:up:'+migration);
+		});
 	}); 
 </script>
 {/literal}
@@ -274,6 +279,22 @@
 						Add
 					</button>
 				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_migrate" tabindex="-1" role="dialog" aria-labelledby="modal_migrate">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Run migration</h4>
+			</div>
+			<div class="modal-body">
+				<iframe src="" id="migrate_url" frameborder="0" style="width:100%;height:300px;"></iframe>
 			</div>
 		</div>
 	</div>
