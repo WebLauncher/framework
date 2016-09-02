@@ -16,6 +16,7 @@ class TablesManager implements ArrayAccess
 
     /**
      * TablesManager constructor.
+     * @param array $tables
      */
     public function __construct($tables = array())
     {

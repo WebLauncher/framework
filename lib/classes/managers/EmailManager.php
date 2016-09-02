@@ -2,6 +2,7 @@
 /**
  * Email Manager Class
  */
+
 /**
  * E-mails Send Manager Class
  * @package WebLauncher\Managers
@@ -39,7 +40,7 @@ class EmailManager
      */
     function compose($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        
+
         try {
             $to = $this->clean_receivers($to);
             if (strtolower(isset(System::getInstance()->mail_type) ? System::getInstance()->mail_type : '') == 'queue')
@@ -47,20 +48,20 @@ class EmailManager
 
             $this->mailer = new PHPMailer();
             $this->mailer->CharSet = 'UTF-8';
-            switch(strtolower(isset(System::getInstance()->mail_type)?System::getInstance()->mail_type:'')) {
-            case "qmail" :
-                $this->mailer->IsQmail();
-                break;
-            case "sendmail" :
-                $this->mailer->IsSendmail();
-                break;
-            case "smtp" :
-                $this->mailer->IsSMTP();
-                $this->mailer->SMTPAuth = true;
-                break;
-            case "mail" :
-            default :
-                $this->mailer->IsMail();
+            switch (strtolower(isset(System::getInstance()->mail_type) ? System::getInstance()->mail_type : '')) {
+                case "qmail" :
+                    $this->mailer->IsQmail();
+                    break;
+                case "sendmail" :
+                    $this->mailer->IsSendmail();
+                    break;
+                case "smtp" :
+                    $this->mailer->IsSMTP();
+                    $this->mailer->SMTPAuth = true;
+                    break;
+                case "mail" :
+                default :
+                    $this->mailer->IsMail();
             }
 
             if (is_array($to)) {
@@ -150,7 +151,7 @@ class EmailManager
      */
     function queue($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        
+
         if (!is_array($to))
             $to = ser(array($to => array('email' => $to)));
         $query = 'insert into `' . System::getInstance()->mail_queue_table . '` (
@@ -193,8 +194,8 @@ class EmailManager
     {
         $send = true;
         if (!is_null($this->mailer)) {
-            try {                
-                if(!$send = $this->mailer->Send()) {
+            try {
+                if (!$send = $this->mailer->Send()) {
                     System::triggerError('Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
                 }
             } catch (phpmailerException $e) {
@@ -216,29 +217,28 @@ class EmailManager
     {
         $this->mailer = null;
         $this->compose(unser($obj['to']), $obj['subject'], $obj['message'], $obj['from'], $obj['from_name'], $obj['reply'], $obj['reply_name'], unser($obj['attachments']), $obj['mail_in'], $obj['sender'], unser($obj['others']));
-        switch(strtolower(isset($hosts[$obj['hostname']]['mail_type'])?$hosts[$obj['hostname']]['mail_type']:"")) {
-        case "qmail" :
-            $this->mailer->IsQmail();
-            break;
-        case "sendmail" :
-            $this->mailer->IsSendmail();
-            break;
-        case "smtp" :
-            $this->mailer->IsSMTP();
-            $this->mailer->SMTPAuth = true;
-            $this->mailer->Host = isset_or($hosts[$obj['hostname']]['mail_host']);
-            $this->mailer->Username = isset_or($hosts[$obj['hostname']]['mail_user']);
-            $this->mailer->Password = isset_or($hosts[$obj['hostname']]['mail_password']);
-            if (isset_or($hosts[$obj['hostname']]['mail_port'])) {
-                $this->mailer->Port = isset_or($hosts[$obj['hostname']]['mail_port']);
-            }
-            break;
-        case "mail" :
-        default :
-            $this->mailer->IsMail();
+        switch (strtolower(isset($hosts[$obj['hostname']]['mail_type']) ? $hosts[$obj['hostname']]['mail_type'] : "")) {
+            case "qmail" :
+                $this->mailer->IsQmail();
+                break;
+            case "sendmail" :
+                $this->mailer->IsSendmail();
+                break;
+            case "smtp" :
+                $this->mailer->IsSMTP();
+                $this->mailer->SMTPAuth = true;
+                $this->mailer->Host = isset_or($hosts[$obj['hostname']]['mail_host']);
+                $this->mailer->Username = isset_or($hosts[$obj['hostname']]['mail_user']);
+                $this->mailer->Password = isset_or($hosts[$obj['hostname']]['mail_password']);
+                if (isset_or($hosts[$obj['hostname']]['mail_port'])) {
+                    $this->mailer->Port = isset_or($hosts[$obj['hostname']]['mail_port']);
+                }
+                break;
+            case "mail" :
+            default :
+                $this->mailer->IsMail();
         }
         $this->mailer->addCustomHeader('X-MessageID: ' . $obj['id']);
         return $this->send();
     }
-
 }
