@@ -2495,9 +2495,9 @@ class System
     private function _initCheckCookies()
     {
         if ($this->check_cookies) {
-            if ($this->actions[0] == '__no_cookies') {
+            if (isset($this->actions[0]) && $this->actions[0] == '__no_cookies') {
                 $this->system_error = 'Please enable the cookies in your browser and then <a href="' . base64_decode($_REQUEST['page']) . '">click here</a> to go to the page you wanted to access.';
-            } elseif ($this->actions[0] == '__check_cookies') {
+            } elseif (isset($this->actions[0]) && $this->actions[0] == '__check_cookies') {
                 $this->cookies_enabled = $_SESSION['__check_cookies'] && $_SESSION['_hash'] = $_REQUEST['hash'];
                 if ($this->cookies_enabled) {
                     $this->redirect(base64_decode($_REQUEST['page']));

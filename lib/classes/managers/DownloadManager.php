@@ -181,7 +181,8 @@ class DownloadManager {
 		header('Content-Length: ' . $fsize);
 
 		$file_path=str_replace('//','/',$file_path);
-		@ob_end_flush();
+        if (ob_get_level())
+		    @ob_end_flush();
 
 		// download
 		switch(System::getInstance()->download_function)

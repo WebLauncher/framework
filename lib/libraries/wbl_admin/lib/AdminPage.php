@@ -9,7 +9,6 @@ class AdminPage extends Page {
 		if ($this -> system -> logged) {
 			// get users permissions
 			$this->user=$this->models->administrators->process_row($this->user);
-
 			// get menu
 			$xmlp = new Xml_Parser();
 			$xmlp -> load($this -> system -> paths['root_dir'] . 'modules/'.$this->system->module.'menu.xml');

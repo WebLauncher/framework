@@ -65,7 +65,7 @@ class TraceManager
         }
 
         $btn_style = "border:1px solid #ccc; color:#000; background:#efefef;margin-right:4px; border-top:0;height:auto;padding:auto;margin:auto; clear:none; float:left; width:auto;";
-        System::getInstance()->trace_page = '<div style="clear:both; position:fixed;bottom:0px; z-index:20000000000;"><button id="btn_page_trace_' . $random . '" onclick="window.open(\'' . System::getInstance()->paths['root'] . '?a=__sys_trace&page=' . urlencode(System::getInstance()->session['__current_trace']) . '\');" style="' . $btn_style . '">&raquo;</button>';
+        System::getInstance()->trace_page = '<div style="clear:both; position:fixed;bottom:0px; z-index:20000000000;"><button id="btn_page_trace_' . $random . '" onclick="window.open(\'' . System::getInstance()->paths['root'] . '?a=__sys_trace&page=' . urlencode(isset_or(System::getInstance()->session['__current_trace'])) . '\');" style="' . $btn_style . '">&raquo;</button>';
         if (System::getInstance()->debug)
             System::getInstance()->trace_page .= '';
         if (System::getInstance()->logger->active && System::getInstance()->logger->no)
@@ -105,7 +105,8 @@ class TraceManager
     {
         
         $html = self::$trace;
-        if ($trace_dir = self::check_dir())
+        $trace_dir='';
+        if ($trace_dir = self::check_dir() && is_dir($trace_dir))
             file_put_contents($trace_dir . System::getInstance()->session['__current_trace'], $html);
         self::clean_dir();
     }
