@@ -1940,7 +1940,7 @@ class System
 
             $query=new QueryBuilder($this->libraries_settings['wbl_locale']['table']);
             $language = $query->select()->where('id=' . $this->session['language_id'])->first();
-            if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))
+            if (isset($this->browser['os']) && strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))
                 $locale = $language['locale_win'];
             elseif (isset_or($language['locale_linux']))
                 $locale = $language['locale_linux'];
