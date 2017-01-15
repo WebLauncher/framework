@@ -12,10 +12,10 @@
  */
 function echopre($arr, $return = false)
 {
-    $console=defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (php_sapi_name() === 'cli'));
-    $text = $console?'':'<pre class="debug">';
+    $console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (php_sapi_name() === 'cli'));
+    $text = $console ? '' : '<pre class="debug">';
     $text .= print_r($arr, true);
-    $text .= $console?"\n":'</pre>';
+    $text .= $console ? "\n" : '</pre>';
     if ($return)
         return $text;
     echo $text;
@@ -117,7 +117,7 @@ function the_error_handler($errno = '', $errstr = '', $errfile = '', $errline = 
             $output = trim($output);
             $output = str_replace("\n", "", $output);
             $output = str_replace("\r", "", $output);
-            
+
             if (isset_or(System::getInstance()->debug))
                 echo $output;
 
@@ -161,7 +161,7 @@ set_error_handler('the_error_handler');
  */
 function the_register_shutdown()
 {
-    
+
     session_write_close();
     # Getting last error
     $error = error_get_last();
@@ -296,7 +296,7 @@ function date2birthday($birthday)
  */
 function encrypt($plain_text)
 {
-    
+
     $salt = System::getInstance()->crypt_key;
 
     $mcrypt_iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -317,7 +317,7 @@ function encrypt($plain_text)
  */
 function decrypt($crypted_text)
 {
-    
+
     $salt = System::getInstance()->crypt_key;
 
     $mcrypt_iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -338,14 +338,14 @@ function decrypt($crypted_text)
  * @param string $tags
  * @return string
  */
-function tr($content, $language_id = 0, $tags = 'site')
+function tr($content, $language_id = 0, $tags = 'site', $params = array())
 {
-    
+
     if ($content != "" && System::getInstance()->multi_language) {
         $language = $language_id ? $language_id : isset(System::getInstance()->session['language_id']) ? System::getInstance()->session['language_id'] : 0;
         $quer = $content;
 
-        if ($page && System::getInstance()->db_conn_enabled && System::getInstance()->libraries_settings['wbl_locale']['type'] == 'db') {
+        if (System::getInstance() && System::getInstance()->db_conn_enabled && System::getInstance()->libraries_settings['wbl_locale']['type'] == 'db') {
             $hostname = '';
             if (System::getInstance()->admin)
                 $key = sha1($content);
