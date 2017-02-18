@@ -229,8 +229,8 @@ class FilesManager
 	 */
 	function isAllowed($fileName)
 	{
-		global $page;
-		return in_array($this->get_extension($fileName), $page->upload_allowed_extensions);
+		
+		return in_array($this->get_extension($fileName), System::getInstance()->upload_allowed_extensions);
 	}
 	
 	/**

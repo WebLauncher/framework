@@ -98,10 +98,10 @@ class VideoManager
      */
     function get_duration($file_path)
     {
-        global $page;
-        $page->import('library', 'video');
+        
+        System::getInstance()->import('library', 'video');
         //$movie = new ffmpeg_movie($file_path);
-        $toolkit = new PHPVideoToolkit($page->paths['root_dir'] . 'tmp_files/');
+        $toolkit = new PHPVideoToolkit(System::getInstance()->paths['root_dir'] . 'tmp_files/');
         $toolkit->on_error_die = FALSE;
         $toolkit->setInputFile($file_path);
         $data = $toolkit->getFileInfo();

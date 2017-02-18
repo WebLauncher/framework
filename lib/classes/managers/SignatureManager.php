@@ -37,8 +37,8 @@ class SignatureManager
             $text = $this->session['signature'];
         $this->session['signature'] = $text;
 
-        global $page;
-        $page->saveSession();
+        
+        System::getInstance()->saveSession();
 
         $my_img = imagecreate($length * 20, 30);
         $background = imagecolorallocate($my_img, 255, 255, 255);

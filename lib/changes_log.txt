@@ -1,3 +1,7 @@
+2.7.11
+- fix tr with params
+2.7.10
+- added ability to build migrations from url or system tools
 2.7.9
 - added gettext translations type
     - using $page->libraries_settings['wbl_locale']['type'] = 'gettext'; to switch to gettext (db is default)

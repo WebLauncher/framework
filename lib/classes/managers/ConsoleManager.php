@@ -81,6 +81,17 @@ class ConsoleManager {
 			break;
 			case '--migrate':
 				self::line("Executing migrations");
+				self::$system->import('library', 'wbl_migrate');
+
+				$manager = new MigrationsManager();
+				$manager->system = &self::$system;
+				global $argv;
+				if(!isset($argv[3])) {
+					$manager->run(isset_or($argv[2], 'up'));
+				}
+				else{
+					$manager->run_migration(isset_or($argv[4]),$argv[3],$argv[2]);
+				}
 				die;
 				break;
 			case '--email' :

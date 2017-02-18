@@ -1113,9 +1113,9 @@
 		 */
 		function getForm()
 		{
-			global $page;
-			$page -> template -> assign('form', $this -> generate());
-			return $page -> template -> fetch($page -> objects['templates']['form']);
+			
+			System::getInstance() -> template -> assign('form', $this -> generate());
+			return System::getInstance() -> template -> fetch(System::getInstance() -> objects['templates']['form']);
 		}
 
 	}

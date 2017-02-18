@@ -154,8 +154,8 @@ class _Page
         $this->view = $view;
         $this->skin = $skin;
 
-        global $page;
-        $this->system = &$page;
+        
+        $this->system = System::getInstance();
         $this->cache = &$this->system->cache;
         $this->models = &$this->system->models;
         $this->template = &$this->system->template;
@@ -368,6 +368,14 @@ class _Page
             if (!$this->system->live && $this->system->build_enabled && isset($this->system->actions[0]) && $this->system->actions[0] == 'build-model') {
                 $build = new BuildManager($this->system->uploads);
                 if (!$build->add_model($this->_folder, $this->system->actions[1])) {
+                    foreach ($build->errors as $e)
+                        $this->system->logger->log('builder_error', $e);
+                }
+                $this->redirect($this->paths['current']);
+            }
+            if (!$this->system->live && $this->system->build_enabled && isset($this->system->actions[0]) && $this->system->actions[0] == 'build-migration') {
+                $build = new BuildManager($this->system->uploads);
+                if (!$build->add_migration($this->paths['root_dir'], $this->system->actions[1])) {
                     foreach ($build->errors as $e)
                         $this->system->logger->log('builder_error', $e);
                 }

@@ -3082,7 +3082,7 @@ class PHPMailer
      * Set or reset instance properties.
      *
      * Usage Example:
-     * $page->set('X-Priority', '3');
+     * System::getInstance()->set('X-Priority', '3');
      *
      * @access public
      * @param string $name

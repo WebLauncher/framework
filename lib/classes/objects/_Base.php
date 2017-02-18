@@ -451,7 +451,6 @@ class _Base implements ArrayAccess
      */
     public function insert($params, $callbacks = true)
     {
-        echopre($params);
         if (is_array($params)) {
             if ($callbacks)
                 $this->_before_insert($params);
