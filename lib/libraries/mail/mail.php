@@ -8,11 +8,11 @@ class Mail
 {
 	function send_mail($to, $subject, $message, $from, $fromname, $reply_to='', $reply_name='',$attachments=array(), $mail_in='to')
 	{
-		global $page;
+		
 
 		$mail = new PHPMailer();
 		$mail->CharSet = "UTF-8";
-		switch(strtolower(isset($page->mail_type)?$page->mail_type:""))
+		switch(strtolower(isset(System::getInstance()->mail_type)?System::getInstance()->mail_type:""))
 		{
 			case "qmail":
 				$mail->IsQmail();
@@ -22,16 +22,16 @@ class Mail
 			break;
 			case "smtp":
 				$mail->IsSMTP();
-				$mail->Host       = $page->mail_host; // SMTP server
+				$mail->Host       = System::getInstance()->mail_host; // SMTP server
 				$mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
 				$mail->SMTPAuth   = true;                  // enable SMTP authentication
-				$mail->Port       = $page->mail_port;                    // set the SMTP port for the GMAIL server
-				$mail->Username   = $page->mail_user; // SMTP account username
-				$mail->Password   = $page->mail_password;        // SMTP account password
-				$mail->SMTPSecure = $page->mail_ssl?'ssl':'';
+				$mail->Port       = System::getInstance()->mail_port;                    // set the SMTP port for the GMAIL server
+				$mail->Username   = System::getInstance()->mail_user; // SMTP account username
+				$mail->Password   = System::getInstance()->mail_password;        // SMTP account password
+				$mail->SMTPSecure = System::getInstance()->mail_ssl?'ssl':'';
 			break;
 			case 'queue':
-				$query='insert into `'.$page->mail_queue_table.'` (
+				$query='insert into `'.System::getInstance()->mail_queue_table.'` (
 					`hostname`,
 					`to`,
 					`from`,
@@ -44,19 +44,19 @@ class Mail
 					`attachments`,
 					`add_datetime`					
 				) values (';
-				$query.=$page->db_conn->stringEscape(isset($page->hostname)?$page->hostname:(isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:'localhost')).',';
-				$query.=$page->db_conn->stringEscape(ser(array($to=>array('email'=>$to)))).',';
-				$query.=$page->db_conn->stringEscape($from).',';
-				$query.=$page->db_conn->stringEscape($fromname).',';
-				$query.=$page->db_conn->stringEscape($mail_in).',';
-				$query.=$page->db_conn->stringEscape($subject).',';
-				$query.=$page->db_conn->stringEscape($message).',';
-				$query.=$page->db_conn->stringEscape($reply_to).',';
-				$query.=$page->db_conn->stringEscape($reply_name).',';
-				$query.=$page->db_conn->stringEscape(ser($attachments)).',';
-				$query.=$page->db_conn->stringEscape(nowfull()).'';
+				$query.=System::getInstance()->db_conn->stringEscape(isset(System::getInstance()->hostname)?System::getInstance()->hostname:(isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:'localhost')).',';
+				$query.=System::getInstance()->db_conn->stringEscape(ser(array($to=>array('email'=>$to)))).',';
+				$query.=System::getInstance()->db_conn->stringEscape($from).',';
+				$query.=System::getInstance()->db_conn->stringEscape($fromname).',';
+				$query.=System::getInstance()->db_conn->stringEscape($mail_in).',';
+				$query.=System::getInstance()->db_conn->stringEscape($subject).',';
+				$query.=System::getInstance()->db_conn->stringEscape($message).',';
+				$query.=System::getInstance()->db_conn->stringEscape($reply_to).',';
+				$query.=System::getInstance()->db_conn->stringEscape($reply_name).',';
+				$query.=System::getInstance()->db_conn->stringEscape(ser($attachments)).',';
+				$query.=System::getInstance()->db_conn->stringEscape(nowfull()).'';
 				$query.=')';
-				$page->db_conn->query($query);
+				System::getInstance()->db_conn->query($query);
 				return 1;
 			break;
 			case "mail":
@@ -94,11 +94,11 @@ class Mail
 
 	function send_mail_multiple($to, $subject, $message, $from, $fromname, $reply_to='', $reply_name='',$attachments=array(),$mail_in='to')
 	{
-		global $page;
+		
 
 		$mail = new PHPMailer();
 		$mail->CharSet = "UTF-8";
-		switch(strtolower(isset($page->mail_type)?$page->mail_type:""))
+		switch(strtolower(isset(System::getInstance()->mail_type)?System::getInstance()->mail_type:""))
 		{
 			case "qmail":
 				$mail->IsQmail();
@@ -111,7 +111,7 @@ class Mail
 				$mail->SMTPAuth=true;
 			break;
 			case 'queue':
-				$query='insert into `'.$page->mail_queue_table.'` (
+				$query='insert into `'.System::getInstance()->mail_queue_table.'` (
 					`hostname`,
 					`to`,
 					`from`,
@@ -124,19 +124,19 @@ class Mail
 					`attachments`,
 					`add_datetime`					
 				) values (';
-				$query.=$page->db_conn->stringEscape(isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:'localhost').',';
-				$query.=$page->db_conn->stringEscape(ser($to)).',';
-				$query.=$page->db_conn->stringEscape($from).',';
-				$query.=$page->db_conn->stringEscape($fromname).',';
-				$query.=$page->db_conn->stringEscape($mail_in).',';
-				$query.=$page->db_conn->stringEscape($subject).',';
-				$query.=$page->db_conn->stringEscape($message).',';
-				$query.=$page->db_conn->stringEscape($reply_to).',';
-				$query.=$page->db_conn->stringEscape($reply_name).',';
-				$query.=$page->db_conn->stringEscape(ser($attachments)).',';
-				$query.=$page->db_conn->stringEscape(nowfull()).'';
+				$query.=System::getInstance()->db_conn->stringEscape(isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:'localhost').',';
+				$query.=System::getInstance()->db_conn->stringEscape(ser($to)).',';
+				$query.=System::getInstance()->db_conn->stringEscape($from).',';
+				$query.=System::getInstance()->db_conn->stringEscape($fromname).',';
+				$query.=System::getInstance()->db_conn->stringEscape($mail_in).',';
+				$query.=System::getInstance()->db_conn->stringEscape($subject).',';
+				$query.=System::getInstance()->db_conn->stringEscape($message).',';
+				$query.=System::getInstance()->db_conn->stringEscape($reply_to).',';
+				$query.=System::getInstance()->db_conn->stringEscape($reply_name).',';
+				$query.=System::getInstance()->db_conn->stringEscape(ser($attachments)).',';
+				$query.=System::getInstance()->db_conn->stringEscape(nowfull()).'';
 				$query.=')';
-				$page->db_conn->query($query);
+				System::getInstance()->db_conn->query($query);
 				return 1;
 			break;
 			case "mail":
@@ -159,9 +159,9 @@ class Mail
 		$mail->Sender = $from;
 		$mail->FromName = $fromname;
 
-		$mail->Host=$page->mail_host;
-		$mail->Username=$page->mail_user;
-		$mail->Password=$page->mail_password;
+		$mail->Host=System::getInstance()->mail_host;
+		$mail->Username=System::getInstance()->mail_user;
+		$mail->Password=System::getInstance()->mail_password;
 
 		// add attachments
 		if(count($attachments)>0)

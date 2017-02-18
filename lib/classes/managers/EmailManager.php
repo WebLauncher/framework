@@ -2,6 +2,7 @@
 /**
  * Email Manager Class
  */
+
 /**
  * E-mails Send Manager Class
  * @package WebLauncher\Managers
@@ -39,28 +40,28 @@ class EmailManager
      */
     function compose($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        global $page;
+
         try {
             $to = $this->clean_receivers($to);
-            if (strtolower(isset($page->mail_type) ? $page->mail_type : '') == 'queue')
+            if (strtolower(isset(System::getInstance()->mail_type) ? System::getInstance()->mail_type : '') == 'queue')
                 return $this->queue($to, $subject, $message, $from, $fromname, $reply_to, $reply_name, $attachments, $mail_in, $sender, $others);
 
             $this->mailer = new PHPMailer();
             $this->mailer->CharSet = 'UTF-8';
-            switch(strtolower(isset($page->mail_type)?$page->mail_type:'')) {
-            case "qmail" :
-                $this->mailer->IsQmail();
-                break;
-            case "sendmail" :
-                $this->mailer->IsSendmail();
-                break;
-            case "smtp" :
-                $this->mailer->IsSMTP();
-                $this->mailer->SMTPAuth = true;
-                break;
-            case "mail" :
-            default :
-                $this->mailer->IsMail();
+            switch (strtolower(isset(System::getInstance()->mail_type) ? System::getInstance()->mail_type : '')) {
+                case "qmail" :
+                    $this->mailer->IsQmail();
+                    break;
+                case "sendmail" :
+                    $this->mailer->IsSendmail();
+                    break;
+                case "smtp" :
+                    $this->mailer->IsSMTP();
+                    $this->mailer->SMTPAuth = true;
+                    break;
+                case "mail" :
+                default :
+                    $this->mailer->IsMail();
             }
 
             if (is_array($to)) {
@@ -91,10 +92,10 @@ class EmailManager
             }
             $this->mailer->FromName = $fromname;
 
-            if (isset($page)) {
-                $this->mailer->Host = $page->mail_host;
-                $this->mailer->Username = $page->mail_user;
-                $this->mailer->Password = $page->mail_password;
+            if (System::getInstance()) {
+                $this->mailer->Host = System::getInstance()->mail_host;
+                $this->mailer->Username = System::getInstance()->mail_user;
+                $this->mailer->Password = System::getInstance()->mail_password;
             }
             // add attachments
             if (count($attachments) > 0)
@@ -150,10 +151,10 @@ class EmailManager
      */
     function queue($to, $subject, $message, $from, $fromname, $reply_to = '', $reply_name = '', $attachments = array(), $mail_in = 'to', $sender = '', $others = array())
     {
-        global $page;
+
         if (!is_array($to))
             $to = ser(array($to => array('email' => $to)));
-        $query = 'insert into `' . $page->mail_queue_table . '` (
+        $query = 'insert into `' . System::getInstance()->mail_queue_table . '` (
 						`hostname`,
 						`to`,
 						`from`,
@@ -168,21 +169,21 @@ class EmailManager
 						`attachments`,
 						`add_datetime`				
 					) values (';
-        $query .= $page->db_conn->stringEscape(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . ',';
-        $query .= $page->db_conn->stringEscape(ser($to)) . ',';
-        $query .= $page->db_conn->stringEscape($from) . ',';
-        $query .= $page->db_conn->stringEscape($fromname) . ',';
-        $query .= $page->db_conn->stringEscape($mail_in) . ',';
-        $query .= $page->db_conn->stringEscape($subject) . ',';
-        $query .= $page->db_conn->stringEscape($message) . ',';
-        $query .= $page->db_conn->stringEscape($reply_to) . ',';
-        $query .= $page->db_conn->stringEscape($reply_name) . ',';
-        $query .= $page->db_conn->stringEscape($sender) . ',';
-        $query .= $page->db_conn->stringEscape(ser($others)) . ',';
-        $query .= $page->db_conn->stringEscape(ser($attachments)) . ',';
-        $query .= $page->db_conn->stringEscape(nowfull()) . '';
+        $query .= System::getInstance()->db_conn->stringEscape(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost') . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($to)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($from) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($fromname) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($mail_in) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($subject) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($message) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($reply_to) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($reply_name) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape($sender) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($others)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(ser($attachments)) . ',';
+        $query .= System::getInstance()->db_conn->stringEscape(nowfull()) . '';
         $query .= ')';
-        $page->db_conn->query($query);
+        System::getInstance()->db_conn->query($query);
         return $this;
     }
 
@@ -193,8 +194,8 @@ class EmailManager
     {
         $send = true;
         if (!is_null($this->mailer)) {
-            try {                
-                if(!$send = $this->mailer->Send()) {
+            try {
+                if (!$send = $this->mailer->Send()) {
                     System::triggerError('Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
                 }
             } catch (phpmailerException $e) {
@@ -216,29 +217,28 @@ class EmailManager
     {
         $this->mailer = null;
         $this->compose(unser($obj['to']), $obj['subject'], $obj['message'], $obj['from'], $obj['from_name'], $obj['reply'], $obj['reply_name'], unser($obj['attachments']), $obj['mail_in'], $obj['sender'], unser($obj['others']));
-        switch(strtolower(isset($hosts[$obj['hostname']]['mail_type'])?$hosts[$obj['hostname']]['mail_type']:"")) {
-        case "qmail" :
-            $this->mailer->IsQmail();
-            break;
-        case "sendmail" :
-            $this->mailer->IsSendmail();
-            break;
-        case "smtp" :
-            $this->mailer->IsSMTP();
-            $this->mailer->SMTPAuth = true;
-            $this->mailer->Host = isset_or($hosts[$obj['hostname']]['mail_host']);
-            $this->mailer->Username = isset_or($hosts[$obj['hostname']]['mail_user']);
-            $this->mailer->Password = isset_or($hosts[$obj['hostname']]['mail_password']);
-            if (isset_or($hosts[$obj['hostname']]['mail_port'])) {
-                $this->mailer->Port = isset_or($hosts[$obj['hostname']]['mail_port']);
-            }
-            break;
-        case "mail" :
-        default :
-            $this->mailer->IsMail();
+        switch (strtolower(isset($hosts[$obj['hostname']]['mail_type']) ? $hosts[$obj['hostname']]['mail_type'] : "")) {
+            case "qmail" :
+                $this->mailer->IsQmail();
+                break;
+            case "sendmail" :
+                $this->mailer->IsSendmail();
+                break;
+            case "smtp" :
+                $this->mailer->IsSMTP();
+                $this->mailer->SMTPAuth = true;
+                $this->mailer->Host = isset_or($hosts[$obj['hostname']]['mail_host']);
+                $this->mailer->Username = isset_or($hosts[$obj['hostname']]['mail_user']);
+                $this->mailer->Password = isset_or($hosts[$obj['hostname']]['mail_password']);
+                if (isset_or($hosts[$obj['hostname']]['mail_port'])) {
+                    $this->mailer->Port = isset_or($hosts[$obj['hostname']]['mail_port']);
+                }
+                break;
+            case "mail" :
+            default :
+                $this->mailer->IsMail();
         }
         $this->mailer->addCustomHeader('X-MessageID: ' . $obj['id']);
         return $this->send();
     }
-
 }

@@ -18,9 +18,9 @@ $this->addConfig('development', array('localhost:10001','localhost:8888'));
 /*
 	Use to import CSS files into template
 
-	$page->add_css_file('{$skin_styles}screen.css');
- 	$page->add_css_file('{$skin_styles}ui.css');
- 	$page->add_css_file('{$skin_styles}ie.css','text/css','screen, projection','if IE');
+	$this->add_css_file('{$skin_styles}screen.css');
+ 	$this->add_css_file('{$skin_styles}ui.css');
+ 	$this->add_css_file('{$skin_styles}ie.css','text/css','screen, projection','if IE');
 */
 $this->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css');
 

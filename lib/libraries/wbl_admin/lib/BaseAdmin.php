@@ -67,7 +67,7 @@ class Base extends _Base {
      * @return string
      */
     function get_admin_table($id = 'ajax_table', $data = 0, $cond = '', $update_action = 'update', $edit_link = 'none', $sort_col_no = 0) {
-        global $page;
+        
 
         $table = new AjaxTable();
         $this -> _init_admin();
@@ -86,8 +86,8 @@ class Base extends _Base {
             if($this->admin_table_filter)
                 $cond.=' 1=1 AND ('.$this->admin_table_filter.')';
             
-            $table -> process_content($this -> get_all($page -> page_skip, $page -> page_offset, $table -> sort_by, $table -> sort_dir, $cond, true, $table -> get_search_fields(), $table -> search_keyword));
-            $page -> no_total_rows = $this -> total_rows;
+            $table -> process_content($this -> get_all(System::getInstance() -> page_skip, System::getInstance() -> page_offset, $table -> sort_by, $table -> sort_dir, $cond, true, $table -> get_search_fields(), $table -> search_keyword));
+            System::getInstance() -> no_total_rows = $this -> total_rows;
 
             foreach ($this->admin_actions as $v)
                 $table -> add_action(isset($v['title']) ? $v['title'] : '', isset($v['text']) ? $v['text'] : '', isset($v['link']) ? $v['link'] : '', isset($v['onclick']) ? $v['onclick'] : '', isset($v['refresh']) ? $v['refresh'] : 1, isset($v['icon']) ? $v['icon'] : '', isset($v['confirm']) ? $v['confirm'] : '');
@@ -95,7 +95,7 @@ class Base extends _Base {
         $table -> update_action = $update_action;
         $table -> edit_link = $edit_link;
         $table -> sort_col_no = $sort_col_no;
-        $table -> total = $page -> no_total_rows;
+        $table -> total = System::getInstance() -> no_total_rows;
         foreach ($this->admin_table_options as $k => $v)
             $table -> {$k} = $v;
 
@@ -145,8 +145,8 @@ class Base extends _Base {
 
         $name = get_class($this) . '_' . str_replace(':', '_', $action);
         $form = new Wbl_Form_Generator($name, $name);
-        global $page;
-        $form -> link_btn_cancel = isset_or($this -> admin_form_options['link_btn_cancel'], $page -> paths['current']);
+        
+        $form -> link_btn_cancel = isset_or($this -> admin_form_options['link_btn_cancel'], System::getInstance() -> paths['current']);
         $form -> startZone($title, $description);
         $form -> addHidden('Action', 'a', $action);
 
@@ -222,7 +222,7 @@ class Base extends _Base {
             System::triggerError('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
             return null;
         }
-        global $page;
+        
         if (!$file_name)
             $file_name = 'export_' . get_class($this);
         switch($type) {
@@ -244,7 +244,7 @@ class Base extends _Base {
                 $query = 'select ' . $fields . ' from `' . $this -> table . '`';
                 $output = $this -> db -> getAll($query);
 
-                $page -> import('class', 'objects.SimpleExcel');
+                System::getInstance() -> import('class', 'objects.SimpleExcel');
                 SimpleExcel::Export($file_name, array_merge(array($header), $output));
                 die();
                 break;
@@ -265,8 +265,8 @@ class Base extends _Base {
             System::triggerError('Undefined function ' . get_class($this) . '->' . $admin_init_function . ':' . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
             return null;
         }
-        global $page;
-        $page -> import('class', 'objects.SimpleExcel');
+        
+        System::getInstance() -> import('class', 'objects.SimpleExcel');
         $data = SimpleExcel::Import($file, $has_header);
 
         $errors = array();

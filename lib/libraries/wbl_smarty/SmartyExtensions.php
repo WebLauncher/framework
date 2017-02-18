@@ -68,8 +68,8 @@ class SmartyExtensions {
 		{
 			$content=trim($content);
 	
-			global $page;
-			if($page->db_conn)
+			
+			if(System::getInstance()->db_conn)
 			{
 				$table=isset_or($params['table']);
 				$get_field=isset_or($params['get_field']);
@@ -78,7 +78,7 @@ class SmartyExtensions {
 				if($table && $get_field && $field && $value)
 				{
 					$query="select `$get_field` from `$table` where `$field`='$value'";
-					$row=$page->db_conn->getRow($query);
+					$row=System::getInstance()->db_conn->getRow($query);
 	
 					if(isset($row[$get_field])) $return=$row[$get_field];
 					else $return=isset_or($params['default']);	
@@ -658,7 +658,7 @@ class SmartyExtensions {
 	 */
 	function css($params, &$smarty)
 	{
-		global $page;
+		
 	    if (empty($params['src'])) {
 	        $smarty->trigger_error("css: missing 'src' parameter");
 	        return;
@@ -668,7 +668,7 @@ class SmartyExtensions {
 	    $media=isset_or($params['media'],'screen, projection');
 	    $browser_cond=isset_or($params['browser_cond']);
 	
-		$page->add_css_file($src,$type,$media,$browser_cond);
+		System::getInstance()->add_css_file($src,$type,$media,$browser_cond);
 	
 		return '';
 	}
@@ -688,7 +688,7 @@ class SmartyExtensions {
 	
 	function js($params, &$smarty)
 	{
-		global $page;
+		
 	    if (empty($params['src'])) {
 	        $smarty->trigger_error("js: missing 'src' parameter");
 	        return;
@@ -697,7 +697,7 @@ class SmartyExtensions {
 	    $local=isset_or($params['local']) && $params['local']=='false'?false:true;
 	    $type=isset_or($params['type'],'text/javascript');
 	
-		$page->add_js_file($src,$local,$type);
+		System::getInstance()->add_js_file($src,$local,$type);
 	
 		return '';
 	}

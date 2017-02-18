@@ -1,10 +1,10 @@
 <?php
-global $page;
-$page->import('file', $page -> paths['root_code'] . $_REQUEST['module']. '/config.php');
-$page->module=$page->session_cookie_module?$page->session_cookie_module:$_REQUEST['module'];
-$page->session_cookie=str_replace('_'.$page->module,'',$_REQUEST['ck']);
+
+System::getInstance()->import('file', System::getInstance() -> paths['root_code'] . $_REQUEST['module']. '/config.php');
+System::getInstance()->module=System::getInstance()->session_cookie_module?System::getInstance()->session_cookie_module:$_REQUEST['module'];
+System::getInstance()->session_cookie=str_replace('_'.System::getInstance()->module,'',$_REQUEST['ck']);
 	
-$page->init_session();
+System::getInstance()->init_session();
 
 /**
  * Groups configuration for default Minify implementation
@@ -16,9 +16,8 @@ $page->init_session();
  * changes. http://yourdomain/min/builder/
  **/
 $arr=array();
-foreach($page->session['__js_files'] as $k=>$v)
+foreach(System::getInstance()->session['__js_files'] as $k=>$v)
 {
 	$arr['js_site'.$k]=$v;
 }
 return $arr;
-?>

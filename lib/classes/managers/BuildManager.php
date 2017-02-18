@@ -78,6 +78,30 @@ class BuildManager
         }
         return count($this->errors)?false:true;
     }
+
+	/**
+	 * Add migration to site
+	 * @param string $path
+	 * @param string $name
+	 * @return int
+	 */
+	function add_migration($path,$name)
+	{
+		if(!$this->files->add_dir($path.'db/'))
+		{
+			$this->errors[]='Could not add dir:"'.$path.'db/"!';
+		}
+		if(!$this->files->save_file($path.'db/migrations/'.$name.'.php',$this->get_migration_class($name)))
+		{
+			$this->errors[]=('Could not write file:"'.$path.'db/'.$name.'.php"!');
+		}
+        $migrations=require_once $path.'db/migrations.php';
+        $migrations[]=$name;
+        $data="<?php\n";
+        $data.="return ".var_export($migrations,true).";\n";
+        file_put_contents($path.'db/migrations.php',$data);
+		return count($this->errors)?false:true;
+	}
 	
 	/**
 	 * Add component to site
@@ -162,6 +186,40 @@ class BuildManager
     }
 
 	/**
+	 * Get generated code for model class
+	 * @param string $name
+	 * @return string
+	 */
+	function get_migration_class($name)
+	{
+		$class="<?php\n";
+		$class.="/**\n";
+		$class.="* Class ".$name."\n";
+		$class.="* @author BuildManager\n";
+		$class.="* Migration class extends Base class so all methods available in models are usable\n";
+		$class.="*/\n";
+		$class.="class ".$name." extends Migration\n";
+		$class.="{\n";
+		$class.= "	function up(){\n";
+		$class.="		// define here all the queries that need to be run to upgrade the db version\n";
+		$class.="	}\n\n";
+
+		$class.="	function down(){\n";
+		$class.="		// define here all methods that need to be run to downgrade the db version\n";
+		$class.="	}\n\n";
+
+		$class.="	function before(\$direction='up'){\n";
+		$class.="		// define here code that needs to be executed before the method up() or down() are run\n";
+		$class.="	}\n\n";
+
+		$class.="	function after(\$direction='up'){\n";
+		$class.="		// define here code that needs to be executed after the method up() or down() are run\n";
+		$class.="	}\n";
+		$class.="}";
+		return $class;
+	}
+
+	/**
 	 * Get generated code for module class
 	 * @param string $module
 	 * @return string
@@ -194,8 +252,8 @@ class BuildManager
  		$class.="* global page access \n";
  		$class.="*\n";
  		$class.="*/\n";
-		$class.='global $page;'."\n";
-		$class.='$page->title="page title for module '.$module.'";'."\n";
+		$class.=''."\n";
+		$class.='System::getInstance()->title="page title for module '.$module.'";'."\n";
 		return $class;
 	}
 

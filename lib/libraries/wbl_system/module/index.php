@@ -34,6 +34,7 @@ class PageIndex extends Page
         $components['kids']=$this->components($this->paths['main_root_code'].$this->system->main_module.'components/');
         $this->assign('components',$components);
         $this->assign('models',$this->get_models());
+        $this->assign('migrations',$this->get_migrations());
     }
 
     function components($path){
@@ -51,6 +52,10 @@ class PageIndex extends Page
             $result[]=$arr;
         }
         return $result;
+    }
+
+    function get_migrations(){
+        return require_once $this->paths['main_root_dir'].'db/migrations.php';
     }
 
     function get_models(){

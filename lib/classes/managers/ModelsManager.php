@@ -74,7 +74,7 @@ class ModelsManager
 	 */
 	function import($model)
 	{
-		global $page;
+		
 		if(!in_array($model,$this->models))
 		{
 			if($this->import_from_page($model))
@@ -86,7 +86,7 @@ class ModelsManager
 					$this->$model->table=$this->db->tables[strtolower($model)];                
 				$this->models[]=$model;
                 $this->{$model}->models=&$this;
-				$this->{$model}->system=&$page;
+				$this->{$model}->system=System::getInstance();
 				return true;
 			}
 			return false;
@@ -114,8 +114,8 @@ class ModelsManager
 				$this->$model_name->table=$this->db->tables[strtolower($model)];
 			$this->models[]=strtolower($model);
             $this->{$model_name}->models=&$this;
-            global $page;
-            $this->{$model_name}->system=&$page;
+            
+            $this->{$model_name}->system=System::getInstance();
 			return true;
 		}
 		return false;
@@ -128,12 +128,12 @@ class ModelsManager
 	 */
 	function import_from_page($model)
 	{
-		global $page;
+		
 
 		// page subpaths
 		$paths=array();
-		$spath=$page->paths['root_dir'].$page->modules_folder.DS;		
-		foreach($page->subquery as $k=>$v)
+		$spath=System::getInstance()->paths['root_dir'].System::getInstance()->modules_folder.DS;		
+		foreach(System::getInstance()->subquery as $k=>$v)
 		{
 			if($v)
 			{

@@ -8,6 +8,9 @@
  * @package WebLauncher\Managers
  */
 class MigrationsManager {
+    /**
+     * @var System null
+     */
     public $system = null;
     private $_migrations = array();
     private $_old_migrations = array();
@@ -83,13 +86,19 @@ class MigrationsManager {
 
     /**
      * Save state into version file
-     * @param string $migration Migration file
+     * @param $migrations
+     * @internal param string $migration Migration file
      */
     function save_state($migrations) {
         file_put_contents($this -> system -> paths['root_dir'] . $this -> system -> files_folder . 'migrations_versions.json', json_encode($migrations));
     }
 
-    function run_migration($name, $version, $direction = 'up') {
+    function run_migration($name="", $version=0, $direction = 'up') {
+        if(!$name){
+            $RD = $this -> system -> paths['root_dir'];
+            $this -> _migrations = require_once $RD . 'db/migrations.php';
+            $name=$this->_migrations[$version];
+        }
         echopre('[Version: '.$version.'] Running: '.$direction.' => ' . $name);
         if (file_exists($this -> system -> paths['root_dir'] . 'db/migrations/' . $name . '.sql')) {
             if($direction=='up'){

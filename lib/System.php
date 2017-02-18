@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.8');
+define('SYS_VERSION', '2.7.10');
 
 /**
  * System Class.
@@ -44,6 +44,10 @@ define('SYS_VERSION', '2.7.8');
  */
 class System
 {
+    /**
+     * @var This class instance
+     */
+    public static $instance;
 
     /**
      * @var string $title Page Title
@@ -857,6 +861,17 @@ class System
     }
 
     /**
+     * @return System
+     */
+    public static function getInstance(){
+        if (null === static::$instance) {
+            static::$instance = new System();
+        }
+
+        return static::$instance;
+    }
+
+    /**
      * Call magic method
      *
      * @param string $name Name of the called method
@@ -1235,7 +1250,7 @@ class System
      */
     private function _initConsole()
     {
-        $this->console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (PHP_SAPI == 'cgi-fcgi' && isset($_SERVER['PWD'])));
+        $this->console = defined('PHP_SAPI') && (PHP_SAPI == 'cli' || (php_sapi_name() === 'cli'));
         if ($this->console) {
             ConsoleManager::$system = &$this;
             ConsoleManager::init();
@@ -1456,7 +1471,12 @@ class System
 
             $manager = new MigrationsManager();
             $manager->system = &$this;
-            $manager->run(isset_or($this->actions[1], 'up'));
+            if(!isset($this->actions[2])) {
+                $manager->run(isset_or($this->actions[1], 'up'));
+            }
+            else{
+                $manager->run_migration($this->actions[3],$this->actions[2],$this->actions[1]);
+            }
             die;
         }
     }
@@ -1920,7 +1940,7 @@ class System
 
             $query=new QueryBuilder($this->libraries_settings['wbl_locale']['table']);
             $language = $query->select()->where('id=' . $this->session['language_id'])->first();
-            if (strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))
+            if (isset($this->browser['os']) && strtolower($this->browser['os']) == 'windows' && isset_or($language['locale_win']))
                 $locale = $language['locale_win'];
             elseif (isset_or($language['locale_linux']))
                 $locale = $language['locale_linux'];
@@ -2475,9 +2495,9 @@ class System
     private function _initCheckCookies()
     {
         if ($this->check_cookies) {
-            if ($this->actions[0] == '__no_cookies') {
+            if (isset($this->actions[0]) && $this->actions[0] == '__no_cookies') {
                 $this->system_error = 'Please enable the cookies in your browser and then <a href="' . base64_decode($_REQUEST['page']) . '">click here</a> to go to the page you wanted to access.';
-            } elseif ($this->actions[0] == '__check_cookies') {
+            } elseif (isset($this->actions[0]) && $this->actions[0] == '__check_cookies') {
                 $this->cookies_enabled = $_SESSION['__check_cookies'] && $_SESSION['_hash'] = $_REQUEST['hash'];
                 if ($this->cookies_enabled) {
                     $this->redirect(base64_decode($_REQUEST['page']));

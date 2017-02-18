@@ -50,7 +50,7 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
      *
      * @var array
      */
-    public static $nameProperties = array();
+    public $nameProperties = array();
 
     /**
      * {section} tag has no item properties
@@ -110,12 +110,11 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
     public function buildPropertyPreg($named, $attributes)
     {
         if ($named) {
-            $this->resultOffsets['named'] = $this->startOffset + 3;
+            $this->resultOffsets[ 'named' ] = $this->startOffset + 3;
             $this->propertyPreg .= "([\$]smarty[.]{$this->tagName}[.]{$attributes['name']}[.](";
-            $className = get_class($this);
-            $properties = $className::$nameProperties;
+            $properties = $this->nameProperties;
         } else {
-            $this->resultOffsets['item'] = $this->startOffset + 3;
+            $this->resultOffsets[ 'item' ] = $this->startOffset + 3;
             $this->propertyPreg .= "([\$]{$attributes['item']}[@](";
             $properties = $this->itemProperties;
         }
@@ -141,8 +140,8 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
         preg_match_all($this->propertyPreg, $source, $match, PREG_SET_ORDER);
         foreach ($this->resultOffsets as $key => $offset) {
             foreach ($match as $m) {
-                if (isset($m[$offset]) && !empty($m[$offset])) {
-                    $this->matchResults[$key][strtolower($m[$offset])] = true;
+                if (isset($m[ $offset ]) && !empty($m[ $offset ])) {
+                    $this->matchResults[ $key ][ strtolower($m[ $offset ]) ] = true;
                 }
             }
         }
@@ -174,9 +173,11 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
                 $_content = $nextCompiler->template->source->getContent();
                 if ($_content != '') {
                     // run pre filter if required
-                    if ((isset($nextCompiler->smarty->autoload_filters['pre']) ||
-                            isset($nextCompiler->smarty->registered_filters['pre']))) {
-                        $_content = $nextCompiler->smarty->ext->_filter_Handler->runFilter('pre', $_content, $nextCompiler->template);
+                    if ((isset($nextCompiler->smarty->autoload_filters[ 'pre' ]) ||
+                         isset($nextCompiler->smarty->registered_filters[ 'pre' ]))
+                    ) {
+                        $_content = $nextCompiler->smarty->ext->_filterHandler->runFilter('pre', $_content,
+                                                                                          $nextCompiler->template);
                     }
                     $this->matchProperty($_content);
                 }
@@ -191,7 +192,6 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
      */
     public function matchBlockSource(Smarty_Internal_TemplateCompilerBase $compiler)
     {
-
     }
 
     /**
@@ -204,17 +204,15 @@ class Smarty_Internal_Compile_Private_ForeachSection extends Smarty_Internal_Com
      * @return string compiled code
      * @throws \SmartyCompilerException
      */
-    public static function compileSpecialVariable($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter)
+    public function compileSpecialVariable($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter)
     {
         $tag = strtolower(trim($parameter[ 0 ], '"\''));
         $name = isset($parameter[ 1 ]) ? $compiler->getId($parameter[ 1 ]) : false;
         if (!$name) {
             $compiler->trigger_template_error("missing or illegal \$smarty.{$tag} name attribute", null, true);
         }
-        /* @var Smarty_Internal_Compile_Foreach|Smarty_Internal_Compile_Section $className */
-        $className = 'Smarty_Internal_Compile_' . ucfirst($tag);
         $property = isset($parameter[ 2 ]) ? strtolower($compiler->getId($parameter[ 2 ])) : false;
-        if (!$property || !in_array($property, $className::$nameProperties)) {
+        if (!$property || !in_array($property, $this->nameProperties)) {
             $compiler->trigger_template_error("missing or illegal \$smarty.{$tag} property attribute", null, true);
         }
         $tagVar = "'__smarty_{$tag}_{$name}'";

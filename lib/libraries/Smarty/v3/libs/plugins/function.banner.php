@@ -21,7 +21,7 @@
 function smarty_function_banner($params, &$smarty)
 {
 
-	global $page;
+	
 
     if (empty($params['banner_id']) && empty($params['zone'])) {
         $smarty->trigger_error("validator: missing 'banner_id' or 'zone' parameter");
@@ -35,17 +35,17 @@ function smarty_function_banner($params, &$smarty)
     if($banner_id)
     {
 
-    	$banner=$page->models->banners->get($banner_id);
-		$zone=$page->models->banners_zones->get($banner['zone_id']);
+    	$banner=System::getInstance()->models->banners->get($banner_id);
+		$zone=System::getInstance()->models->banners_zones->get($banner['zone_id']);
     }
     else
     {
 		if($zone_name!='')
 		{
-			if($page->models)
+			if(System::getInstance()->models)
 			{
-				$banner=$page->models->banners->GetBanner($zone_name);
-				$zone=$page->models->banners_zones->get_cond('name="'.$zone_name.'"');
+				$banner=System::getInstance()->models->banners->GetBanner($zone_name);
+				$zone=System::getInstance()->models->banners_zones->get_cond('name="'.$zone_name.'"');
 			}
 		}
     }
@@ -62,10 +62,10 @@ function smarty_function_banner($params, &$smarty)
     		break;
     		case 'flash':
     			$response.='<div id="banner_'.$banner['id'].'>';
-    			$response.=$page->paths['root'].$banner['content'];
+    			$response.=System::getInstance()->paths['root'].$banner['content'];
     			$response.='</div>';
     			$response.='<script type="text/javascript">';
-    			$response.='swfobject.embedSWF("'.$page->paths['root'].$banner['content'].'", "banner_'.$banner['id'].'", "'.$zone['width'].'", "'.$zone['height'].'", "9.0.0","'.$page->paths['root_scripts'].'swfobject/expressInstall.swf","",{wmode:\'transparent\'});';
+    			$response.='swfobject.embedSWF("'.System::getInstance()->paths['root'].$banner['content'].'", "banner_'.$banner['id'].'", "'.$zone['width'].'", "'.$zone['height'].'", "9.0.0","'.System::getInstance()->paths['root_scripts'].'swfobject/expressInstall.swf","",{wmode:\'transparent\'});';
     			$response.='</script>';
     		break;
     		case 'script':
@@ -81,7 +81,7 @@ function smarty_function_banner($params, &$smarty)
     }
     else
     {
-		if ($page->live)
+		if (System::getInstance()->live)
 			$response.='<div class="banner">Banner Zone</div>';
 		else
 			$response.='- banner zone ['.$zone_name.'] not found -';

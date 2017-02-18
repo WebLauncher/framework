@@ -1,5 +1,5 @@
 <?php
-	global $page;
+	
 	$this->import('file',dirname(__FILE__).'/Init.php');
 	try {
 
@@ -30,13 +30,13 @@
 				 * or you can access the config directly like here:
 				 */
 				// database configuration
-				$init->config['Logging']['wrapper']='mysql:host='.$page->db_connections[0]['host'].';port=3306;dbname='.$page->db_connections[0]['dbname'];
-				$init->config['Logging']['user']=$page->db_connections[0]['user'];
-				$init->config['Logging']['password']=$page->db_connections[0]['password'];
+				$init->config['Logging']['wrapper']='mysql:host='.System::getInstance()->db_connections[0]['host'].';port=3306;dbname='.System::getInstance()->db_connections[0]['dbname'];
+				$init->config['Logging']['user']=System::getInstance()->db_connections[0]['user'];
+				$init->config['Logging']['password']=System::getInstance()->db_connections[0]['password'];
 				$init->config['Logging']['table']='intrusions';
 				$init->config['General']['filter_path']=dirname(__FILE__).'/IDS/default_filter.xml';
-				$init->config['General']['tmp_path']=$page->paths['root_cache'];
-				$init->config['Caching']['path']=$page->paths['root_cache'].'default_filter.cache';
+				$init->config['General']['tmp_path']=System::getInstance()->paths['root_cache'];
+				$init->config['Caching']['path']=System::getInstance()->paths['root_cache'].'default_filter.cache';
 
 				// 2. Initiate the PHPIDS and fetch the results
 				$ids = new IDS_Monitor($request, $init);
@@ -57,9 +57,9 @@
 					$impact=$result->getImpact();
 					if($impact>10)
 					{
-						$page->import('file',dirname(__FILE__).'/IDS/Log/Composite.php');
+						System::getInstance()->import('file',dirname(__FILE__).'/IDS/Log/Composite.php');
 						//require_once dirname(__FILE__).'/IDS/Log/Email.php';
-						$page->import('file',dirname(__FILE__).'/IDS/Log/Database.php');
+						System::getInstance()->import('file',dirname(__FILE__).'/IDS/Log/Database.php');
 						$compositeLog = new IDS_Log_Composite();
 						$compositeLog->addLogger(
 						//IDS_Log_Email::getInstance($init),
@@ -70,11 +70,11 @@
 					}
 					if($impact>27 && $impact<81)
 					{
-						$page->restricted('Restricted access for security reasons.');
+						System::getInstance()->restricted('Restricted access for security reasons.');
 					}
 					elseif($impact>81)
 					{
-						$page->restricted('Blocked access for security reasons.');
+						System::getInstance()->restricted('Blocked access for security reasons.');
 					}
 
 				}
