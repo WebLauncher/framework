@@ -45,7 +45,7 @@ define('SYS_VERSION', '2.7.10');
 class System
 {
     /**
-     * @var This class instance
+     * @var System class instance
      */
     public static $instance;
 
@@ -2267,7 +2267,7 @@ class System
             if (is_file($template_folder . 'noscript.tpl')) {
                 $this->fetchTemplate('__noscript', $template_folder . 'noscript.tpl', $cache_folder);
             }
-            if ($this->ajax && $this->obj_index->view != 'index') {
+            if ($this->ajax && $this->obj_index->view != 'index' && count($this->components)<=1) {
                 $this->render_type = 'page';
             }
             if (is_a($this->obj_index, "Page")) {
