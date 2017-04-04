@@ -1,4 +1,0 @@
-Requirements:
-Apache 2.2 (2.4 recommended) (Mod Rewrite active - important)
-PHP 5.3+ (5.4 recommended)
-MySql 5+
