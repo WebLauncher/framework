@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.10');
+define('SYS_VERSION', '2.7.12');
 
 /**
  * System Class.
@@ -973,7 +973,9 @@ class System
                     $this->_initMail();
                 return $this->_mail;
                 break;
-
+            case 'db_conn':
+                return false;
+                break;
             case 'request_method' :
                 $methods = array(
                     'POST',
@@ -3416,10 +3418,17 @@ class System
      *
      * @param string $message
      * @param int $type
+     * @param string $file
      */
-    public static function triggerError($message, $type = E_USER_NOTICE)
+    public static function triggerError($message, $type = E_USER_NOTICE, $file = '')
     {
-        trigger_error('[File] ' . __FILE__ . ']' . $message, $type);
+        if(!$file) {
+            $bt = debug_backtrace();
+            if ($bt[0]) {
+                $file = $bt[0]['file'];
+            }
+        }
+        trigger_error('[File] ' . $file . '] ' . $message, $type);
     }
 
     /**
