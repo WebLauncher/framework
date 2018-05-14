@@ -23,7 +23,7 @@ define('DS', DIRECTORY_SEPARATOR);
  * System Version
  * @package  WebLauncher\System
  */
-define('SYS_VERSION', '2.7.10');
+define('SYS_VERSION', '2.7.12');
 
 /**
  * System Class.
